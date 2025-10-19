@@ -1,0 +1,3 @@
+DAC - https://ro.mouser.com/ProductDetail/Analog-Devices/LTC2645HMS-L8PBF?qs=hVkxg5c3xu8cyu1klfxAEg%3D%3D
+DAC MSOP16 adapter - https://www.artekit.eu/products/breakout-boards/bbadapters/msop-to-dip/msop-16-to-dip-adapter/
+Inverters - https://kellycontroller.com/shop/kls-8080n-nps/
