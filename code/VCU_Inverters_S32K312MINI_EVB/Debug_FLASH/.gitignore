@@ -1,0 +1,9 @@
+/generate/
+/src/
+/Project_Settings/
+/RTD/
+/board/
+/VCU_Inverters_S32K312MINI_EVB.args
+/makefile
+/objects.mk
+/sources.mk

@@ -53,3 +53,5 @@ dkms.conf
 
 # debug information files
 *.dwo
+/code/VCU_Inverters_S32K312MINI_EVB/RTD
+/code/VCU_Inverters_S32K312MINI_EVB/generate
