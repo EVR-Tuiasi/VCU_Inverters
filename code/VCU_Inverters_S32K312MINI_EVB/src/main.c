@@ -103,6 +103,16 @@ int main(void)
 	UartMessaging_Init();
 
 	volatile uint64_t i;
+
+	while(1){
+		Dio_WriteChannel(90, STD_HIGH);
+		i=5000000;
+		while(i--);
+		Dio_WriteChannel(90, STD_LOW);
+		i=5000000;
+		while(i--);
+	}
+
 	while(1){
 		for(uint64_t cnt=0;cnt<=32768;cnt+=1){
 			Pwm_SetDutyCycle(2, cnt);
