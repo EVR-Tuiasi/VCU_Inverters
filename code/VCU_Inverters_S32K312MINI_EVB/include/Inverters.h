@@ -18,7 +18,18 @@ extern "C"{
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
 ==================================================================================================*/
+typedef enum{
+	ONE,
+	TWO
+}PartNum;
 
+typedef enum{
+	FORWARD,
+	REVERSE,
+	ECO,
+	ACCELERATE,
+	BRAKE
+}Function;
 /*==================================================================================================
 *                                       LOCAL MACROS
 ==================================================================================================*/
@@ -57,6 +68,19 @@ extern "C"{
 ==================================================================================================*/
 void Inverters_BrakeLightTurnOn(void);
 void Inverters_BrakeLightTurnOff(void);
+void Dac_Init(void);
+void SetThrottle(PartNum num, uint8_t percentage);
+void SetBrake(PartNum num, uint8_t percentage);
+void SetFanSpeed(PartNum num, uint8_t percentage);
+void SetPumpSpeed(PartNum num, uint8_t percentage);
+void TurnRelayOn(void);
+void TurnRelayOn(void);
+void FunctionOn(Function name, PartNum num);
+void FunctionOff(Function name, PartNum num);
+void Cooling_Init(void);
+uint16_t ReadTemp(PartNum num);
+uint16_t ReadPressure(PartNum num);
+uint16_t ReadAcceleration(PartNum num);
 
 #ifdef __cplusplus
 }

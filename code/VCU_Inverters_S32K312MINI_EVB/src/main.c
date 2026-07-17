@@ -101,29 +101,18 @@ int main(void)
 
 	CanMessaging_Init();
 	UartMessaging_Init();
+	Cooling_Init();
 
-	volatile uint64_t i;
-
-	while(1){
-		Dio_WriteChannel(90, STD_HIGH);
-		i=5000000;
-		while(i--);
-		Dio_WriteChannel(90, STD_LOW);
-		i=5000000;
-		while(i--);
-	}
+	SetThrottle(ONE, 50);
+	SetThrottle(TWO, 50);
 
 	while(1){
-		for(uint64_t cnt=0;cnt<=32768;cnt+=1){
-			Pwm_SetDutyCycle(2, cnt);
-			i=1000;
-			while(i--);
-		}
-		for(uint64_t cnt=32768;cnt>0;cnt-=1){
-			Pwm_SetDutyCycle(2, cnt);
-			i=1000;
-			while(i--);
-		}
+		volatile uint16_t temp1 = ReadTemp(ONE);
+		volatile uint16_t temp2 = ReadTemp(TWO);
+		volatile uint16_t pres1 = ReadPressure(ONE);
+		volatile uint16_t pres2 = ReadPressure(TWO);
+		volatile uint16_t acc1 = ReadAcceleration(ONE);
+		volatile uint16_t acc2 = ReadAcceleration(TWO);
 	}
 }
 

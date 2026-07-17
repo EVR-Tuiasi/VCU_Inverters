@@ -547,11 +547,6 @@
                   <data type="Version">1.0.0</data>
                </feature>
             </dependency>
-            <dependency resourceType="Tool" resourceId="Clocks" description="The Clocks tool is required by the Peripherals tool, but it is disabled." problem_level="2" source="Peripherals">
-               <feature name="enabled" evaluation="equal">
-                  <data>true</data>
-               </feature>
-            </dependency>
          </dependencies>
          <generated_project_files>
             <file path="board/Siul2_Port_Ip_Cfg.c" update_enabled="true"/>
@@ -2719,7 +2714,22 @@
                         <array name="IntCtrlConfig">
                            <struct name="0">
                               <setting name="Name" value="IntCtrlConfig_0"/>
-                              <array name="PlatformIsrConfig"/>
+                              <array name="PlatformIsrConfig">
+                                 <struct name="0">
+                                    <setting name="Name" value="PlatformIsrConfig_0"/>
+                                    <setting name="IsrName" value="ADC0_IRQn"/>
+                                    <setting name="IsrEnabled" value="true"/>
+                                    <setting name="IsrPriority" value="0"/>
+                                    <setting name="IsrHandler" value="Adc_Sar_0_Isr"/>
+                                 </struct>
+                                 <struct name="1">
+                                    <setting name="Name" value="PlatformIsrConfig_1"/>
+                                    <setting name="IsrName" value="ADC1_IRQn"/>
+                                    <setting name="IsrEnabled" value="true"/>
+                                    <setting name="IsrPriority" value="0"/>
+                                    <setting name="IsrHandler" value="Adc_Sar_1_Isr"/>
+                                 </struct>
+                              </array>
                               <array name="PlatformNvicEcucPartitionRef"/>
                            </struct>
                         </array>
