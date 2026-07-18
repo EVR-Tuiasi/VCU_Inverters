@@ -24,6 +24,11 @@ typedef enum{
 }PartNum;
 
 typedef enum{
+	LEFT_INVERTER,
+	RIGHT_INVERTER
+}Inverter;
+
+typedef enum{
 	FORWARD,
 	REVERSE,
 	ECO,
@@ -66,21 +71,22 @@ typedef enum{
 /*==================================================================================================
 *                                       GLOBAL FUNCTIONS
 ==================================================================================================*/
-void Inverters_BrakeLightTurnOn(void);
-void Inverters_BrakeLightTurnOff(void);
-void Dac_Init(void);
-void SetThrottle(PartNum num, uint8_t percentage);
-void SetBrake(PartNum num, uint8_t percentage);
-void SetFanSpeed(PartNum num, uint8_t percentage);
-void SetPumpSpeed(PartNum num, uint8_t percentage);
-void TurnRelayOn(void);
-void TurnRelayOn(void);
-void FunctionOn(Function name, PartNum num);
-void FunctionOff(Function name, PartNum num);
+void BrakeLight_SetState(bool value);
+
+void Inverters_Init(void);
+void Inverters_Test(void);
+void Inverters_SetThrottle(Inverter inverter, uint8_t percentage);
+void Inverters_SetBrake(Inverter inverter, uint8_t percentage);
+void Inverters_SetPower(bool value);
+void Inverters_SetFunction(Function name, Inverter inverter, bool value);
+uint16_t Inverters_ReadAcceleration(Inverter inverter);
+
 void Cooling_Init(void);
-uint16_t ReadTemp(PartNum num);
-uint16_t ReadPressure(PartNum num);
-uint16_t ReadAcceleration(PartNum num);
+void Cooling_Test(void);
+void Cooling_SetFanSpeed(PartNum num, uint8_t percentage);
+void Cooling_SetPumpSpeed(PartNum num, uint8_t percentage);
+uint16_t Cooling_ReadTemp(PartNum num);
+uint16_t Cooling_ReadPressure(PartNum num);
 
 #ifdef __cplusplus
 }

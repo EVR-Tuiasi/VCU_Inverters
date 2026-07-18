@@ -101,18 +101,23 @@ int main(void)
 
 	CanMessaging_Init();
 	UartMessaging_Init();
+	Inverters_Init();
 	Cooling_Init();
 
-	SetThrottle(ONE, 50);
-	SetThrottle(TWO, 50);
+	//Cooling_Test();
+	Inverters_Test();
 
+	volatile int i;
 	while(1){
-		volatile uint16_t temp1 = ReadTemp(ONE);
-		volatile uint16_t temp2 = ReadTemp(TWO);
-		volatile uint16_t pres1 = ReadPressure(ONE);
-		volatile uint16_t pres2 = ReadPressure(TWO);
-		volatile uint16_t acc1 = ReadAcceleration(ONE);
-		volatile uint16_t acc2 = ReadAcceleration(TWO);
+		volatile uint16_t tmp1 = Cooling_ReadTemp(ONE);
+		volatile uint16_t tmp2 = Cooling_ReadTemp(TWO);
+
+		volatile uint16_t pres1 = Cooling_ReadPressure(ONE);
+		volatile uint16_t pres2 = Cooling_ReadPressure(TWO);
+
+		volatile uint16_t acc1 = Inverters_ReadAcceleration(LEFT_INVERTER);
+		volatile uint16_t acc2 = Inverters_ReadAcceleration(RIGHT_INVERTER);
+		i=0;
 	}
 }
 

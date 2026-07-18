@@ -177,17 +177,20 @@
                         <pin_feature name="direction" value="OUTPUT"/>
                      </pin_features>
                   </pin>
-                  <pin peripheral="eMIOS_1" signal="emios_1_ch_17_y" pin_num="111" pin_signal="PTD20">
+                  <pin peripheral="ADC0" signal="adc0_p0" pin_num="7" pin_signal="PTD1"/>
+                  <pin peripheral="ADC1" signal="adc1_p1" pin_num="155" pin_signal="PTA13">
                      <pin_features>
-                        <pin_feature name="direction" value="OUTPUT"/>
+                        <pin_feature name="pullEnable" value="enabled"/>
                      </pin_features>
                   </pin>
-                  <pin peripheral="eMIOS_1" signal="emios_1_ch_18_y" pin_num="115" pin_signal="PTD21">
+                  <pin peripheral="ADC0" signal="adc0_p2" pin_num="172" pin_signal="PTA8">
                      <pin_features>
-                        <pin_feature name="direction" value="OUTPUT"/>
+                        <pin_feature name="pullEnable" value="enabled"/>
                      </pin_features>
                   </pin>
-                  <pin peripheral="eMIOS_1" signal="emios_1_ch_12_h" pin_num="101" pin_signal="PTC30">
+                  <pin peripheral="ADC0" signal="adc0_s9" pin_num="135" pin_signal="PTA1"/>
+                  <pin peripheral="ADC1" signal="adc1_s17" pin_num="123" pin_signal="PTA3"/>
+                  <pin peripheral="SIUL2" signal="gpio, 17" pin_num="109" pin_signal="PTA17">
                      <pin_features>
                         <pin_feature name="direction" value="OUTPUT"/>
                      </pin_features>
@@ -197,13 +200,17 @@
                         <pin_feature name="direction" value="OUTPUT"/>
                      </pin_features>
                   </pin>
-                  <pin peripheral="ADC0" signal="adc0_p1" pin_num="8" pin_signal="PTD0"/>
-                  <pin peripheral="ADC0" signal="adc0_p0" pin_num="7" pin_signal="PTD1"/>
-                  <pin peripheral="ADC1" signal="adc1_p1" pin_num="155" pin_signal="PTA13"/>
-                  <pin peripheral="ADC0" signal="adc0_p2" pin_num="172" pin_signal="PTA8"/>
-                  <pin peripheral="ADC0" signal="adc0_s9" pin_num="135" pin_signal="PTA1"/>
-                  <pin peripheral="ADC1" signal="adc1_s17" pin_num="123" pin_signal="PTA3"/>
-                  <pin peripheral="SIUL2" signal="gpio, 17" pin_num="109" pin_signal="PTA17">
+                  <pin peripheral="eMIOS_1" signal="emios_1_ch_12_h" pin_num="101" pin_signal="PTC30">
+                     <pin_features>
+                        <pin_feature name="direction" value="OUTPUT"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="eMIOS_1" signal="emios_1_ch_18_y" pin_num="115" pin_signal="PTD21">
+                     <pin_features>
+                        <pin_feature name="direction" value="OUTPUT"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="eMIOS_1" signal="emios_1_ch_17_y" pin_num="111" pin_signal="PTD20">
                      <pin_features>
                         <pin_feature name="direction" value="OUTPUT"/>
                      </pin_features>
@@ -1568,7 +1575,7 @@
                                     </struct>
                                     <struct name="36">
                                        <setting name="Name" value="PortPin_36"/>
-                                       <setting name="PortPinPue" value="false"/>
+                                       <setting name="PortPinPue" value="true"/>
                                        <setting name="PortPinPus" value="false"/>
                                        <setting name="PortPinSafeMode" value="false"/>
                                        <setting name="PortPinDse" value="false"/>
@@ -1589,7 +1596,7 @@
                                     </struct>
                                     <struct name="37">
                                        <setting name="Name" value="PortPin_37"/>
-                                       <setting name="PortPinPue" value="false"/>
+                                       <setting name="PortPinPue" value="true"/>
                                        <setting name="PortPinPus" value="false"/>
                                        <setting name="PortPinSafeMode" value="false"/>
                                        <setting name="PortPinDse" value="false"/>
@@ -1748,27 +1755,6 @@
                                        <setting name="PortPinInvertControl" value="false"/>
                                        <setting name="PortPinSiul2Instance" value="SIUL2_0"/>
                                        <setting name="PortPinId" value="45"/>
-                                       <setting name="PortPinInitialMode" value="PORT_GPIO_MODE"/>
-                                       <setting name="OBEGroupSelect" value="NO_OBE_GROUP"/>
-                                       <setting name="MscrPdacSlot" value="VIRTUAL_WRAPPER_PDAC0"/>
-                                       <setting name="ImcrPdacSlot" value="VIRTUAL_WRAPPER_PDAC0"/>
-                                       <array name="IGFSettings"/>
-                                       <array name="PortPinEcucPartitionRef"/>
-                                    </struct>
-                                    <struct name="45">
-                                       <setting name="Name" value="PortPin_45"/>
-                                       <setting name="PortPinPue" value="false"/>
-                                       <setting name="PortPinPus" value="false"/>
-                                       <setting name="PortPinSafeMode" value="false"/>
-                                       <setting name="PortPinDse" value="false"/>
-                                       <setting name="PortPinWithReadBack" value="false"/>
-                                       <setting name="PortPinPke" value="false"/>
-                                       <setting name="PortPinIfe" value="false"/>
-                                       <setting name="PortPinDirectionChangeable" value="true"/>
-                                       <setting name="PortPinModeChangeable" value="true"/>
-                                       <setting name="PortPinInvertControl" value="false"/>
-                                       <setting name="PortPinSiul2Instance" value="SIUL2_0"/>
-                                       <setting name="PortPinId" value="46"/>
                                        <setting name="PortPinInitialMode" value="PORT_GPIO_MODE"/>
                                        <setting name="OBEGroupSelect" value="NO_OBE_GROUP"/>
                                        <setting name="MscrPdacSlot" value="VIRTUAL_WRAPPER_PDAC0"/>
@@ -2952,18 +2938,29 @@
                               <struct name="0">
                                  <setting name="Name" value="EmiosCommon_0"/>
                                  <setting name="EmiosMclInstances" value="EMIOS_1"/>
-                                 <setting name="EmiosMclEnableFreezState" value="true"/>
+                                 <setting name="EmiosMclEnableFreezState" value="false"/>
                                  <setting name="EmiosMclEnableGlobalTimeBase" value="true"/>
-                                 <setting name="EmiosMclClkDivVal" value="30"/>
+                                 <setting name="EmiosMclClkDivVal" value="3"/>
                                  <array name="EmiosCommonEcucPartitionRef"/>
                                  <array name="EmiosMclMasterBus">
                                     <struct name="0">
                                        <setting name="Name" value="EMIOS_0_MasteBus0"/>
                                        <setting name="EmiosMclMasterBusNumber" value="EMIOS_CH_23"/>
                                        <setting name="EmiosMclMasterBusModeType" value="MCB_UP_COUNTER"/>
-                                       <setting name="EmiosMclDefaultPeriod" value="40000"/>
+                                       <setting name="EmiosMclDefaultPeriod" value="4000"/>
                                        <setting name="EmiosMclFirstOffsetValue" value="0"/>
                                        <setting name="EmiosMclMasterBusPrescaler" value="DIV_1"/>
+                                       <setting name="EmiosMclMasterBusAltPrescaler" value="DIV_1"/>
+                                       <setting name="EmiosMclChannelAllowDebugMode" value="true"/>
+                                       <setting name="EmiosMclPwmExclusiveAccess" value="true"/>
+                                    </struct>
+                                    <struct name="1">
+                                       <setting name="Name" value="EMIOS_1_MasteBus1"/>
+                                       <setting name="EmiosMclMasterBusNumber" value="EMIOS_CH_22"/>
+                                       <setting name="EmiosMclMasterBusModeType" value="MCB_UP_COUNTER"/>
+                                       <setting name="EmiosMclDefaultPeriod" value="40000"/>
+                                       <setting name="EmiosMclFirstOffsetValue" value="0"/>
+                                       <setting name="EmiosMclMasterBusPrescaler" value="DIV_10"/>
                                        <setting name="EmiosMclMasterBusAltPrescaler" value="DIV_1"/>
                                        <setting name="EmiosMclChannelAllowDebugMode" value="true"/>
                                        <setting name="EmiosMclPwmExclusiveAccess" value="true"/>
@@ -2971,24 +2968,7 @@
                                  </array>
                               </struct>
                            </array>
-                           <array name="FlexioCommon">
-                              <struct name="0">
-                                 <setting name="Name" value="FlexioCommon_0"/>
-                                 <setting name="FlexioMclInstances" value="FLEXIO_0"/>
-                                 <setting name="FlexioDebugEnable" value="false"/>
-                                 <array name="FlexioMclLogicChannels">
-                                    <struct name="0">
-                                       <setting name="Name" value="FlexioMclLogicChannels_0"/>
-                                       <setting name="FlexioMclChannelId" value="CHANNEL_0"/>
-                                       <setting name="FlexioMclPinId" value="PIN_0"/>
-                                       <setting name="FlexioMclAddPinEnable" value="false"/>
-                                       <setting name="FlexioMclAddPinId" value="PIN_0"/>
-                                       <setting name="FlexioMclAddChannelEnable" value="false"/>
-                                       <setting name="FlexioMclAddChannelId" value="CHANNEL_0"/>
-                                    </struct>
-                                 </array>
-                              </struct>
-                           </array>
+                           <array name="FlexioCommon"/>
                            <array name="lcuConfiguration">
                               <struct name="0">
                                  <setting name="Name" value="lcuConfiguration"/>
@@ -3519,8 +3499,29 @@
                                     <struct name="3">
                                        <setting name="Name" value="AdcChannel_3"/>
                                        <setting name="AdcLogicalChannelId" value="3"/>
-                                       <setting name="AdcChannelName" value="S9_ChanNum33"/>
-                                       <setting name="AdcChannelId" value="33"/>
+                                       <setting name="AdcChannelName" value="S8_ChanNum32"/>
+                                       <setting name="AdcChannelId" value="32"/>
+                                       <array name="AdcChannelConvTime"/>
+                                       <array name="AdcChannelLimitCheck"/>
+                                       <array name="AdcChannelHighLimit">
+                                          <setting name="0" value="65535"/>
+                                       </array>
+                                       <array name="AdcChannelLowLimit"/>
+                                       <array name="AdcChannelRangeSelect"/>
+                                       <array name="AdcChannelRefVoltsrcHigh"/>
+                                       <array name="AdcChannelRefVoltsrcLow"/>
+                                       <array name="AdcChannelResolution"/>
+                                       <array name="AdcChannelSampTime"/>
+                                       <setting name="AdcEnablePresampling" value="false"/>
+                                       <setting name="AdcEnableThresholds" value="false"/>
+                                       <array name="AdcThresholdRegister"/>
+                                       <setting name="AdcWdogNotification" value="NULL_PTR"/>
+                                    </struct>
+                                    <struct name="4">
+                                       <setting name="Name" value="AdcChannel_6"/>
+                                       <setting name="AdcLogicalChannelId" value="4"/>
+                                       <setting name="AdcChannelName" value="S16_ChanNum40"/>
+                                       <setting name="AdcChannelId" value="40"/>
                                        <array name="AdcChannelConvTime"/>
                                        <array name="AdcChannelLimitCheck"/>
                                        <array name="AdcChannelHighLimit">
@@ -3581,9 +3582,194 @@
                                        </struct>
                                        <array name="AdcGroupDefinition">
                                           <setting name="0" value="/Adc/Adc/AdcConfigSet/AdcHwUnit_0/AdcChannel_0"/>
-                                          <setting name="1" value="/Adc/Adc/AdcConfigSet/AdcHwUnit_0/AdcChannel_1"/>
-                                          <setting name="2" value="/Adc/Adc/AdcConfigSet/AdcHwUnit_0/AdcChannel_2"/>
-                                          <setting name="3" value="/Adc/Adc/AdcConfigSet/AdcHwUnit_0/AdcChannel_3"/>
+                                       </array>
+                                       <array name="AdcGroupEcucPartitionRef"/>
+                                    </struct>
+                                    <struct name="1">
+                                       <setting name="Name" value="AdcGroup_2"/>
+                                       <setting name="AdcGroupAccessMode" value="ADC_ACCESS_MODE_SINGLE"/>
+                                       <setting name="AdcGroupConversionMode" value="ADC_CONV_MODE_ONESHOT"/>
+                                       <setting name="AdcGroupConversionType" value="ADC_CONV_TYPE_NORMAL"/>
+                                       <setting name="AdcGroupId" value="2"/>
+                                       <array name="AdcGroupPriority"/>
+                                       <array name="AdcGroupReplacement"/>
+                                       <setting name="AdcGroupTriggSrc" value="ADC_TRIGG_SRC_SW"/>
+                                       <setting name="AdcGroupHwTriggerSource" value="/Adc/Adc/AdcConfigSet/AdcHwTrigger_0"/>
+                                       <array name="AdcHwTrigSignal"/>
+                                       <array name="AdcHwTrigTimer"/>
+                                       <array name="AdcNotification">
+                                          <setting name="0" value="NULL_PTR"/>
+                                       </array>
+                                       <setting name="AdcExtraNotification" value="NULL_PTR"/>
+                                       <setting name="AdcDmaErrorNotification" value="NULL_PTR"/>
+                                       <setting name="AdcStreamingBufferMode" value="ADC_STREAM_BUFFER_LINEAR"/>
+                                       <setting name="AdcEnableOptimizeDmaStreamingGroups" value="false"/>
+                                       <setting name="AdcEnableHalfInterrupt" value="false"/>
+                                       <setting name="AdcStreamingNumSamples" value="1"/>
+                                       <setting name="AdcStreamResultGroup" value="false"/>
+                                       <setting name="AdcEnableChDisableChGroup" value="false"/>
+                                       <setting name="AdcWithoutInterrupts" value="false"/>
+                                       <setting name="AdcWithoutDma" value="false"/>
+                                       <setting name="AdcExtDMAChanEnable" value="false"/>
+                                       <struct name="AdcGroupConversionConfiguration">
+                                          <setting name="Name" value="AdcGroupConversionConfiguration"/>
+                                          <setting name="AdcGroupHardwareAverageEnable" value="true"/>
+                                          <setting name="AdcGroupHardwareAverageSelect" value="SAMPLES_32"/>
+                                          <setting name="AdcSamplingDuration0" value="22"/>
+                                          <setting name="AdcSamplingDuration1" value="22"/>
+                                          <setting name="AdcSamplingDuration2" value="22"/>
+                                       </struct>
+                                       <struct name="AdcAlternateGroupConvTimings">
+                                          <setting name="Name" value="AdcAlternateGroupConvTimings"/>
+                                          <setting name="AdcGroupAltHardwareAverageEnable" value="false"/>
+                                          <setting name="AdcGroupAltHardwareAverageSelect" value="SAMPLES_4"/>
+                                          <setting name="AdcAltGroupSamplingDuration0" value="22"/>
+                                          <setting name="AdcAltGroupSamplingDuration1" value="22"/>
+                                          <setting name="AdcAltGroupSamplingDuration2" value="22"/>
+                                       </struct>
+                                       <array name="AdcGroupDefinition">
+                                          <setting name="0" value="/Adc/Adc/AdcConfigSet/AdcHwUnit_0/AdcChannel_1"/>
+                                       </array>
+                                       <array name="AdcGroupEcucPartitionRef"/>
+                                    </struct>
+                                    <struct name="2">
+                                       <setting name="Name" value="AdcGroup_3"/>
+                                       <setting name="AdcGroupAccessMode" value="ADC_ACCESS_MODE_SINGLE"/>
+                                       <setting name="AdcGroupConversionMode" value="ADC_CONV_MODE_ONESHOT"/>
+                                       <setting name="AdcGroupConversionType" value="ADC_CONV_TYPE_NORMAL"/>
+                                       <setting name="AdcGroupId" value="3"/>
+                                       <array name="AdcGroupPriority"/>
+                                       <array name="AdcGroupReplacement"/>
+                                       <setting name="AdcGroupTriggSrc" value="ADC_TRIGG_SRC_SW"/>
+                                       <setting name="AdcGroupHwTriggerSource" value="/Adc/Adc/AdcConfigSet/AdcHwTrigger_0"/>
+                                       <array name="AdcHwTrigSignal"/>
+                                       <array name="AdcHwTrigTimer"/>
+                                       <array name="AdcNotification">
+                                          <setting name="0" value="NULL_PTR"/>
+                                       </array>
+                                       <setting name="AdcExtraNotification" value="NULL_PTR"/>
+                                       <setting name="AdcDmaErrorNotification" value="NULL_PTR"/>
+                                       <setting name="AdcStreamingBufferMode" value="ADC_STREAM_BUFFER_LINEAR"/>
+                                       <setting name="AdcEnableOptimizeDmaStreamingGroups" value="false"/>
+                                       <setting name="AdcEnableHalfInterrupt" value="false"/>
+                                       <setting name="AdcStreamingNumSamples" value="1"/>
+                                       <setting name="AdcStreamResultGroup" value="false"/>
+                                       <setting name="AdcEnableChDisableChGroup" value="false"/>
+                                       <setting name="AdcWithoutInterrupts" value="false"/>
+                                       <setting name="AdcWithoutDma" value="false"/>
+                                       <setting name="AdcExtDMAChanEnable" value="false"/>
+                                       <struct name="AdcGroupConversionConfiguration">
+                                          <setting name="Name" value="AdcGroupConversionConfiguration"/>
+                                          <setting name="AdcGroupHardwareAverageEnable" value="true"/>
+                                          <setting name="AdcGroupHardwareAverageSelect" value="SAMPLES_32"/>
+                                          <setting name="AdcSamplingDuration0" value="22"/>
+                                          <setting name="AdcSamplingDuration1" value="22"/>
+                                          <setting name="AdcSamplingDuration2" value="22"/>
+                                       </struct>
+                                       <struct name="AdcAlternateGroupConvTimings">
+                                          <setting name="Name" value="AdcAlternateGroupConvTimings"/>
+                                          <setting name="AdcGroupAltHardwareAverageEnable" value="false"/>
+                                          <setting name="AdcGroupAltHardwareAverageSelect" value="SAMPLES_4"/>
+                                          <setting name="AdcAltGroupSamplingDuration0" value="22"/>
+                                          <setting name="AdcAltGroupSamplingDuration1" value="22"/>
+                                          <setting name="AdcAltGroupSamplingDuration2" value="22"/>
+                                       </struct>
+                                       <array name="AdcGroupDefinition">
+                                          <setting name="0" value="/Adc/Adc/AdcConfigSet/AdcHwUnit_0/AdcChannel_2"/>
+                                       </array>
+                                       <array name="AdcGroupEcucPartitionRef"/>
+                                    </struct>
+                                    <struct name="3">
+                                       <setting name="Name" value="AdcGroup_4"/>
+                                       <setting name="AdcGroupAccessMode" value="ADC_ACCESS_MODE_SINGLE"/>
+                                       <setting name="AdcGroupConversionMode" value="ADC_CONV_MODE_ONESHOT"/>
+                                       <setting name="AdcGroupConversionType" value="ADC_CONV_TYPE_NORMAL"/>
+                                       <setting name="AdcGroupId" value="4"/>
+                                       <array name="AdcGroupPriority"/>
+                                       <array name="AdcGroupReplacement"/>
+                                       <setting name="AdcGroupTriggSrc" value="ADC_TRIGG_SRC_SW"/>
+                                       <setting name="AdcGroupHwTriggerSource" value="/Adc/Adc/AdcConfigSet/AdcHwTrigger_0"/>
+                                       <array name="AdcHwTrigSignal"/>
+                                       <array name="AdcHwTrigTimer"/>
+                                       <array name="AdcNotification">
+                                          <setting name="0" value="NULL_PTR"/>
+                                       </array>
+                                       <setting name="AdcExtraNotification" value="NULL_PTR"/>
+                                       <setting name="AdcDmaErrorNotification" value="NULL_PTR"/>
+                                       <setting name="AdcStreamingBufferMode" value="ADC_STREAM_BUFFER_LINEAR"/>
+                                       <setting name="AdcEnableOptimizeDmaStreamingGroups" value="false"/>
+                                       <setting name="AdcEnableHalfInterrupt" value="false"/>
+                                       <setting name="AdcStreamingNumSamples" value="1"/>
+                                       <setting name="AdcStreamResultGroup" value="false"/>
+                                       <setting name="AdcEnableChDisableChGroup" value="false"/>
+                                       <setting name="AdcWithoutInterrupts" value="false"/>
+                                       <setting name="AdcWithoutDma" value="false"/>
+                                       <setting name="AdcExtDMAChanEnable" value="false"/>
+                                       <struct name="AdcGroupConversionConfiguration">
+                                          <setting name="Name" value="AdcGroupConversionConfiguration"/>
+                                          <setting name="AdcGroupHardwareAverageEnable" value="true"/>
+                                          <setting name="AdcGroupHardwareAverageSelect" value="SAMPLES_32"/>
+                                          <setting name="AdcSamplingDuration0" value="22"/>
+                                          <setting name="AdcSamplingDuration1" value="22"/>
+                                          <setting name="AdcSamplingDuration2" value="22"/>
+                                       </struct>
+                                       <struct name="AdcAlternateGroupConvTimings">
+                                          <setting name="Name" value="AdcAlternateGroupConvTimings"/>
+                                          <setting name="AdcGroupAltHardwareAverageEnable" value="false"/>
+                                          <setting name="AdcGroupAltHardwareAverageSelect" value="SAMPLES_4"/>
+                                          <setting name="AdcAltGroupSamplingDuration0" value="22"/>
+                                          <setting name="AdcAltGroupSamplingDuration1" value="22"/>
+                                          <setting name="AdcAltGroupSamplingDuration2" value="22"/>
+                                       </struct>
+                                       <array name="AdcGroupDefinition">
+                                          <setting name="0" value="/Adc/Adc/AdcConfigSet/AdcHwUnit_0/AdcChannel_3"/>
+                                       </array>
+                                       <array name="AdcGroupEcucPartitionRef"/>
+                                    </struct>
+                                    <struct name="4">
+                                       <setting name="Name" value="AdcGroup_5"/>
+                                       <setting name="AdcGroupAccessMode" value="ADC_ACCESS_MODE_SINGLE"/>
+                                       <setting name="AdcGroupConversionMode" value="ADC_CONV_MODE_ONESHOT"/>
+                                       <setting name="AdcGroupConversionType" value="ADC_CONV_TYPE_NORMAL"/>
+                                       <setting name="AdcGroupId" value="5"/>
+                                       <array name="AdcGroupPriority"/>
+                                       <array name="AdcGroupReplacement"/>
+                                       <setting name="AdcGroupTriggSrc" value="ADC_TRIGG_SRC_SW"/>
+                                       <setting name="AdcGroupHwTriggerSource" value="/Adc/Adc/AdcConfigSet/AdcHwTrigger_0"/>
+                                       <array name="AdcHwTrigSignal"/>
+                                       <array name="AdcHwTrigTimer"/>
+                                       <array name="AdcNotification">
+                                          <setting name="0" value="NULL_PTR"/>
+                                       </array>
+                                       <setting name="AdcExtraNotification" value="NULL_PTR"/>
+                                       <setting name="AdcDmaErrorNotification" value="NULL_PTR"/>
+                                       <setting name="AdcStreamingBufferMode" value="ADC_STREAM_BUFFER_LINEAR"/>
+                                       <setting name="AdcEnableOptimizeDmaStreamingGroups" value="false"/>
+                                       <setting name="AdcEnableHalfInterrupt" value="false"/>
+                                       <setting name="AdcStreamingNumSamples" value="1"/>
+                                       <setting name="AdcStreamResultGroup" value="false"/>
+                                       <setting name="AdcEnableChDisableChGroup" value="false"/>
+                                       <setting name="AdcWithoutInterrupts" value="false"/>
+                                       <setting name="AdcWithoutDma" value="false"/>
+                                       <setting name="AdcExtDMAChanEnable" value="false"/>
+                                       <struct name="AdcGroupConversionConfiguration">
+                                          <setting name="Name" value="AdcGroupConversionConfiguration"/>
+                                          <setting name="AdcGroupHardwareAverageEnable" value="true"/>
+                                          <setting name="AdcGroupHardwareAverageSelect" value="SAMPLES_32"/>
+                                          <setting name="AdcSamplingDuration0" value="22"/>
+                                          <setting name="AdcSamplingDuration1" value="22"/>
+                                          <setting name="AdcSamplingDuration2" value="22"/>
+                                       </struct>
+                                       <struct name="AdcAlternateGroupConvTimings">
+                                          <setting name="Name" value="AdcAlternateGroupConvTimings"/>
+                                          <setting name="AdcGroupAltHardwareAverageEnable" value="false"/>
+                                          <setting name="AdcGroupAltHardwareAverageSelect" value="SAMPLES_4"/>
+                                          <setting name="AdcAltGroupSamplingDuration0" value="22"/>
+                                          <setting name="AdcAltGroupSamplingDuration1" value="22"/>
+                                          <setting name="AdcAltGroupSamplingDuration2" value="22"/>
+                                       </struct>
+                                       <array name="AdcGroupDefinition">
+                                          <setting name="0" value="/Adc/Adc/AdcConfigSet/AdcHwUnit_0/AdcChannel_6"/>
                                        </array>
                                        <array name="AdcGroupEcucPartitionRef"/>
                                     </struct>
@@ -3653,27 +3839,6 @@
                                        <array name="AdcThresholdRegister"/>
                                        <setting name="AdcWdogNotification" value="NULL_PTR"/>
                                     </struct>
-                                    <struct name="1">
-                                       <setting name="Name" value="AdcChannel_5"/>
-                                       <setting name="AdcLogicalChannelId" value="1"/>
-                                       <setting name="AdcChannelName" value="S17_ChanNum41"/>
-                                       <setting name="AdcChannelId" value="41"/>
-                                       <array name="AdcChannelConvTime"/>
-                                       <array name="AdcChannelLimitCheck"/>
-                                       <array name="AdcChannelHighLimit">
-                                          <setting name="0" value="65535"/>
-                                       </array>
-                                       <array name="AdcChannelLowLimit"/>
-                                       <array name="AdcChannelRangeSelect"/>
-                                       <array name="AdcChannelRefVoltsrcHigh"/>
-                                       <array name="AdcChannelRefVoltsrcLow"/>
-                                       <array name="AdcChannelResolution"/>
-                                       <array name="AdcChannelSampTime"/>
-                                       <setting name="AdcEnablePresampling" value="false"/>
-                                       <setting name="AdcEnableThresholds" value="false"/>
-                                       <array name="AdcThresholdRegister"/>
-                                       <setting name="AdcWdogNotification" value="NULL_PTR"/>
-                                    </struct>
                                  </array>
                                  <array name="AdcGroup">
                                     <struct name="0">
@@ -3720,7 +3885,6 @@
                                        </struct>
                                        <array name="AdcGroupDefinition">
                                           <setting name="0" value="/Adc/Adc/AdcConfigSet/AdcHwUnit_1/AdcChannel_4"/>
-                                          <setting name="1" value="/Adc/Adc/AdcConfigSet/AdcHwUnit_1/AdcChannel_5"/>
                                        </array>
                                        <array name="AdcGroupEcucPartitionRef"/>
                                     </struct>
@@ -3879,17 +4043,13 @@
                                  <setting name="Name" value="PwmChannel_0"/>
                                  <setting name="PwmChannelId" value="0"/>
                                  <setting name="PwmHwChannel" value="/Pwm/Pwm/PwmChannelConfigSet/PwmEmios_0/PwmEmiosChannels_0"/>
-                                 <array name="PwmChannelClass">
-                                    <setting name="0" value="PWM_FIXED_PERIOD"/>
-                                 </array>
+                                 <array name="PwmChannelClass"/>
                                  <setting name="PwmPeriodInTicks" value="true"/>
-                                 <setting name="PwmPeriodDefault" value="40000"/>
+                                 <setting name="PwmPeriodDefault" value="4000"/>
                                  <setting name="PwmDutycycleDefault" value="0"/>
                                  <setting name="PwmPolarity" value="PWM_HIGH"/>
                                  <setting name="PwmIdleState" value="PWM_LOW"/>
-                                 <array name="PwmNotification">
-                                    <setting name="0" value="NULL_PTR"/>
-                                 </array>
+                                 <array name="PwmNotification"/>
                                  <setting name="PwmMcuClockReferencePoint" value="/Mcu/Mcu/McuModuleConfiguration/McuClockSettingConfig_0/McuClockReferencePoint_0"/>
                                  <array name="PwmChannelEcucPartitionRef"/>
                               </struct>
@@ -3899,7 +4059,7 @@
                                  <setting name="PwmHwChannel" value="/Pwm/Pwm/PwmChannelConfigSet/PwmEmios_0/PwmEmiosChannels_1"/>
                                  <array name="PwmChannelClass"/>
                                  <setting name="PwmPeriodInTicks" value="true"/>
-                                 <setting name="PwmPeriodDefault" value="40000"/>
+                                 <setting name="PwmPeriodDefault" value="4000"/>
                                  <setting name="PwmDutycycleDefault" value="0"/>
                                  <setting name="PwmPolarity" value="PWM_HIGH"/>
                                  <setting name="PwmIdleState" value="PWM_LOW"/>
@@ -3913,7 +4073,7 @@
                                  <setting name="PwmHwChannel" value="/Pwm/Pwm/PwmChannelConfigSet/PwmEmios_0/PwmEmiosChannels_2"/>
                                  <array name="PwmChannelClass"/>
                                  <setting name="PwmPeriodInTicks" value="true"/>
-                                 <setting name="PwmPeriodDefault" value="40000"/>
+                                 <setting name="PwmPeriodDefault" value="4000"/>
                                  <setting name="PwmDutycycleDefault" value="0"/>
                                  <setting name="PwmPolarity" value="PWM_HIGH"/>
                                  <setting name="PwmIdleState" value="PWM_LOW"/>
@@ -3927,7 +4087,7 @@
                                  <setting name="PwmHwChannel" value="/Pwm/Pwm/PwmChannelConfigSet/PwmEmios_0/PwmEmiosChannels_3"/>
                                  <array name="PwmChannelClass"/>
                                  <setting name="PwmPeriodInTicks" value="true"/>
-                                 <setting name="PwmPeriodDefault" value="40000"/>
+                                 <setting name="PwmPeriodDefault" value="4000"/>
                                  <setting name="PwmDutycycleDefault" value="0"/>
                                  <setting name="PwmPolarity" value="PWM_HIGH"/>
                                  <setting name="PwmIdleState" value="PWM_LOW"/>
@@ -3999,7 +4159,7 @@
                                  <array name="PwmEmiosChannels">
                                     <struct name="0">
                                        <setting name="Name" value="PwmEmiosChannels_0"/>
-                                       <setting name="EmiosChId" value="CH_14"/>
+                                       <setting name="EmiosChId" value="CH_6"/>
                                        <setting name="EmiosChMode" value="EMIOS_PWM_IP_MODE_OPWMB"/>
                                        <setting name="EmiosChFlagGeneration" value="Trailing_Edge"/>
                                        <setting name="EmiosChCounterBus" value="EMIOS_PWM_IP_BUS_A"/>
@@ -4018,7 +4178,7 @@
                                     </struct>
                                     <struct name="1">
                                        <setting name="Name" value="PwmEmiosChannels_1"/>
-                                       <setting name="EmiosChId" value="CH_12"/>
+                                       <setting name="EmiosChId" value="CH_5"/>
                                        <setting name="EmiosChMode" value="EMIOS_PWM_IP_MODE_OPWMB"/>
                                        <setting name="EmiosChFlagGeneration" value="Trailing_Edge"/>
                                        <setting name="EmiosChCounterBus" value="EMIOS_PWM_IP_BUS_A"/>
@@ -4037,7 +4197,7 @@
                                     </struct>
                                     <struct name="2">
                                        <setting name="Name" value="PwmEmiosChannels_2"/>
-                                       <setting name="EmiosChId" value="CH_18"/>
+                                       <setting name="EmiosChId" value="CH_4"/>
                                        <setting name="EmiosChMode" value="EMIOS_PWM_IP_MODE_OPWMB"/>
                                        <setting name="EmiosChFlagGeneration" value="Trailing_Edge"/>
                                        <setting name="EmiosChCounterBus" value="EMIOS_PWM_IP_BUS_A"/>
@@ -4056,7 +4216,7 @@
                                     </struct>
                                     <struct name="3">
                                        <setting name="Name" value="PwmEmiosChannels_3"/>
-                                       <setting name="EmiosChId" value="CH_17"/>
+                                       <setting name="EmiosChId" value="CH_3"/>
                                        <setting name="EmiosChMode" value="EMIOS_PWM_IP_MODE_OPWMB"/>
                                        <setting name="EmiosChFlagGeneration" value="Trailing_Edge"/>
                                        <setting name="EmiosChCounterBus" value="EMIOS_PWM_IP_BUS_A"/>
@@ -4075,12 +4235,12 @@
                                     </struct>
                                     <struct name="4">
                                        <setting name="Name" value="PwmEmiosChannels_4"/>
-                                       <setting name="EmiosChId" value="CH_6"/>
+                                       <setting name="EmiosChId" value="CH_14"/>
                                        <setting name="EmiosChMode" value="EMIOS_PWM_IP_MODE_OPWMB"/>
                                        <setting name="EmiosChFlagGeneration" value="Trailing_Edge"/>
-                                       <setting name="EmiosChCounterBus" value="EMIOS_PWM_IP_BUS_A"/>
+                                       <setting name="EmiosChCounterBus" value="EMIOS_PWM_IP_BUS_F"/>
                                        <array name="PwmEmiosBusRef">
-                                          <setting name="0" value="/Mcl/Mcl/MclConfig/EmiosCommon_0/EMIOS_0_MasteBus0"/>
+                                          <setting name="0" value="/Mcl/Mcl/MclConfig/EmiosCommon_0/EMIOS_1_MasteBus1"/>
                                        </array>
                                        <setting name="EmiosChFreeze" value="false"/>
                                        <setting name="EmiosChOutputDisable" value="EMIOS_PWM_IP_OUTPUT_DISABLE_NONE"/>
@@ -4094,12 +4254,12 @@
                                     </struct>
                                     <struct name="5">
                                        <setting name="Name" value="PwmEmiosChannels_5"/>
-                                       <setting name="EmiosChId" value="CH_5"/>
+                                       <setting name="EmiosChId" value="CH_12"/>
                                        <setting name="EmiosChMode" value="EMIOS_PWM_IP_MODE_OPWMB"/>
                                        <setting name="EmiosChFlagGeneration" value="Trailing_Edge"/>
-                                       <setting name="EmiosChCounterBus" value="EMIOS_PWM_IP_BUS_A"/>
+                                       <setting name="EmiosChCounterBus" value="EMIOS_PWM_IP_BUS_F"/>
                                        <array name="PwmEmiosBusRef">
-                                          <setting name="0" value="/Mcl/Mcl/MclConfig/EmiosCommon_0/EMIOS_0_MasteBus0"/>
+                                          <setting name="0" value="/Mcl/Mcl/MclConfig/EmiosCommon_0/EMIOS_1_MasteBus1"/>
                                        </array>
                                        <setting name="EmiosChFreeze" value="false"/>
                                        <setting name="EmiosChOutputDisable" value="EMIOS_PWM_IP_OUTPUT_DISABLE_NONE"/>
@@ -4113,12 +4273,12 @@
                                     </struct>
                                     <struct name="6">
                                        <setting name="Name" value="PwmEmiosChannels_6"/>
-                                       <setting name="EmiosChId" value="CH_4"/>
+                                       <setting name="EmiosChId" value="CH_18"/>
                                        <setting name="EmiosChMode" value="EMIOS_PWM_IP_MODE_OPWMB"/>
                                        <setting name="EmiosChFlagGeneration" value="Trailing_Edge"/>
-                                       <setting name="EmiosChCounterBus" value="EMIOS_PWM_IP_BUS_A"/>
+                                       <setting name="EmiosChCounterBus" value="EMIOS_PWM_IP_BUS_F"/>
                                        <array name="PwmEmiosBusRef">
-                                          <setting name="0" value="/Mcl/Mcl/MclConfig/EmiosCommon_0/EMIOS_0_MasteBus0"/>
+                                          <setting name="0" value="/Mcl/Mcl/MclConfig/EmiosCommon_0/EMIOS_1_MasteBus1"/>
                                        </array>
                                        <setting name="EmiosChFreeze" value="false"/>
                                        <setting name="EmiosChOutputDisable" value="EMIOS_PWM_IP_OUTPUT_DISABLE_NONE"/>
@@ -4132,12 +4292,12 @@
                                     </struct>
                                     <struct name="7">
                                        <setting name="Name" value="PwmEmiosChannels_7"/>
-                                       <setting name="EmiosChId" value="CH_3"/>
+                                       <setting name="EmiosChId" value="CH_17"/>
                                        <setting name="EmiosChMode" value="EMIOS_PWM_IP_MODE_OPWMB"/>
                                        <setting name="EmiosChFlagGeneration" value="Trailing_Edge"/>
-                                       <setting name="EmiosChCounterBus" value="EMIOS_PWM_IP_BUS_A"/>
+                                       <setting name="EmiosChCounterBus" value="EMIOS_PWM_IP_BUS_F"/>
                                        <array name="PwmEmiosBusRef">
-                                          <setting name="0" value="/Mcl/Mcl/MclConfig/EmiosCommon_0/EMIOS_0_MasteBus0"/>
+                                          <setting name="0" value="/Mcl/Mcl/MclConfig/EmiosCommon_0/EMIOS_1_MasteBus1"/>
                                        </array>
                                        <setting name="EmiosChFreeze" value="false"/>
                                        <setting name="EmiosChOutputDisable" value="EMIOS_PWM_IP_OUTPUT_DISABLE_NONE"/>
