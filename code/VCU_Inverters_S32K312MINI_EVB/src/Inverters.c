@@ -102,7 +102,22 @@ void BrakeLight_SetState(bool value){
 		Dio_WriteChannel(BRAKE_LIGHT_PIN, STD_LOW);
 	}
 }
+void BrakeLight_Test(void){
+	volatile uint64_t i;
+	while(1){
+		BrakeLight_SetState(1);
+		i=1000000;
+		while(i--);
+		BrakeLight_SetState(0);
+		i=1000000;
+		while(i--);
+	}
+}
 void Inverters_Init(void){
+	volatile uint64_t i;
+	Inverters_SetPower(0);
+	i=1000000;
+	while(i--);
 	Pwm_SetDutyCycle(THROTTLE1_CHANNEL, 0U);
 	Pwm_SetDutyCycle(THROTTLE2_CHANNEL, 0U);
 	Pwm_SetDutyCycle(BRAKE1_CHANNEL, 0U);
@@ -110,6 +125,25 @@ void Inverters_Init(void){
 	Adc_SetupResultBuffer(ADC_ACCELERATION_LEFT, &accLeft);
 	Adc_SetupResultBuffer(ADC_ACCELERATION_RIGHT, &accRight);
 	Dio_WriteChannel(DAC_WAKE_UP_PIN, STD_HIGH);
+	Inverters_SetFunction(FORWARD, LEFT_INVERTER, 1);
+	Inverters_SetFunction(FORWARD, RIGHT_INVERTER, 0);
+	Inverters_SetFunction(REVERSE, LEFT_INVERTER, 0);
+	Inverters_SetFunction(REVERSE, RIGHT_INVERTER, 0);
+	Inverters_SetFunction(ECO, LEFT_INVERTER, 0);
+	Inverters_SetFunction(ECO, RIGHT_INVERTER, 0);
+	Inverters_SetFunction(ACCELERATE, LEFT_INVERTER, 1);
+	Inverters_SetFunction(ACCELERATE, RIGHT_INVERTER, 0);
+	Inverters_SetFunction(BRAKE, LEFT_INVERTER, 0);
+	Inverters_SetFunction(BRAKE, RIGHT_INVERTER, 0);
+	Inverters_SetPower(1);
+	i=1000000;
+	while(i--);
+	Inverters_SetPower(0);
+	i=1000000;
+	while(i--);
+	Inverters_SetPower(1);
+	i=1000000;
+	while(i--);
 }
 void Inverters_SetThrottle(Inverter inverter, uint8_t percentage){
 	if(percentage > 100U){
@@ -294,20 +328,20 @@ void Inverters_Test(void){
 		for(uint64_t i=0;i<=MAX_DUTY_CYCLE;i++){
 			Pwm_SetDutyCycle(THROTTLE1_CHANNEL, i);
 			Pwm_SetDutyCycle(THROTTLE2_CHANNEL, i);
-			Pwm_SetDutyCycle(BRAKE1_CHANNEL, i);
-			Pwm_SetDutyCycle(BRAKE2_CHANNEL, i);
+			//Pwm_SetDutyCycle(BRAKE1_CHANNEL, i);
+			//Pwm_SetDutyCycle(BRAKE2_CHANNEL, i);
 			delay=1000;
 			while(delay--);
 		}
 		for(uint64_t i=MAX_DUTY_CYCLE;i>0;i--){
 			Pwm_SetDutyCycle(THROTTLE1_CHANNEL, i);
 			Pwm_SetDutyCycle(THROTTLE2_CHANNEL, i);
-			Pwm_SetDutyCycle(BRAKE1_CHANNEL, i);
-			Pwm_SetDutyCycle(BRAKE2_CHANNEL, i);
+			//Pwm_SetDutyCycle(BRAKE1_CHANNEL, i);
+			//Pwm_SetDutyCycle(BRAKE2_CHANNEL, i);
 			delay=1000;
 			while(delay--);
 		}
-		Inverters_SetPower(1);
+		/*Inverters_SetPower(1);
 
 		Inverters_SetFunction(FORWARD, LEFT_INVERTER, 0);
 		Inverters_SetFunction(FORWARD, RIGHT_INVERTER, 0);
@@ -326,7 +360,7 @@ void Inverters_Test(void){
 
 		delay=50000000;
 		while(delay--);
-		Inverters_SetPower(0);
+		Inverters_SetPower(0);*/
 	}
 }
 

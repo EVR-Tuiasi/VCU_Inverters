@@ -311,14 +311,14 @@
                   <clock_output id="EMIOS1_CLK.outFreq" value="120 MHz" locked="false" accuracy=""/>
                   <clock_output id="ERM0_CLK.outFreq" value="60 MHz" locked="false" accuracy=""/>
                   <clock_output id="FIRCOUT.outFreq" value="48 MHz" locked="false" accuracy=""/>
-                  <clock_output id="FLEXCAN0_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
-                  <clock_output id="FLEXCAN1_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
-                  <clock_output id="FLEXCAN2_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
-                  <clock_output id="FLEXCAN3_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
-                  <clock_output id="FLEXCAN4_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
-                  <clock_output id="FLEXCAN5_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
-                  <clock_output id="FLEXCANA_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
-                  <clock_output id="FLEXCANB_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXCAN0_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXCAN1_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXCAN2_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXCAN3_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXCAN4_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXCAN5_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXCANA_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXCANB_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
                   <clock_output id="FLEXIO0_CLK.outFreq" value="120 MHz" locked="false" accuracy=""/>
                   <clock_output id="FXOSCOUT.outFreq" value="16 MHz" locked="false" accuracy=""/>
                   <clock_output id="HSE_CLK.outFreq" value="60 MHz" locked="false" accuracy=""/>
@@ -381,8 +381,8 @@
                   <setting id="MC_CGM_MUX_6.sel" value="N/A" locked="false"/>
                   <setting id="MC_CGM_MUX_6_DE0" value="Enabled" locked="false"/>
                   <setting id="MC_CGM_MUX_6_DIV0.scale" value="2" locked="true"/>
-                  <setting id="MODULE_CLOCKS.MC_CGM_AUX3_DIV0.scale" value="2" locked="true"/>
-                  <setting id="MODULE_CLOCKS.MC_CGM_AUX4_DIV0.scale" value="2" locked="true"/>
+                  <setting id="MODULE_CLOCKS.MC_CGM_AUX3_DIV0.scale" value="1" locked="true"/>
+                  <setting id="MODULE_CLOCKS.MC_CGM_AUX4_DIV0.scale" value="1" locked="true"/>
                   <setting id="PHI0.scale" value="2" locked="true"/>
                   <setting id="PHI1.scale" value="5" locked="true"/>
                   <setting id="PLL_PREDIV.scale" value="2" locked="true"/>
@@ -552,6 +552,11 @@
             <dependency resourceType="SWComponent" resourceId="platform.driver.pwm" description="An unsupported version of the Pwm in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. The project might not compile correctly." problem_level="1" source="Peripherals">
                <feature name="version" evaluation="equivalent">
                   <data type="Version">1.0.0</data>
+               </feature>
+            </dependency>
+            <dependency resourceType="Tool" resourceId="Clocks" description="The Clocks tool is required by the Peripherals tool, but it is disabled." problem_level="2" source="Peripherals">
+               <feature name="enabled" evaluation="equal">
+                  <data>true</data>
                </feature>
             </dependency>
          </dependencies>
@@ -2167,6 +2172,10 @@
                                        <setting name="Name" value="McuClockReferencePoint_0"/>
                                        <setting name="McuClockFrequencySelect" value="CORE_CLK"/>
                                     </struct>
+                                    <struct name="1">
+                                       <setting name="Name" value="FlexCan0"/>
+                                       <setting name="McuClockFrequencySelect" value="FIRC_CLK"/>
+                                    </struct>
                                  </array>
                               </struct>
                            </array>
@@ -2715,6 +2724,27 @@
                                     <setting name="IsrPriority" value="0"/>
                                     <setting name="IsrHandler" value="Adc_Sar_1_Isr"/>
                                  </struct>
+                                 <struct name="2">
+                                    <setting name="Name" value="PlatformIsrConfig_2"/>
+                                    <setting name="IsrName" value="FlexCAN0_0_IRQn"/>
+                                    <setting name="IsrEnabled" value="true"/>
+                                    <setting name="IsrPriority" value="0"/>
+                                    <setting name="IsrHandler" value="CAN0_ORED_IRQHandler"/>
+                                 </struct>
+                                 <struct name="3">
+                                    <setting name="Name" value="PlatformIsrConfig_3"/>
+                                    <setting name="IsrName" value="FlexCAN0_1_IRQn"/>
+                                    <setting name="IsrEnabled" value="true"/>
+                                    <setting name="IsrPriority" value="0"/>
+                                    <setting name="IsrHandler" value="CAN0_ORED_0_31_MB_IRQHandler"/>
+                                 </struct>
+                                 <struct name="4">
+                                    <setting name="Name" value="PlatformIsrConfig_4"/>
+                                    <setting name="IsrName" value="FlexCAN0_2_IRQn"/>
+                                    <setting name="IsrEnabled" value="true"/>
+                                    <setting name="IsrPriority" value="0"/>
+                                    <setting name="IsrHandler" value="CAN0_ORED_32_63_MB_IRQHandler"/>
+                                 </struct>
                               </array>
                               <array name="PlatformNvicEcucPartitionRef"/>
                            </struct>
@@ -3072,11 +3102,11 @@
                         <setting name="Name" value="Can"/>
                         <struct name="ConfigTimeSupport">
                            <setting name="POST_BUILD_VARIANT_USED" value="false"/>
-                           <setting name="IMPLEMENTATION_CONFIG_VARIANT" value="VARIANT-POST-BUILD"/>
+                           <setting name="IMPLEMENTATION_CONFIG_VARIANT" value="VARIANT-PRE-COMPILE"/>
                         </struct>
-                        <struct name="CanGeneral" quick_selection="Default">
+                        <struct name="CanGeneral">
                            <setting name="Name" value="CanGeneral"/>
-                           <setting name="CanDevErrorDetect" value="false"/>
+                           <setting name="CanDevErrorDetect" value="true"/>
                            <setting name="CanEnableUserModeSupport" value="false"/>
                            <setting name="CanMultiPartitionSupport" value="false"/>
                            <setting name="CanEnableSecurityEventReporting" value="false"/>
@@ -3091,13 +3121,20 @@
                            <array name="CanLPduReceiveCalloutFunction"/>
                            <array name="CanEcucPartitionRef"/>
                            <array name="CanOsCounterRef"/>
-                           <array name="CanApiEnableMbAbort"/>
+                           <array name="CanApiEnableMbAbort">
+                              <setting name="0" value="true"/>
+                           </array>
                            <array name="CanSetBaudrateApi"/>
                            <setting name="CanEnableDualClockMode" value="false"/>
                            <array name="CanListenOnlyModeApi"/>
                            <setting name="CanGlobalTimeSupport" value="false"/>
                            <array name="CanTimeStamp"/>
-                           <array name="CanMainFunctionRWPeriods"/>
+                           <array name="CanMainFunctionRWPeriods">
+                              <struct name="0">
+                                 <setting name="Name" value="CanMainFunctionRWPeriods_0"/>
+                                 <setting name="CanMainFunctionPeriod" value="0.001"/>
+                              </struct>
+                           </array>
                         </struct>
                         <struct name="CanConfigSet">
                            <setting name="Name" value="CanConfigSet"/>
@@ -3113,60 +3150,15 @@
                                  <setting name="CanBusoffProcessing" value="INTERRUPT"/>
                                  <setting name="CanWakeupProcessing" value="INTERRUPT"/>
                                  <setting name="CanLoopBackMode" value="false"/>
-                                 <setting name="CanAutoBusOffRecovery" value="false"/>
+                                 <setting name="CanAutoBusOffRecovery" value="true"/>
                                  <setting name="CanTrippleSamplingEnable" value="false"/>
                                  <setting name="CanControllerPrExcEn" value="false"/>
                                  <setting name="CanControllerEdgeFilter" value="false"/>
-                                 <setting name="CanControllerFdISO" value="true"/>
+                                 <setting name="CanControllerFdISO" value="false"/>
                                  <setting name="CanLowestBufferTransmittedFirst" value="false"/>
                                  <setting name="CanControllerDefaultBaudrate" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0/CanControllerBaudrateConfig_0"/>
                                  <array name="CanControllerEcucPartitionRef"/>
-                                 <setting name="CanCpuClockRef" value="/Mcu/Mcu/McuModuleConfiguration/McuClockSettingConfig_0/McuClockReferencePoint_0"/>
-                                 <setting name="CanCpuClockRefAlternate" value="/Mcu/Mcu/McuModuleConfiguration/McuClockSettingConfig_0/McuClockReferencePoint_0"/>
-                                 <array name="CanControllerBaudrateConfig">
-                                    <struct name="0">
-                                       <setting name="Name" value="CanControllerBaudrateConfig_0"/>
-                                       <setting name="CanBaudrateTypeSuport" value="NORMAL_CBT"/>
-                                       <setting name="CanAdvancedSetting" value="true"/>
-                                       <setting name="CanBusLength" value="10"/>
-                                       <setting name="CanPropDelayTranceiver" value="150"/>
-                                       <setting name="CanTxArbitrationStartDelay" value="12"/>
-                                       <setting name="CanControllerPrescaller" value="40"/>
-                                       <setting name="CanControllerPrescallerAlternate" value="10"/>
-                                       <setting name="CanControllerBaudRateConfigID" value="0"/>
-                                       <setting name="CanControllerBaudRate" value="200"/>
-                                       <setting name="CanControllerSyncSeg" value="1"/>
-                                       <setting name="CanControllerPropSeg" value="5"/>
-                                       <setting name="CanControllerSeg1" value="5"/>
-                                       <setting name="CanControllerSeg2" value="6"/>
-                                       <setting name="CanControllerSyncJumpWidth" value="1"/>
-                                       <array name="CanControllerFdBaudrateConfig"/>
-                                    </struct>
-                                 </array>
-                                 <array name="CanRamBlock"/>
-                                 <array name="CanRxFiFo"/>
-                                 <array name="CanControllerTimeStamp"/>
-                              </struct>
-                              <struct name="1">
-                                 <setting name="Name" value="CanController_1"/>
-                                 <setting name="CanHwChannel" value="FLEXCAN_1"/>
-                                 <setting name="CanControllerActivation" value="true"/>
-                                 <setting name="CanControllerBaseAddress" value="0"/>
-                                 <setting name="CanControllerId" value="1"/>
-                                 <setting name="CanRxProcessing" value="INTERRUPT"/>
-                                 <setting name="CanTxProcessing" value="INTERRUPT"/>
-                                 <setting name="CanBusoffProcessing" value="INTERRUPT"/>
-                                 <setting name="CanWakeupProcessing" value="INTERRUPT"/>
-                                 <setting name="CanLoopBackMode" value="false"/>
-                                 <setting name="CanAutoBusOffRecovery" value="false"/>
-                                 <setting name="CanTrippleSamplingEnable" value="false"/>
-                                 <setting name="CanControllerPrExcEn" value="false"/>
-                                 <setting name="CanControllerEdgeFilter" value="false"/>
-                                 <setting name="CanControllerFdISO" value="true"/>
-                                 <setting name="CanLowestBufferTransmittedFirst" value="false"/>
-                                 <setting name="CanControllerDefaultBaudrate" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_1/CanControllerBaudrateConfig_0"/>
-                                 <array name="CanControllerEcucPartitionRef"/>
-                                 <setting name="CanCpuClockRef" value="/Mcu/Mcu/McuModuleConfiguration/McuClockSettingConfig_0/McuClockReferencePoint_0"/>
+                                 <setting name="CanCpuClockRef" value="/Mcu/Mcu/McuModuleConfiguration/McuClockSettingConfig_0/FlexCan0"/>
                                  <setting name="CanCpuClockRefAlternate" value="/Mcu/Mcu/McuModuleConfiguration/McuClockSettingConfig_0/McuClockReferencePoint_0"/>
                                  <array name="CanControllerBaudrateConfig">
                                     <struct name="0">
@@ -3176,14 +3168,14 @@
                                        <setting name="CanBusLength" value="40"/>
                                        <setting name="CanPropDelayTranceiver" value="150"/>
                                        <setting name="CanTxArbitrationStartDelay" value="12"/>
-                                       <setting name="CanControllerPrescaller" value="40"/>
+                                       <setting name="CanControllerPrescaller" value="12"/>
                                        <setting name="CanControllerPrescallerAlternate" value="10"/>
                                        <setting name="CanControllerBaudRateConfigID" value="0"/>
-                                       <setting name="CanControllerBaudRate" value="200"/>
+                                       <setting name="CanControllerBaudRate" value="250"/>
                                        <setting name="CanControllerSyncSeg" value="1"/>
                                        <setting name="CanControllerPropSeg" value="5"/>
                                        <setting name="CanControllerSeg1" value="5"/>
-                                       <setting name="CanControllerSeg2" value="6"/>
+                                       <setting name="CanControllerSeg2" value="5"/>
                                        <setting name="CanControllerSyncJumpWidth" value="1"/>
                                        <array name="CanControllerFdBaudrateConfig"/>
                                     </struct>
@@ -3195,13 +3187,513 @@
                            </array>
                            <array name="CanHardwareObject">
                               <struct name="0">
-                                 <setting name="Name" value="CanHardwareObject_0"/>
+                                 <setting name="Name" value="INVERTOR_STANGA_RECEIVE"/>
                                  <array name="CanFdPaddingValue"/>
-                                 <setting name="CanHandleType" value="BASIC"/>
+                                 <setting name="CanHandleType" value="FULL"/>
                                  <setting name="CanIdType" value="EXTENDED"/>
                                  <setting name="CanObjectId" value="0"/>
+                                 <setting name="CanObjectType" value="RECEIVE"/>
+                                 <array name="CanObjectPayloadLength">
+                                    <setting name="0" value="CAN_OBJECT_PL_8"/>
+                                 </array>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef"/>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter">
+                                    <struct name="0">
+                                       <setting name="Name" value="Can_aHwFilter_Object_0"/>
+                                       <setting name="CanHwFilterCode" value="0x110"/>
+                                       <setting name="CanHwFilterMask" value="0x1FFFFFFF"/>
+                                       <setting name="CanHwFilterIDE" value="false"/>
+                                    </struct>
+                                 </array>
+                              </struct>
+                              <struct name="1">
+                                 <setting name="Name" value="INVERTOR_DREAPTA_RECEIVE"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="FULL"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="1"/>
+                                 <setting name="CanObjectType" value="RECEIVE"/>
+                                 <array name="CanObjectPayloadLength">
+                                    <setting name="0" value="CAN_OBJECT_PL_8"/>
+                                 </array>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef"/>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter">
+                                    <struct name="0">
+                                       <setting name="Name" value="Can_aHwFilter_Object_0"/>
+                                       <setting name="CanHwFilterCode" value="0x111"/>
+                                       <setting name="CanHwFilterMask" value="0x1FFFFFFF"/>
+                                       <setting name="CanHwFilterIDE" value="false"/>
+                                    </struct>
+                                 </array>
+                              </struct>
+                              <struct name="2">
+                                 <setting name="Name" value="INVERTOARE_RECEIVE"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="FULL"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="2"/>
+                                 <setting name="CanObjectType" value="RECEIVE"/>
+                                 <array name="CanObjectPayloadLength">
+                                    <setting name="0" value="CAN_OBJECT_PL_8"/>
+                                 </array>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef"/>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter">
+                                    <struct name="0">
+                                       <setting name="Name" value="Can_aHwFilter_Object_0"/>
+                                       <setting name="CanHwFilterCode" value="0x112"/>
+                                       <setting name="CanHwFilterMask" value="0x1FFFFFFF"/>
+                                       <setting name="CanHwFilterIDE" value="false"/>
+                                    </struct>
+                                 </array>
+                              </struct>
+                              <struct name="3">
+                                 <setting name="Name" value="BORD_RECEIVE"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="FULL"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="3"/>
+                                 <setting name="CanObjectType" value="RECEIVE"/>
+                                 <array name="CanObjectPayloadLength">
+                                    <setting name="0" value="CAN_OBJECT_PL_8"/>
+                                 </array>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef"/>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter">
+                                    <struct name="0">
+                                       <setting name="Name" value="Can_aHwFilter_Object_0"/>
+                                       <setting name="CanHwFilterCode" value="0x113"/>
+                                       <setting name="CanHwFilterMask" value="0x1FFFFFFF"/>
+                                       <setting name="CanHwFilterIDE" value="false"/>
+                                    </struct>
+                                 </array>
+                              </struct>
+                              <struct name="4">
+                                 <setting name="Name" value="ACCELERATIE_RECEIVE"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="FULL"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="4"/>
+                                 <setting name="CanObjectType" value="RECEIVE"/>
+                                 <array name="CanObjectPayloadLength">
+                                    <setting name="0" value="CAN_OBJECT_PL_8"/>
+                                 </array>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef"/>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter">
+                                    <struct name="0">
+                                       <setting name="Name" value="Can_aHwFilter_Object_0"/>
+                                       <setting name="CanHwFilterCode" value="0x330"/>
+                                       <setting name="CanHwFilterMask" value="0x1FFFFFFF"/>
+                                       <setting name="CanHwFilterIDE" value="false"/>
+                                    </struct>
+                                 </array>
+                              </struct>
+                              <struct name="5">
+                                 <setting name="Name" value="FRANA_RECEIVE"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="FULL"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="5"/>
+                                 <setting name="CanObjectType" value="RECEIVE"/>
+                                 <array name="CanObjectPayloadLength">
+                                    <setting name="0" value="CAN_OBJECT_PL_8"/>
+                                 </array>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef"/>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter">
+                                    <struct name="0">
+                                       <setting name="Name" value="Can_aHwFilter_Object_0"/>
+                                       <setting name="CanHwFilterCode" value="0x331"/>
+                                       <setting name="CanHwFilterMask" value="0x1FFFFFFF"/>
+                                       <setting name="CanHwFilterIDE" value="false"/>
+                                    </struct>
+                                 </array>
+                              </struct>
+                              <struct name="6">
+                                 <setting name="Name" value="BATERIE_RECEIVE"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="FULL"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="6"/>
+                                 <setting name="CanObjectType" value="RECEIVE"/>
+                                 <array name="CanObjectPayloadLength">
+                                    <setting name="0" value="CAN_OBJECT_PL_8"/>
+                                 </array>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef"/>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter">
+                                    <struct name="0">
+                                       <setting name="Name" value="Can_aHwFilter_Object_0"/>
+                                       <setting name="CanHwFilterCode" value="0x114"/>
+                                       <setting name="CanHwFilterMask" value="0x1FFFFFFF"/>
+                                       <setting name="CanHwFilterIDE" value="false"/>
+                                    </struct>
+                                 </array>
+                              </struct>
+                              <struct name="7">
+                                 <setting name="Name" value="BATERIE_TENSIUNI_CELULE_RECEIVE"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="FULL"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="7"/>
+                                 <setting name="CanObjectType" value="RECEIVE"/>
+                                 <array name="CanObjectPayloadLength">
+                                    <setting name="0" value="CAN_OBJECT_PL_8"/>
+                                 </array>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef"/>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter">
+                                    <struct name="0">
+                                       <setting name="Name" value="Can_aHwFilter_Object_0"/>
+                                       <setting name="CanHwFilterCode" value="0x115"/>
+                                       <setting name="CanHwFilterMask" value="0x1FFFFFFF"/>
+                                       <setting name="CanHwFilterIDE" value="false"/>
+                                    </struct>
+                                 </array>
+                              </struct>
+                              <struct name="8">
+                                 <setting name="Name" value="BATERIE_TEMPERATURI_CELULE_RECEIVE"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="FULL"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="8"/>
+                                 <setting name="CanObjectType" value="RECEIVE"/>
+                                 <array name="CanObjectPayloadLength">
+                                    <setting name="0" value="CAN_OBJECT_PL_8"/>
+                                 </array>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef"/>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter">
+                                    <struct name="0">
+                                       <setting name="Name" value="Can_aHwFilter_Object_0"/>
+                                       <setting name="CanHwFilterCode" value="0x116"/>
+                                       <setting name="CanHwFilterMask" value="0x1FFFFFFF"/>
+                                       <setting name="CanHwFilterIDE" value="false"/>
+                                    </struct>
+                                 </array>
+                              </struct>
+                              <struct name="9">
+                                 <setting name="Name" value="BATERIE_2_RECEIVE"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="FULL"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="9"/>
+                                 <setting name="CanObjectType" value="RECEIVE"/>
+                                 <array name="CanObjectPayloadLength">
+                                    <setting name="0" value="CAN_OBJECT_PL_8"/>
+                                 </array>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef"/>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter">
+                                    <struct name="0">
+                                       <setting name="Name" value="Can_aHwFilter_Object_0"/>
+                                       <setting name="CanHwFilterCode" value="0x117"/>
+                                       <setting name="CanHwFilterMask" value="0x1FFFFFFF"/>
+                                       <setting name="CanHwFilterIDE" value="false"/>
+                                    </struct>
+                                 </array>
+                              </struct>
+                              <struct name="10">
+                                 <setting name="Name" value="BATERIE_CHARGER_RECEIVE"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="FULL"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="10"/>
+                                 <setting name="CanObjectType" value="RECEIVE"/>
+                                 <array name="CanObjectPayloadLength">
+                                    <setting name="0" value="CAN_OBJECT_PL_8"/>
+                                 </array>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef"/>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter">
+                                    <struct name="0">
+                                       <setting name="Name" value="Can_aHwFilter_Object_0"/>
+                                       <setting name="CanHwFilterCode" value="0x119"/>
+                                       <setting name="CanHwFilterMask" value="0x1FFFFFFF"/>
+                                       <setting name="CanHwFilterIDE" value="false"/>
+                                    </struct>
+                                 </array>
+                              </struct>
+                              <struct name="11">
+                                 <setting name="Name" value="COMUNICATII_RECEIVE"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="FULL"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="11"/>
+                                 <setting name="CanObjectType" value="RECEIVE"/>
+                                 <array name="CanObjectPayloadLength">
+                                    <setting name="0" value="CAN_OBJECT_PL_8"/>
+                                 </array>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef"/>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter">
+                                    <struct name="0">
+                                       <setting name="Name" value="Can_aHwFilter_Object_0"/>
+                                       <setting name="CanHwFilterCode" value="0x118"/>
+                                       <setting name="CanHwFilterMask" value="0x1FFFFFFF"/>
+                                       <setting name="CanHwFilterIDE" value="false"/>
+                                    </struct>
+                                 </array>
+                              </struct>
+                              <struct name="12">
+                                 <setting name="Name" value="INVERTOR_STANGA_TRANSMIT"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="FULL"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="12"/>
                                  <setting name="CanObjectType" value="TRANSMIT"/>
-                                 <array name="CanObjectPayloadLength"/>
+                                 <array name="CanObjectPayloadLength">
+                                    <setting name="0" value="CAN_OBJECT_PL_8"/>
+                                 </array>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef"/>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter"/>
+                              </struct>
+                              <struct name="13">
+                                 <setting name="Name" value="INVERTOR_DREAPTA_TRANSMIT"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="FULL"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="13"/>
+                                 <setting name="CanObjectType" value="TRANSMIT"/>
+                                 <array name="CanObjectPayloadLength">
+                                    <setting name="0" value="CAN_OBJECT_PL_8"/>
+                                 </array>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef"/>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter"/>
+                              </struct>
+                              <struct name="14">
+                                 <setting name="Name" value="INVERTOARE_TRANSMIT"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="FULL"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="14"/>
+                                 <setting name="CanObjectType" value="TRANSMIT"/>
+                                 <array name="CanObjectPayloadLength">
+                                    <setting name="0" value="CAN_OBJECT_PL_8"/>
+                                 </array>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef"/>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter"/>
+                              </struct>
+                              <struct name="15">
+                                 <setting name="Name" value="BORD_TRANSMIT"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="FULL"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="15"/>
+                                 <setting name="CanObjectType" value="TRANSMIT"/>
+                                 <array name="CanObjectPayloadLength">
+                                    <setting name="0" value="CAN_OBJECT_PL_8"/>
+                                 </array>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef"/>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter"/>
+                              </struct>
+                              <struct name="16">
+                                 <setting name="Name" value="ACCELERATIE_TRANSMIT"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="FULL"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="16"/>
+                                 <setting name="CanObjectType" value="TRANSMIT"/>
+                                 <array name="CanObjectPayloadLength">
+                                    <setting name="0" value="CAN_OBJECT_PL_8"/>
+                                 </array>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef"/>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter"/>
+                              </struct>
+                              <struct name="17">
+                                 <setting name="Name" value="FRANA_TRANSMIT"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="FULL"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="17"/>
+                                 <setting name="CanObjectType" value="TRANSMIT"/>
+                                 <array name="CanObjectPayloadLength">
+                                    <setting name="0" value="CAN_OBJECT_PL_8"/>
+                                 </array>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef"/>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter"/>
+                              </struct>
+                              <struct name="18">
+                                 <setting name="Name" value="BATERIE_TRANSMIT"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="FULL"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="18"/>
+                                 <setting name="CanObjectType" value="TRANSMIT"/>
+                                 <array name="CanObjectPayloadLength">
+                                    <setting name="0" value="CAN_OBJECT_PL_8"/>
+                                 </array>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef"/>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter"/>
+                              </struct>
+                              <struct name="19">
+                                 <setting name="Name" value="BATERIE_TENSIUNI_CELULE_TRANSMIT"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="FULL"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="19"/>
+                                 <setting name="CanObjectType" value="TRANSMIT"/>
+                                 <array name="CanObjectPayloadLength">
+                                    <setting name="0" value="CAN_OBJECT_PL_8"/>
+                                 </array>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef"/>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter"/>
+                              </struct>
+                              <struct name="20">
+                                 <setting name="Name" value="BATERIE_TEMPERATURI_CELULE_TRANSMIT"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="FULL"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="20"/>
+                                 <setting name="CanObjectType" value="TRANSMIT"/>
+                                 <array name="CanObjectPayloadLength">
+                                    <setting name="0" value="CAN_OBJECT_PL_8"/>
+                                 </array>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef"/>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter"/>
+                              </struct>
+                              <struct name="21">
+                                 <setting name="Name" value="BATERIE_2_TRANSMIT"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="FULL"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="21"/>
+                                 <setting name="CanObjectType" value="TRANSMIT"/>
+                                 <array name="CanObjectPayloadLength">
+                                    <setting name="0" value="CAN_OBJECT_PL_8"/>
+                                 </array>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef"/>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter"/>
+                              </struct>
+                              <struct name="22">
+                                 <setting name="Name" value="BATERIE_CHARGER_TRANSMIT"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="FULL"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="22"/>
+                                 <setting name="CanObjectType" value="TRANSMIT"/>
+                                 <array name="CanObjectPayloadLength">
+                                    <setting name="0" value="CAN_OBJECT_PL_8"/>
+                                 </array>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef"/>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter"/>
+                              </struct>
+                              <struct name="23">
+                                 <setting name="Name" value="COMUNICATII_TRANSMIT"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="FULL"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="23"/>
+                                 <setting name="CanObjectType" value="TRANSMIT"/>
+                                 <array name="CanObjectPayloadLength">
+                                    <setting name="0" value="CAN_OBJECT_PL_8"/>
+                                 </array>
                                  <array name="CanHardwareObjectUsesPolling"/>
                                  <array name="CanTriggerTransmitEnable"/>
                                  <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
@@ -3237,7 +3729,9 @@
                            <setting name="Name" value="CanIfPublicCfg"/>
                            <setting name="CanIfDevErrorDetect" value="true"/>
                            <setting name="CanIfWakeupSupport" value="true"/>
-                           <array name="CanIfPublicCddHeaderFile"/>
+                           <array name="CanIfPublicCddHeaderFile">
+                              <setting name="0" value="CanMessaging"/>
+                           </array>
                         </struct>
                         <array name="CanIfCtrlDrvCfg">
                            <struct name="0">
@@ -3249,22 +3743,536 @@
                                     <setting name="CanIfCtrlId" value="0"/>
                                     <setting name="CanIfCtrlCanCtrlRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
                                  </struct>
-                                 <struct name="1">
-                                    <setting name="Name" value="CanIfCtrlCfg_1"/>
-                                    <setting name="CanIfCtrlId" value="1"/>
-                                    <setting name="CanIfCtrlCanCtrlRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_1"/>
-                                 </struct>
                               </array>
                            </struct>
                         </array>
-                        <struct name="CanIfInitCfg" quick_selection="Default">
+                        <struct name="CanIfInitCfg">
                            <setting name="Name" value="CanIfInitCfg"/>
-                           <array name="CanIfMaxRxPduCfg"/>
-                           <array name="CanIfMaxTxPduCfg"/>
-                           <array name="CanIfTxPduCfg"/>
-                           <array name="CanIfRxPduCfg"/>
-                           <array name="CanIfBufferCfg"/>
-                           <array name="CanIfInitHohCfg"/>
+                           <array name="CanIfMaxRxPduCfg">
+                              <setting name="0" value="12"/>
+                           </array>
+                           <array name="CanIfMaxTxPduCfg">
+                              <setting name="0" value="12"/>
+                           </array>
+                           <array name="CanIfTxPduCfg">
+                              <struct name="0">
+                                 <setting name="Name" value="CanIfTxPduCfg_INVERTOR_STANGA"/>
+                                 <array name="CanIfTxPduCanId">
+                                    <setting name="0" value="0x110"/>
+                                 </array>
+                                 <array name="CanIfTxPduCanIdType">
+                                    <setting name="0" value="EXTENDED_CAN"/>
+                                 </array>
+                                 <setting name="CanIfTxPduId" value="0"/>
+                                 <array name="CanIfTxPduUserTxConfirmationName"/>
+                                 <array name="CanIfTxPduUserTxConfirmationUL"/>
+                                 <setting name="CanIfTxPduBufferRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfBufferCfg_INVERTOR_STANGA"/>
+                              </struct>
+                              <struct name="1">
+                                 <setting name="Name" value="CanIfTxPduCfg_INVERTOR_DREAPTA"/>
+                                 <array name="CanIfTxPduCanId">
+                                    <setting name="0" value="0x111"/>
+                                 </array>
+                                 <array name="CanIfTxPduCanIdType">
+                                    <setting name="0" value="EXTENDED_CAN"/>
+                                 </array>
+                                 <setting name="CanIfTxPduId" value="1"/>
+                                 <array name="CanIfTxPduUserTxConfirmationName"/>
+                                 <array name="CanIfTxPduUserTxConfirmationUL"/>
+                                 <setting name="CanIfTxPduBufferRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfBufferCfg_INVERTOR_DREAPTA"/>
+                              </struct>
+                              <struct name="2">
+                                 <setting name="Name" value="CanIfTxPduCfg_INVERTOARE"/>
+                                 <array name="CanIfTxPduCanId">
+                                    <setting name="0" value="0x112"/>
+                                 </array>
+                                 <array name="CanIfTxPduCanIdType">
+                                    <setting name="0" value="EXTENDED_CAN"/>
+                                 </array>
+                                 <setting name="CanIfTxPduId" value="2"/>
+                                 <array name="CanIfTxPduUserTxConfirmationName"/>
+                                 <array name="CanIfTxPduUserTxConfirmationUL"/>
+                                 <setting name="CanIfTxPduBufferRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfBufferCfg_INVERTOARE"/>
+                              </struct>
+                              <struct name="3">
+                                 <setting name="Name" value="CanIfTxPduCfg_BORD"/>
+                                 <array name="CanIfTxPduCanId">
+                                    <setting name="0" value="0x113"/>
+                                 </array>
+                                 <array name="CanIfTxPduCanIdType">
+                                    <setting name="0" value="EXTENDED_CAN"/>
+                                 </array>
+                                 <setting name="CanIfTxPduId" value="3"/>
+                                 <array name="CanIfTxPduUserTxConfirmationName"/>
+                                 <array name="CanIfTxPduUserTxConfirmationUL"/>
+                                 <setting name="CanIfTxPduBufferRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfBufferCfg_BORD"/>
+                              </struct>
+                              <struct name="4">
+                                 <setting name="Name" value="CanIfTxPduCfg_ACCELERATIE"/>
+                                 <array name="CanIfTxPduCanId">
+                                    <setting name="0" value="0x330"/>
+                                 </array>
+                                 <array name="CanIfTxPduCanIdType">
+                                    <setting name="0" value="EXTENDED_CAN"/>
+                                 </array>
+                                 <setting name="CanIfTxPduId" value="4"/>
+                                 <array name="CanIfTxPduUserTxConfirmationName"/>
+                                 <array name="CanIfTxPduUserTxConfirmationUL"/>
+                                 <setting name="CanIfTxPduBufferRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfBufferCfg_ACCELERATIE"/>
+                              </struct>
+                              <struct name="5">
+                                 <setting name="Name" value="CanIfTxPduCfg_FRANA"/>
+                                 <array name="CanIfTxPduCanId">
+                                    <setting name="0" value="0x331"/>
+                                 </array>
+                                 <array name="CanIfTxPduCanIdType">
+                                    <setting name="0" value="EXTENDED_CAN"/>
+                                 </array>
+                                 <setting name="CanIfTxPduId" value="5"/>
+                                 <array name="CanIfTxPduUserTxConfirmationName"/>
+                                 <array name="CanIfTxPduUserTxConfirmationUL"/>
+                                 <setting name="CanIfTxPduBufferRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfBufferCfg_FRANA"/>
+                              </struct>
+                              <struct name="6">
+                                 <setting name="Name" value="CanIfTxPduCfg_BATERIE"/>
+                                 <array name="CanIfTxPduCanId">
+                                    <setting name="0" value="0x114"/>
+                                 </array>
+                                 <array name="CanIfTxPduCanIdType">
+                                    <setting name="0" value="EXTENDED_CAN"/>
+                                 </array>
+                                 <setting name="CanIfTxPduId" value="6"/>
+                                 <array name="CanIfTxPduUserTxConfirmationName"/>
+                                 <array name="CanIfTxPduUserTxConfirmationUL"/>
+                                 <setting name="CanIfTxPduBufferRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfBufferCfg_BATERIE"/>
+                              </struct>
+                              <struct name="7">
+                                 <setting name="Name" value="CanIfTxPduCfg_BATERIE_TENSIUNI_CELULE"/>
+                                 <array name="CanIfTxPduCanId">
+                                    <setting name="0" value="0x115"/>
+                                 </array>
+                                 <array name="CanIfTxPduCanIdType">
+                                    <setting name="0" value="EXTENDED_CAN"/>
+                                 </array>
+                                 <setting name="CanIfTxPduId" value="7"/>
+                                 <array name="CanIfTxPduUserTxConfirmationName"/>
+                                 <array name="CanIfTxPduUserTxConfirmationUL"/>
+                                 <setting name="CanIfTxPduBufferRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfBufferCfg_BATERIE_TENSIUNI_CELULE"/>
+                              </struct>
+                              <struct name="8">
+                                 <setting name="Name" value="CanIfTxPduCfg_BATERIE_TEMPERATURI_CELULE"/>
+                                 <array name="CanIfTxPduCanId">
+                                    <setting name="0" value="0x116"/>
+                                 </array>
+                                 <array name="CanIfTxPduCanIdType">
+                                    <setting name="0" value="EXTENDED_CAN"/>
+                                 </array>
+                                 <setting name="CanIfTxPduId" value="8"/>
+                                 <array name="CanIfTxPduUserTxConfirmationName"/>
+                                 <array name="CanIfTxPduUserTxConfirmationUL"/>
+                                 <setting name="CanIfTxPduBufferRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfBufferCfg_BATERIE_TEMPERATURI_CELULE"/>
+                              </struct>
+                              <struct name="9">
+                                 <setting name="Name" value="CanIfTxPduCfg_BATERIE_2"/>
+                                 <array name="CanIfTxPduCanId">
+                                    <setting name="0" value="0x117"/>
+                                 </array>
+                                 <array name="CanIfTxPduCanIdType">
+                                    <setting name="0" value="EXTENDED_CAN"/>
+                                 </array>
+                                 <setting name="CanIfTxPduId" value="9"/>
+                                 <array name="CanIfTxPduUserTxConfirmationName"/>
+                                 <array name="CanIfTxPduUserTxConfirmationUL"/>
+                                 <setting name="CanIfTxPduBufferRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfBufferCfg_BATERIE_2"/>
+                              </struct>
+                              <struct name="10">
+                                 <setting name="Name" value="CanIfTxPduCfg_BATERIE_CHARGER"/>
+                                 <array name="CanIfTxPduCanId">
+                                    <setting name="0" value="0x119"/>
+                                 </array>
+                                 <array name="CanIfTxPduCanIdType">
+                                    <setting name="0" value="EXTENDED_CAN"/>
+                                 </array>
+                                 <setting name="CanIfTxPduId" value="10"/>
+                                 <array name="CanIfTxPduUserTxConfirmationName"/>
+                                 <array name="CanIfTxPduUserTxConfirmationUL"/>
+                                 <setting name="CanIfTxPduBufferRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfBufferCfg_BATERIE_CHARGER"/>
+                              </struct>
+                              <struct name="11">
+                                 <setting name="Name" value="CanIfTxPduCfg_COMUNICATII"/>
+                                 <array name="CanIfTxPduCanId">
+                                    <setting name="0" value="0x118"/>
+                                 </array>
+                                 <array name="CanIfTxPduCanIdType">
+                                    <setting name="0" value="EXTENDED_CAN"/>
+                                 </array>
+                                 <setting name="CanIfTxPduId" value="11"/>
+                                 <array name="CanIfTxPduUserTxConfirmationName"/>
+                                 <array name="CanIfTxPduUserTxConfirmationUL"/>
+                                 <setting name="CanIfTxPduBufferRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfBufferCfg_COMUNICATII"/>
+                              </struct>
+                           </array>
+                           <array name="CanIfRxPduCfg">
+                              <struct name="0">
+                                 <setting name="Name" value="CanIfRxPduCfg_INVERTOR_STANGA"/>
+                                 <setting name="CanIfRxPduId" value="0"/>
+                                 <array name="CanIfRxPduDataLengthCheck"/>
+                                 <array name="CanIfRxPduDataLength">
+                                    <setting name="0" value="8"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationName">
+                                    <setting name="0" value="Can_Receive_Interrupt_INVERTOR_STANGA"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationUL">
+                                    <setting name="0" value="CDD"/>
+                                 </array>
+                                 <setting name="CanIfRxPduHrhIdRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHrhCfg_INVERTOR_STANGA"/>
+                              </struct>
+                              <struct name="1">
+                                 <setting name="Name" value="CanIfRxPduCfg_INVERTOR_DREAPTA"/>
+                                 <setting name="CanIfRxPduId" value="1"/>
+                                 <array name="CanIfRxPduDataLengthCheck"/>
+                                 <array name="CanIfRxPduDataLength">
+                                    <setting name="0" value="8"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationName">
+                                    <setting name="0" value="Can_Receive_Interrupt_INVERTOR_DREAPTA"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationUL">
+                                    <setting name="0" value="CDD"/>
+                                 </array>
+                                 <setting name="CanIfRxPduHrhIdRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHrhCfg_INVERTOR_DREAPTA"/>
+                              </struct>
+                              <struct name="2">
+                                 <setting name="Name" value="CanIfRxPduCfg_INVERTOARE"/>
+                                 <setting name="CanIfRxPduId" value="2"/>
+                                 <array name="CanIfRxPduDataLengthCheck"/>
+                                 <array name="CanIfRxPduDataLength">
+                                    <setting name="0" value="8"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationName">
+                                    <setting name="0" value="Can_Receive_Interrupt_INVERTOARE"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationUL">
+                                    <setting name="0" value="CDD"/>
+                                 </array>
+                                 <setting name="CanIfRxPduHrhIdRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHrhCfg_INVERTOARE"/>
+                              </struct>
+                              <struct name="3">
+                                 <setting name="Name" value="CanIfRxPduCfg_BORD"/>
+                                 <setting name="CanIfRxPduId" value="3"/>
+                                 <array name="CanIfRxPduDataLengthCheck"/>
+                                 <array name="CanIfRxPduDataLength">
+                                    <setting name="0" value="8"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationName">
+                                    <setting name="0" value="Can_Receive_Interrupt_BORD"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationUL">
+                                    <setting name="0" value="CDD"/>
+                                 </array>
+                                 <setting name="CanIfRxPduHrhIdRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHrhCfg_BORD"/>
+                              </struct>
+                              <struct name="4">
+                                 <setting name="Name" value="CanIfRxPduCfg_ACCELERATIE"/>
+                                 <setting name="CanIfRxPduId" value="4"/>
+                                 <array name="CanIfRxPduDataLengthCheck"/>
+                                 <array name="CanIfRxPduDataLength">
+                                    <setting name="0" value="8"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationName">
+                                    <setting name="0" value="Can_Receive_Interrupt_ACCELERATIE"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationUL">
+                                    <setting name="0" value="CDD"/>
+                                 </array>
+                                 <setting name="CanIfRxPduHrhIdRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHrhCfg_ACCELERATIE"/>
+                              </struct>
+                              <struct name="5">
+                                 <setting name="Name" value="CanIfRxPduCfg_FRANA"/>
+                                 <setting name="CanIfRxPduId" value="5"/>
+                                 <array name="CanIfRxPduDataLengthCheck"/>
+                                 <array name="CanIfRxPduDataLength">
+                                    <setting name="0" value="8"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationName">
+                                    <setting name="0" value="Can_Receive_Interrupt_FRANA"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationUL">
+                                    <setting name="0" value="CDD"/>
+                                 </array>
+                                 <setting name="CanIfRxPduHrhIdRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHrhCfg_FRANA"/>
+                              </struct>
+                              <struct name="6">
+                                 <setting name="Name" value="CanIfRxPduCfg_BATERIE"/>
+                                 <setting name="CanIfRxPduId" value="6"/>
+                                 <array name="CanIfRxPduDataLengthCheck"/>
+                                 <array name="CanIfRxPduDataLength">
+                                    <setting name="0" value="8"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationName">
+                                    <setting name="0" value="Can_Receive_Interrupt_BATERIE"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationUL">
+                                    <setting name="0" value="CDD"/>
+                                 </array>
+                                 <setting name="CanIfRxPduHrhIdRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHrhCfg_BATERIE"/>
+                              </struct>
+                              <struct name="7">
+                                 <setting name="Name" value="CanIfRxPduCfg_BATERIE_TENSIUNI_CELULE"/>
+                                 <setting name="CanIfRxPduId" value="7"/>
+                                 <array name="CanIfRxPduDataLengthCheck"/>
+                                 <array name="CanIfRxPduDataLength">
+                                    <setting name="0" value="8"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationName">
+                                    <setting name="0" value="Can_Receive_Interrupt_BATERIE_TENSIUNI_CELULE"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationUL">
+                                    <setting name="0" value="CDD"/>
+                                 </array>
+                                 <setting name="CanIfRxPduHrhIdRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHrhCfg_BATERIE_TENSIUNI_CELULE"/>
+                              </struct>
+                              <struct name="8">
+                                 <setting name="Name" value="CanIfRxPduCfg_BATERIE_TEMPERATURI_CELULE"/>
+                                 <setting name="CanIfRxPduId" value="8"/>
+                                 <array name="CanIfRxPduDataLengthCheck"/>
+                                 <array name="CanIfRxPduDataLength">
+                                    <setting name="0" value="8"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationName">
+                                    <setting name="0" value="Can_Receive_Interrupt_BATERIE_TEMPERATURI_CELULE"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationUL">
+                                    <setting name="0" value="CDD"/>
+                                 </array>
+                                 <setting name="CanIfRxPduHrhIdRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHrhCfg_BATERIE_TEMPERATURI_CELULE"/>
+                              </struct>
+                              <struct name="9">
+                                 <setting name="Name" value="CanIfRxPduCfg_BATERIE_2"/>
+                                 <setting name="CanIfRxPduId" value="9"/>
+                                 <array name="CanIfRxPduDataLengthCheck"/>
+                                 <array name="CanIfRxPduDataLength">
+                                    <setting name="0" value="8"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationName">
+                                    <setting name="0" value="Can_Receive_Interrupt_BATERIE_2"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationUL">
+                                    <setting name="0" value="CDD"/>
+                                 </array>
+                                 <setting name="CanIfRxPduHrhIdRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHrhCfg_BATERIE_2"/>
+                              </struct>
+                              <struct name="10">
+                                 <setting name="Name" value="CanIfRxPduCfg_BATERIE_CHARGER"/>
+                                 <setting name="CanIfRxPduId" value="10"/>
+                                 <array name="CanIfRxPduDataLengthCheck"/>
+                                 <array name="CanIfRxPduDataLength">
+                                    <setting name="0" value="8"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationName">
+                                    <setting name="0" value="Can_Receive_Interrupt_BATERIE_CHARGER"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationUL">
+                                    <setting name="0" value="CDD"/>
+                                 </array>
+                                 <setting name="CanIfRxPduHrhIdRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHrhCfg_BATERIE_CHARGER"/>
+                              </struct>
+                              <struct name="11">
+                                 <setting name="Name" value="CanIfRxPduCfg_COMUNICATII"/>
+                                 <setting name="CanIfRxPduId" value="11"/>
+                                 <array name="CanIfRxPduDataLengthCheck"/>
+                                 <array name="CanIfRxPduDataLength">
+                                    <setting name="0" value="8"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationName">
+                                    <setting name="0" value="Can_Receive_Interrupt_COMUNICATII"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationUL">
+                                    <setting name="0" value="CDD"/>
+                                 </array>
+                                 <setting name="CanIfRxPduHrhIdRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHrhCfg_COMUNICATII"/>
+                              </struct>
+                           </array>
+                           <array name="CanIfBufferCfg">
+                              <struct name="0">
+                                 <setting name="Name" value="CanIfBufferCfg_INVERTOR_STANGA"/>
+                                 <setting name="CanIfBufferHthRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHthCfg_INVERTOR_STANGA"/>
+                              </struct>
+                              <struct name="1">
+                                 <setting name="Name" value="CanIfBufferCfg_INVERTOR_DREAPTA"/>
+                                 <setting name="CanIfBufferHthRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHthCfg_INVERTOR_DREAPTA"/>
+                              </struct>
+                              <struct name="2">
+                                 <setting name="Name" value="CanIfBufferCfg_INVERTOARE"/>
+                                 <setting name="CanIfBufferHthRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHthCfg_INVERTOARE"/>
+                              </struct>
+                              <struct name="3">
+                                 <setting name="Name" value="CanIfBufferCfg_BORD"/>
+                                 <setting name="CanIfBufferHthRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHthCfg_BORD"/>
+                              </struct>
+                              <struct name="4">
+                                 <setting name="Name" value="CanIfBufferCfg_ACCELERATIE"/>
+                                 <setting name="CanIfBufferHthRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHthCfg_ACCELERATIE"/>
+                              </struct>
+                              <struct name="5">
+                                 <setting name="Name" value="CanIfBufferCfg_FRANA"/>
+                                 <setting name="CanIfBufferHthRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHthCfg_FRANA"/>
+                              </struct>
+                              <struct name="6">
+                                 <setting name="Name" value="CanIfBufferCfg_BATERIE"/>
+                                 <setting name="CanIfBufferHthRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHthCfg_BATERIE"/>
+                              </struct>
+                              <struct name="7">
+                                 <setting name="Name" value="CanIfBufferCfg_BATERIE_TENSIUNI_CELULE"/>
+                                 <setting name="CanIfBufferHthRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHthCfg_BATERIE_TENSIUNI_CELULE"/>
+                              </struct>
+                              <struct name="8">
+                                 <setting name="Name" value="CanIfBufferCfg_BATERIE_TEMPERATURI_CELULE"/>
+                                 <setting name="CanIfBufferHthRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHthCfg_BATERIE_TEMPERATURI_CELULE"/>
+                              </struct>
+                              <struct name="9">
+                                 <setting name="Name" value="CanIfBufferCfg_BATERIE_2"/>
+                                 <setting name="CanIfBufferHthRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHthCfg_BATERIE_2"/>
+                              </struct>
+                              <struct name="10">
+                                 <setting name="Name" value="CanIfBufferCfg_BATERIE_CHARGER"/>
+                                 <setting name="CanIfBufferHthRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHthCfg_BATERIE_CHARGER"/>
+                              </struct>
+                              <struct name="11">
+                                 <setting name="Name" value="CanIfBufferCfg_COMUNICATII"/>
+                                 <setting name="CanIfBufferHthRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHthCfg_COMUNICATII"/>
+                              </struct>
+                           </array>
+                           <array name="CanIfInitHohCfg">
+                              <struct name="0">
+                                 <setting name="Name" value="CanIfInitHohCfg_0"/>
+                                 <array name="CanIfHthCfg">
+                                    <struct name="0">
+                                       <setting name="Name" value="CanIfHthCfg_INVERTOR_STANGA"/>
+                                       <setting name="CanIfHthCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHthIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/INVERTOR_STANGA_TRANSMIT"/>
+                                    </struct>
+                                    <struct name="1">
+                                       <setting name="Name" value="CanIfHthCfg_INVERTOR_DREAPTA"/>
+                                       <setting name="CanIfHthCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHthIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/INVERTOR_DREAPTA_TRANSMIT"/>
+                                    </struct>
+                                    <struct name="2">
+                                       <setting name="Name" value="CanIfHthCfg_INVERTOARE"/>
+                                       <setting name="CanIfHthCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHthIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/INVERTOARE_TRANSMIT"/>
+                                    </struct>
+                                    <struct name="3">
+                                       <setting name="Name" value="CanIfHthCfg_BORD"/>
+                                       <setting name="CanIfHthCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHthIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/BORD_TRANSMIT"/>
+                                    </struct>
+                                    <struct name="4">
+                                       <setting name="Name" value="CanIfHthCfg_ACCELERATIE"/>
+                                       <setting name="CanIfHthCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHthIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/ACCELERATIE_TRANSMIT"/>
+                                    </struct>
+                                    <struct name="5">
+                                       <setting name="Name" value="CanIfHthCfg_FRANA"/>
+                                       <setting name="CanIfHthCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHthIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/FRANA_TRANSMIT"/>
+                                    </struct>
+                                    <struct name="6">
+                                       <setting name="Name" value="CanIfHthCfg_BATERIE"/>
+                                       <setting name="CanIfHthCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHthIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/BATERIE_TRANSMIT"/>
+                                    </struct>
+                                    <struct name="7">
+                                       <setting name="Name" value="CanIfHthCfg_BATERIE_TENSIUNI_CELULE"/>
+                                       <setting name="CanIfHthCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHthIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/BATERIE_TENSIUNI_CELULE_TRANSMIT"/>
+                                    </struct>
+                                    <struct name="8">
+                                       <setting name="Name" value="CanIfHthCfg_BATERIE_TEMPERATURI_CELULE"/>
+                                       <setting name="CanIfHthCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHthIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/BATERIE_TEMPERATURI_CELULE_TRANSMIT"/>
+                                    </struct>
+                                    <struct name="9">
+                                       <setting name="Name" value="CanIfHthCfg_BATERIE_2"/>
+                                       <setting name="CanIfHthCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHthIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/BATERIE_2_TRANSMIT"/>
+                                    </struct>
+                                    <struct name="10">
+                                       <setting name="Name" value="CanIfHthCfg_BATERIE_CHARGER"/>
+                                       <setting name="CanIfHthCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHthIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/BATERIE_CHARGER_TRANSMIT"/>
+                                    </struct>
+                                    <struct name="11">
+                                       <setting name="Name" value="CanIfHthCfg_COMUNICATII"/>
+                                       <setting name="CanIfHthCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHthIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/COMUNICATII_TRANSMIT"/>
+                                    </struct>
+                                 </array>
+                                 <array name="CanIfHrhCfg">
+                                    <struct name="0">
+                                       <setting name="Name" value="CanIfHrhCfg_INVERTOR_STANGA"/>
+                                       <setting name="CanIfHrhCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHrhIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/INVERTOR_STANGA_RECEIVE"/>
+                                    </struct>
+                                    <struct name="1">
+                                       <setting name="Name" value="CanIfHrhCfg_INVERTOR_DREAPTA"/>
+                                       <setting name="CanIfHrhCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHrhIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/INVERTOR_DREAPTA_RECEIVE"/>
+                                    </struct>
+                                    <struct name="2">
+                                       <setting name="Name" value="CanIfHrhCfg_INVERTOARE"/>
+                                       <setting name="CanIfHrhCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHrhIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/INVERTOARE_RECEIVE"/>
+                                    </struct>
+                                    <struct name="3">
+                                       <setting name="Name" value="CanIfHrhCfg_BORD"/>
+                                       <setting name="CanIfHrhCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHrhIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/BORD_RECEIVE"/>
+                                    </struct>
+                                    <struct name="4">
+                                       <setting name="Name" value="CanIfHrhCfg_ACCELERATIE"/>
+                                       <setting name="CanIfHrhCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHrhIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/ACCELERATIE_RECEIVE"/>
+                                    </struct>
+                                    <struct name="5">
+                                       <setting name="Name" value="CanIfHrhCfg_FRANA"/>
+                                       <setting name="CanIfHrhCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHrhIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/FRANA_RECEIVE"/>
+                                    </struct>
+                                    <struct name="6">
+                                       <setting name="Name" value="CanIfHrhCfg_BATERIE"/>
+                                       <setting name="CanIfHrhCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHrhIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/BATERIE_RECEIVE"/>
+                                    </struct>
+                                    <struct name="7">
+                                       <setting name="Name" value="CanIfHrhCfg_BATERIE_TENSIUNI_CELULE"/>
+                                       <setting name="CanIfHrhCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHrhIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/BATERIE_TENSIUNI_CELULE_RECEIVE"/>
+                                    </struct>
+                                    <struct name="8">
+                                       <setting name="Name" value="CanIfHrhCfg_BATERIE_TEMPERATURI_CELULE"/>
+                                       <setting name="CanIfHrhCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHrhIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/BATERIE_TEMPERATURI_CELULE_RECEIVE"/>
+                                    </struct>
+                                    <struct name="9">
+                                       <setting name="Name" value="CanIfHrhCfg_BATERIE_2"/>
+                                       <setting name="CanIfHrhCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHrhIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/BATERIE_2_RECEIVE"/>
+                                    </struct>
+                                    <struct name="10">
+                                       <setting name="Name" value="CanIfHrhCfg_BATERIE_CHARGER"/>
+                                       <setting name="CanIfHrhCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHrhIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/BATERIE_CHARGER_RECEIVE"/>
+                                    </struct>
+                                    <struct name="11">
+                                       <setting name="Name" value="CanIfHrhCfg_COMUNICATII"/>
+                                       <setting name="CanIfHrhCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHrhIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/COMUNICATII_RECEIVE"/>
+                                    </struct>
+                                 </array>
+                              </struct>
+                           </array>
                         </struct>
                         <struct name="CanIfDispatchCfg" quick_selection="Default">
                            <setting name="Name" value="CanIfDispatchCfg"/>

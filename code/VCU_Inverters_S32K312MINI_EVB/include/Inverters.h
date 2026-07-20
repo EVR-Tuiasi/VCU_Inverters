@@ -72,6 +72,7 @@ typedef enum{
 *                                       GLOBAL FUNCTIONS
 ==================================================================================================*/
 void BrakeLight_SetState(bool value);
+void BrakeLight_Test(void);
 
 void Inverters_Init(void);
 void Inverters_Test(void);

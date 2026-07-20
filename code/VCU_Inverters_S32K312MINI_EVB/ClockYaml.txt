@@ -36,14 +36,14 @@ outputs:
 - {id: EMIOS1_CLK.outFreq, value: 120 MHz}
 - {id: ERM0_CLK.outFreq, value: 60 MHz}
 - {id: FIRCOUT.outFreq, value: 48 MHz}
-- {id: FLEXCAN0_CLK.outFreq, value: 24 MHz}
-- {id: FLEXCAN1_CLK.outFreq, value: 24 MHz}
-- {id: FLEXCAN2_CLK.outFreq, value: 24 MHz}
-- {id: FLEXCAN3_CLK.outFreq, value: 24 MHz}
-- {id: FLEXCAN4_CLK.outFreq, value: 24 MHz}
-- {id: FLEXCAN5_CLK.outFreq, value: 24 MHz}
-- {id: FLEXCANA_CLK.outFreq, value: 24 MHz}
-- {id: FLEXCANB_CLK.outFreq, value: 24 MHz}
+- {id: FLEXCAN0_CLK.outFreq, value: 48 MHz}
+- {id: FLEXCAN1_CLK.outFreq, value: 48 MHz}
+- {id: FLEXCAN2_CLK.outFreq, value: 48 MHz}
+- {id: FLEXCAN3_CLK.outFreq, value: 48 MHz}
+- {id: FLEXCAN4_CLK.outFreq, value: 48 MHz}
+- {id: FLEXCAN5_CLK.outFreq, value: 48 MHz}
+- {id: FLEXCANA_CLK.outFreq, value: 48 MHz}
+- {id: FLEXCANB_CLK.outFreq, value: 48 MHz}
 - {id: FLEXIO0_CLK.outFreq, value: 120 MHz}
 - {id: FXOSCOUT.outFreq, value: 16 MHz}
 - {id: HSE_CLK.outFreq, value: 60 MHz}
@@ -105,8 +105,8 @@ settings:
 - {id: MC_CGM_MUX_6.sel, value: N/A}
 - {id: MC_CGM_MUX_6_DE0, value: Enabled}
 - {id: MC_CGM_MUX_6_DIV0.scale, value: '2', locked: true}
-- {id: MODULE_CLOCKS.MC_CGM_AUX3_DIV0.scale, value: '2', locked: true}
-- {id: MODULE_CLOCKS.MC_CGM_AUX4_DIV0.scale, value: '2', locked: true}
+- {id: MODULE_CLOCKS.MC_CGM_AUX3_DIV0.scale, value: '1', locked: true}
+- {id: MODULE_CLOCKS.MC_CGM_AUX4_DIV0.scale, value: '1', locked: true}
 - {id: PHI0.scale, value: '2', locked: true}
 - {id: PHI1.scale, value: '5', locked: true}
 - {id: PLL_PREDIV.scale, value: '2', locked: true}

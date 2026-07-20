@@ -104,12 +104,12 @@ int main(void)
 	Inverters_Init();
 	Cooling_Init();
 
+	//BrakeLight_Test();
 	//Cooling_Test();
-	Inverters_Test();
+	//Inverters_Test();
 
-	volatile int i;
 	while(1){
-		volatile uint16_t tmp1 = Cooling_ReadTemp(ONE);
+		/*volatile uint16_t tmp1 = Cooling_ReadTemp(ONE);
 		volatile uint16_t tmp2 = Cooling_ReadTemp(TWO);
 
 		volatile uint16_t pres1 = Cooling_ReadPressure(ONE);
@@ -117,7 +117,8 @@ int main(void)
 
 		volatile uint16_t acc1 = Inverters_ReadAcceleration(LEFT_INVERTER);
 		volatile uint16_t acc2 = Inverters_ReadAcceleration(RIGHT_INVERTER);
-		i=0;
+		 */
+		Inverters_SetThrottle(LEFT_INVERTER, MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1TravelPercentage.valueCan);
 	}
 }
 
