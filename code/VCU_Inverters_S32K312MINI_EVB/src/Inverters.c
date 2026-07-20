@@ -116,7 +116,7 @@ void BrakeLight_Test(void){
 void Inverters_Init(void){
 	volatile uint64_t i;
 	Inverters_SetPower(0);
-	i=1000000;
+	i=10000000;
 	while(i--);
 	Pwm_SetDutyCycle(THROTTLE1_CHANNEL, 0U);
 	Pwm_SetDutyCycle(THROTTLE2_CHANNEL, 0U);
@@ -136,13 +136,13 @@ void Inverters_Init(void){
 	Inverters_SetFunction(BRAKE, LEFT_INVERTER, 0);
 	Inverters_SetFunction(BRAKE, RIGHT_INVERTER, 0);
 	Inverters_SetPower(1);
-	i=1000000;
+	i=10000000;
 	while(i--);
 	Inverters_SetPower(0);
-	i=1000000;
+	i=10000000;
 	while(i--);
 	Inverters_SetPower(1);
-	i=1000000;
+	i=10000000;
 	while(i--);
 }
 void Inverters_SetThrottle(Inverter inverter, uint8_t percentage){
