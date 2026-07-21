@@ -48,9 +48,13 @@ extern "C"{
 #define CAN_HTH_COMUNICATII					23U
 
 #define CAN_CONTROLLER_ID	0U
+#define CAN_LEFT_INVERTER_ID 1U
+#define CAN_RIGHT_INVERTER_ID 2U
 
 #define CAN_CHANNEL_EN 	85U
 #define CAN_CHANNEL_STB_N 84U
+#define Pyy 42U
+#define Pzz 41U
 
 /*Takes a uint64_t argument and any xMonitoredValue_t type of argument.*/
 #define ReadDataFromAddressAndWriteInRawBufferCan(rawBufferU64, xMonitoredValue_t_Address) \
@@ -472,6 +476,22 @@ void Can_Receive_Interrupt_COMUNICATII(PduIdType RxPduId, const PduInfoType * Pd
 	(void)RxPduId;
 }
 
+void Can_Receive_Interrupt_LEFT_INVERTER_MSG1(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
+	(void)RxPduId;
+}
+
+void Can_Receive_Interrupt_RIGHT_INVERTER_MSG1(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
+	(void)RxPduId;
+}
+
+void Can_Receive_Interrupt_LEFT_INVERTER_MSG2(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
+	(void)RxPduId;
+}
+
+void Can_Receive_Interrupt_RIGHT_INVERTER_MSG2(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
+	(void)RxPduId;
+}
+
 /*==================================================================================================
 *                                       GLOBAL FUNCTIONS
 ==================================================================================================*/
@@ -482,8 +502,18 @@ void CanMessaging_Init(void){
 	Dio_WriteChannel(CAN_CHANNEL_STB_N, STD_HIGH); //CAN0_STB_N
 	i = 1000000;
 	while(i--);
+	Dio_WriteChannel(Pzz, STD_LOW);
+	i = 1000000;
+	while(i--);
+	Dio_WriteChannel(Pyy, STD_LOW);
+	i = 1000000;
+	while(i--);
 	Can_43_FLEXCAN_SetControllerMode(CAN_CONTROLLER_ID, CAN_CS_STARTED);
+	Can_43_FLEXCAN_SetControllerMode(CAN_LEFT_INVERTER_ID, CAN_CS_STARTED);
+	Can_43_FLEXCAN_SetControllerMode(CAN_RIGHT_INVERTER_ID, CAN_CS_STARTED);
 	Can_43_FLEXCAN_EnableControllerInterrupts(CAN_CONTROLLER_ID);
+	Can_43_FLEXCAN_EnableControllerInterrupts(CAN_LEFT_INVERTER_ID);
+	Can_43_FLEXCAN_EnableControllerInterrupts(CAN_RIGHT_INVERTER_ID);
 }
 
 void CanMessaging_Test(void){

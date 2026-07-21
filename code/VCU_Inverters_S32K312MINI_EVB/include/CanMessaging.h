@@ -68,6 +68,11 @@ void Can_Receive_Interrupt_BATERIE_TEMPERATURI_CELULE(PduIdType RxPduId, const P
 void Can_Receive_Interrupt_BATERIE_2(PduIdType RxPduId, const PduInfoType * PduInfoPtr);
 void Can_Receive_Interrupt_BATERIE_CHARGER(PduIdType RxPduId, const PduInfoType * PduInfoPtr);
 void Can_Receive_Interrupt_COMUNICATII(PduIdType RxPduId, const PduInfoType * PduInfoPtr);
+void Can_Receive_Interrupt_LEFT_INVERTER_MSG1(PduIdType RxPduId, const PduInfoType * PduInfoPtr);
+void Can_Receive_Interrupt_RIGHT_INVERTER_MSG1(PduIdType RxPduId, const PduInfoType * PduInfoPtr);
+void Can_Receive_Interrupt_LEFT_INVERTER_MSG2(PduIdType RxPduId, const PduInfoType * PduInfoPtr);
+void Can_Receive_Interrupt_RIGHT_INVERTER_MSG2(PduIdType RxPduId, const PduInfoType * PduInfoPtr);
+
 
 /*==================================================================================================
 *                                       GLOBAL FUNCTIONS
