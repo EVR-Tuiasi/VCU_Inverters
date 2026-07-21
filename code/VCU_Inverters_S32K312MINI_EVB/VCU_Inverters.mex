@@ -554,11 +554,6 @@
                   <data type="Version">1.0.0</data>
                </feature>
             </dependency>
-            <dependency resourceType="Tool" resourceId="Clocks" description="The Clocks tool is required by the Peripherals tool, but it is disabled." problem_level="2" source="Peripherals">
-               <feature name="enabled" evaluation="equal">
-                  <data>true</data>
-               </feature>
-            </dependency>
          </dependencies>
          <generated_project_files>
             <file path="board/Siul2_Port_Ip_Cfg.c" update_enabled="true"/>
@@ -2745,6 +2740,41 @@
                                     <setting name="IsrPriority" value="0"/>
                                     <setting name="IsrHandler" value="CAN0_ORED_32_63_MB_IRQHandler"/>
                                  </struct>
+                                 <struct name="5">
+                                    <setting name="Name" value="PlatformIsrConfig_5"/>
+                                    <setting name="IsrName" value="FlexCAN1_0_IRQn"/>
+                                    <setting name="IsrEnabled" value="true"/>
+                                    <setting name="IsrPriority" value="0"/>
+                                    <setting name="IsrHandler" value="CAN1_ORED_IRQHandler"/>
+                                 </struct>
+                                 <struct name="6">
+                                    <setting name="Name" value="PlatformIsrConfig_6"/>
+                                    <setting name="IsrName" value="FlexCAN1_1_IRQn"/>
+                                    <setting name="IsrEnabled" value="true"/>
+                                    <setting name="IsrPriority" value="0"/>
+                                    <setting name="IsrHandler" value="CAN1_ORED_0_31_MB_IRQHandler"/>
+                                 </struct>
+                                 <struct name="7">
+                                    <setting name="Name" value="PlatformIsrConfig_7"/>
+                                    <setting name="IsrName" value="FlexCAN1_2_IRQn"/>
+                                    <setting name="IsrEnabled" value="true"/>
+                                    <setting name="IsrPriority" value="0"/>
+                                    <setting name="IsrHandler" value="CAN1_ORED_32_63_MB_IRQHandler"/>
+                                 </struct>
+                                 <struct name="8">
+                                    <setting name="Name" value="PlatformIsrConfig_8"/>
+                                    <setting name="IsrName" value="FlexCAN5_0_IRQn"/>
+                                    <setting name="IsrEnabled" value="true"/>
+                                    <setting name="IsrPriority" value="0"/>
+                                    <setting name="IsrHandler" value="CAN5_ORED_IRQHandler"/>
+                                 </struct>
+                                 <struct name="9">
+                                    <setting name="Name" value="PlatformIsrConfig_9"/>
+                                    <setting name="IsrName" value="FlexCAN5_1_IRQn"/>
+                                    <setting name="IsrEnabled" value="true"/>
+                                    <setting name="IsrPriority" value="0"/>
+                                    <setting name="IsrHandler" value="CAN5_ORED_0_31_MB_IRQHandler"/>
+                                 </struct>
                               </array>
                               <array name="PlatformNvicEcucPartitionRef"/>
                            </struct>
@@ -3157,6 +3187,96 @@
                                  <setting name="CanControllerFdISO" value="false"/>
                                  <setting name="CanLowestBufferTransmittedFirst" value="false"/>
                                  <setting name="CanControllerDefaultBaudrate" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0/CanControllerBaudrateConfig_0"/>
+                                 <array name="CanControllerEcucPartitionRef"/>
+                                 <setting name="CanCpuClockRef" value="/Mcu/Mcu/McuModuleConfiguration/McuClockSettingConfig_0/FlexCan0"/>
+                                 <setting name="CanCpuClockRefAlternate" value="/Mcu/Mcu/McuModuleConfiguration/McuClockSettingConfig_0/McuClockReferencePoint_0"/>
+                                 <array name="CanControllerBaudrateConfig">
+                                    <struct name="0">
+                                       <setting name="Name" value="CanControllerBaudrateConfig_0"/>
+                                       <setting name="CanBaudrateTypeSuport" value="NORMAL_CBT"/>
+                                       <setting name="CanAdvancedSetting" value="true"/>
+                                       <setting name="CanBusLength" value="40"/>
+                                       <setting name="CanPropDelayTranceiver" value="150"/>
+                                       <setting name="CanTxArbitrationStartDelay" value="12"/>
+                                       <setting name="CanControllerPrescaller" value="12"/>
+                                       <setting name="CanControllerPrescallerAlternate" value="10"/>
+                                       <setting name="CanControllerBaudRateConfigID" value="0"/>
+                                       <setting name="CanControllerBaudRate" value="250"/>
+                                       <setting name="CanControllerSyncSeg" value="1"/>
+                                       <setting name="CanControllerPropSeg" value="5"/>
+                                       <setting name="CanControllerSeg1" value="5"/>
+                                       <setting name="CanControllerSeg2" value="5"/>
+                                       <setting name="CanControllerSyncJumpWidth" value="1"/>
+                                       <array name="CanControllerFdBaudrateConfig"/>
+                                    </struct>
+                                 </array>
+                                 <array name="CanRamBlock"/>
+                                 <array name="CanRxFiFo"/>
+                                 <array name="CanControllerTimeStamp"/>
+                              </struct>
+                              <struct name="1">
+                                 <setting name="Name" value="CanController_1"/>
+                                 <setting name="CanHwChannel" value="FLEXCAN_1"/>
+                                 <setting name="CanControllerActivation" value="true"/>
+                                 <setting name="CanControllerBaseAddress" value="0"/>
+                                 <setting name="CanControllerId" value="1"/>
+                                 <setting name="CanRxProcessing" value="INTERRUPT"/>
+                                 <setting name="CanTxProcessing" value="INTERRUPT"/>
+                                 <setting name="CanBusoffProcessing" value="INTERRUPT"/>
+                                 <setting name="CanWakeupProcessing" value="INTERRUPT"/>
+                                 <setting name="CanLoopBackMode" value="false"/>
+                                 <setting name="CanAutoBusOffRecovery" value="true"/>
+                                 <setting name="CanTrippleSamplingEnable" value="false"/>
+                                 <setting name="CanControllerPrExcEn" value="false"/>
+                                 <setting name="CanControllerEdgeFilter" value="false"/>
+                                 <setting name="CanControllerFdISO" value="false"/>
+                                 <setting name="CanLowestBufferTransmittedFirst" value="false"/>
+                                 <setting name="CanControllerDefaultBaudrate" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_1/CanControllerBaudrateConfig_0"/>
+                                 <array name="CanControllerEcucPartitionRef"/>
+                                 <setting name="CanCpuClockRef" value="/Mcu/Mcu/McuModuleConfiguration/McuClockSettingConfig_0/FlexCan0"/>
+                                 <setting name="CanCpuClockRefAlternate" value="/Mcu/Mcu/McuModuleConfiguration/McuClockSettingConfig_0/McuClockReferencePoint_0"/>
+                                 <array name="CanControllerBaudrateConfig">
+                                    <struct name="0">
+                                       <setting name="Name" value="CanControllerBaudrateConfig_0"/>
+                                       <setting name="CanBaudrateTypeSuport" value="NORMAL_CBT"/>
+                                       <setting name="CanAdvancedSetting" value="true"/>
+                                       <setting name="CanBusLength" value="40"/>
+                                       <setting name="CanPropDelayTranceiver" value="150"/>
+                                       <setting name="CanTxArbitrationStartDelay" value="12"/>
+                                       <setting name="CanControllerPrescaller" value="12"/>
+                                       <setting name="CanControllerPrescallerAlternate" value="10"/>
+                                       <setting name="CanControllerBaudRateConfigID" value="0"/>
+                                       <setting name="CanControllerBaudRate" value="250"/>
+                                       <setting name="CanControllerSyncSeg" value="1"/>
+                                       <setting name="CanControllerPropSeg" value="5"/>
+                                       <setting name="CanControllerSeg1" value="5"/>
+                                       <setting name="CanControllerSeg2" value="5"/>
+                                       <setting name="CanControllerSyncJumpWidth" value="1"/>
+                                       <array name="CanControllerFdBaudrateConfig"/>
+                                    </struct>
+                                 </array>
+                                 <array name="CanRamBlock"/>
+                                 <array name="CanRxFiFo"/>
+                                 <array name="CanControllerTimeStamp"/>
+                              </struct>
+                              <struct name="2">
+                                 <setting name="Name" value="CanController_2"/>
+                                 <setting name="CanHwChannel" value="FLEXCAN_5"/>
+                                 <setting name="CanControllerActivation" value="true"/>
+                                 <setting name="CanControllerBaseAddress" value="0"/>
+                                 <setting name="CanControllerId" value="2"/>
+                                 <setting name="CanRxProcessing" value="INTERRUPT"/>
+                                 <setting name="CanTxProcessing" value="INTERRUPT"/>
+                                 <setting name="CanBusoffProcessing" value="INTERRUPT"/>
+                                 <setting name="CanWakeupProcessing" value="INTERRUPT"/>
+                                 <setting name="CanLoopBackMode" value="false"/>
+                                 <setting name="CanAutoBusOffRecovery" value="true"/>
+                                 <setting name="CanTrippleSamplingEnable" value="false"/>
+                                 <setting name="CanControllerPrExcEn" value="false"/>
+                                 <setting name="CanControllerEdgeFilter" value="false"/>
+                                 <setting name="CanControllerFdISO" value="false"/>
+                                 <setting name="CanLowestBufferTransmittedFirst" value="false"/>
+                                 <setting name="CanControllerDefaultBaudrate" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_2/CanControllerBaudrateConfig_0"/>
                                  <array name="CanControllerEcucPartitionRef"/>
                                  <setting name="CanCpuClockRef" value="/Mcu/Mcu/McuModuleConfiguration/McuClockSettingConfig_0/FlexCan0"/>
                                  <setting name="CanCpuClockRefAlternate" value="/Mcu/Mcu/McuModuleConfiguration/McuClockSettingConfig_0/McuClockReferencePoint_0"/>
@@ -3742,6 +3862,16 @@
                                     <setting name="Name" value="CanIfCtrlCfg_0"/>
                                     <setting name="CanIfCtrlId" value="0"/>
                                     <setting name="CanIfCtrlCanCtrlRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 </struct>
+                                 <struct name="1">
+                                    <setting name="Name" value="CanIfCtrlCfg_1"/>
+                                    <setting name="CanIfCtrlId" value="1"/>
+                                    <setting name="CanIfCtrlCanCtrlRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_1"/>
+                                 </struct>
+                                 <struct name="2">
+                                    <setting name="Name" value="CanIfCtrlCfg_2"/>
+                                    <setting name="CanIfCtrlId" value="2"/>
+                                    <setting name="CanIfCtrlCanCtrlRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_2"/>
                                  </struct>
                               </array>
                            </struct>
