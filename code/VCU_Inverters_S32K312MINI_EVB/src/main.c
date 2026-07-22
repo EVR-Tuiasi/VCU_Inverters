@@ -99,10 +99,10 @@ int main(void)
 	CanIf_Init(NULL_PTR);
 	Pwm_Init(NULL_PTR);
 
-	Inverters_Init();
 	Cooling_Init();
 	CanMessaging_Init();
 	UartMessaging_Init();
+	Inverters_Init();
 
 	//BrakeLight_Test();
 	//Cooling_Test();

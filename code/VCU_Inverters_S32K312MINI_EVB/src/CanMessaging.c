@@ -478,18 +478,22 @@ void Can_Receive_Interrupt_COMUNICATII(PduIdType RxPduId, const PduInfoType * Pd
 
 void Can_Receive_Interrupt_LEFT_INVERTER_MSG1(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
 	(void)RxPduId;
+	__asm volatile ("nop");
 }
 
 void Can_Receive_Interrupt_RIGHT_INVERTER_MSG1(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
 	(void)RxPduId;
+	__asm volatile ("nop");
 }
 
 void Can_Receive_Interrupt_LEFT_INVERTER_MSG2(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
 	(void)RxPduId;
+	__asm volatile ("nop");
 }
 
 void Can_Receive_Interrupt_RIGHT_INVERTER_MSG2(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
 	(void)RxPduId;
+	__asm volatile ("nop");
 }
 
 /*==================================================================================================
@@ -497,16 +501,16 @@ void Can_Receive_Interrupt_RIGHT_INVERTER_MSG2(PduIdType RxPduId, const PduInfoT
 ==================================================================================================*/
 void CanMessaging_Init(void){
 	Dio_WriteChannel(CAN_CHANNEL_EN, STD_HIGH); //CAN0_EN
-	volatile uint64 i = 1000000;
+	volatile uint32_t i = 10000;
 	while(i--);
 	Dio_WriteChannel(CAN_CHANNEL_STB_N, STD_HIGH); //CAN0_STB_N
-	i = 1000000;
+	i = 10000;
 	while(i--);
 	Dio_WriteChannel(Pzz, STD_LOW);
-	i = 1000000;
+	i = 10000;
 	while(i--);
 	Dio_WriteChannel(Pyy, STD_LOW);
-	i = 1000000;
+	i = 10000;
 	while(i--);
 	Can_43_FLEXCAN_SetControllerMode(CAN_CONTROLLER_ID, CAN_CS_STARTED);
 	Can_43_FLEXCAN_SetControllerMode(CAN_LEFT_INVERTER_ID, CAN_CS_STARTED);
