@@ -478,22 +478,39 @@ void Can_Receive_Interrupt_COMUNICATII(PduIdType RxPduId, const PduInfoType * Pd
 
 void Can_Receive_Interrupt_LEFT_INVERTER_MSG1(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
 	(void)RxPduId;
-	__asm volatile ("nop");
+	WriteCanDataAtAddress(((uint16_t)PduInfoPtr->SduDataPtr[1] << 8) | (PduInfoPtr->SduDataPtr[0]), &MonitoredValues.InvertersMonitoredValues.LeftMotorRpm);
+	WriteCanDataAtAddress(((uint16_t)PduInfoPtr->SduDataPtr[3] << 8) | (PduInfoPtr->SduDataPtr[2]), &MonitoredValues.InvertersMonitoredValues.LeftInverterCurrent);
+	WriteCanDataAtAddress(((uint16_t)PduInfoPtr->SduDataPtr[5] << 8) | (PduInfoPtr->SduDataPtr[4]), &MonitoredValues.InvertersMonitoredValues.LeftInverterInputVoltage);
+	volatile uint16_t left_inverters_errors = ((uint16_t)PduInfoPtr->SduDataPtr[7] << 8) | (PduInfoPtr->SduDataPtr[6]);
 }
 
 void Can_Receive_Interrupt_RIGHT_INVERTER_MSG1(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
 	(void)RxPduId;
-	__asm volatile ("nop");
+	WriteCanDataAtAddress(((uint16_t)PduInfoPtr->SduDataPtr[1] << 8) | (PduInfoPtr->SduDataPtr[0]), &MonitoredValues.InvertersMonitoredValues.RightMotorRpm);
+	WriteCanDataAtAddress(((uint16_t)PduInfoPtr->SduDataPtr[3] << 8) | (PduInfoPtr->SduDataPtr[2]), &MonitoredValues.InvertersMonitoredValues.RightInverterCurrent);
+	WriteCanDataAtAddress(((uint16_t)PduInfoPtr->SduDataPtr[5] << 8) | (PduInfoPtr->SduDataPtr[4]), &MonitoredValues.InvertersMonitoredValues.RightInverterInputVoltage);
+	volatile uint16_t right_inverters_errors = ((uint16_t)PduInfoPtr->SduDataPtr[7] << 8) | (PduInfoPtr->SduDataPtr[6]);
 }
 
 void Can_Receive_Interrupt_LEFT_INVERTER_MSG2(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
 	(void)RxPduId;
-	__asm volatile ("nop");
+	WriteCanDataAtAddress(PduInfoPtr->SduDataPtr[0], &MonitoredValues.InvertersMonitoredValues.LeftInverterThrottleFeedback);
+	WriteCanDataAtAddress(PduInfoPtr->SduDataPtr[1], &MonitoredValues.InvertersMonitoredValues.LeftInverterTemperature);
+	WriteCanDataAtAddress(PduInfoPtr->SduDataPtr[2], &MonitoredValues.InvertersMonitoredValues.LeftMotorTemperature);
+	volatile uint8_t left_controller_status = PduInfoPtr->SduDataPtr[4];
+	volatile uint8_t left_switch_signals_status = PduInfoPtr->SduDataPtr[5];
+	WriteCanDataAtAddress((uint8_t)(((uint64_t)MonitoredValues.InvertersMonitoredValues.LeftMotorRpm.valueCan * (uint64_t)2459403U) / ((uint64_t)100000000U)), &MonitoredValues.InvertersMonitoredValues.LeftMotorSpeedKmh);
+	//WriteCanDataAtAddress(((left_switch_signals_status & (1<<4)) >> 4), &MonitoredValues.InvertersMonitoredValues.IsCarInReverse);
 }
 
 void Can_Receive_Interrupt_RIGHT_INVERTER_MSG2(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
 	(void)RxPduId;
-	__asm volatile ("nop");
+	WriteCanDataAtAddress(PduInfoPtr->SduDataPtr[0], &MonitoredValues.InvertersMonitoredValues.RightInverterThrottleFeedback);
+	WriteCanDataAtAddress(PduInfoPtr->SduDataPtr[1], &MonitoredValues.InvertersMonitoredValues.RightInverterTemperature);
+	WriteCanDataAtAddress(PduInfoPtr->SduDataPtr[2], &MonitoredValues.InvertersMonitoredValues.RightMotorTemperature);
+	volatile uint8_t right_controller_status = PduInfoPtr->SduDataPtr[4];
+	volatile uint8_t right_switch_signals_status = PduInfoPtr->SduDataPtr[5];
+	WriteCanDataAtAddress((uint8_t)(((uint64_t)MonitoredValues.InvertersMonitoredValues.RightMotorRpm.valueCan * (uint64_t)2459403U) / ((uint64_t)100000000U)), &MonitoredValues.InvertersMonitoredValues.RightMotorSpeedKmh);
 }
 
 /*==================================================================================================

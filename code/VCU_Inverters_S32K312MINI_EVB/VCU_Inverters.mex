@@ -215,6 +215,11 @@
                         <pin_feature name="direction" value="OUTPUT"/>
                      </pin_features>
                   </pin>
+                  <pin peripheral="LPUART6" signal="lpuart6_tx" pin_num="143" pin_signal="PTA16">
+                     <pin_features>
+                        <pin_feature name="direction" value="OUTPUT"/>
+                     </pin_features>
+                  </pin>
                </pins>
             </function>
          </functions_list>
@@ -1762,6 +1767,27 @@
                                        <array name="IGFSettings"/>
                                        <array name="PortPinEcucPartitionRef"/>
                                     </struct>
+                                    <struct name="45">
+                                       <setting name="Name" value="PortPin_45"/>
+                                       <setting name="PortPinPue" value="false"/>
+                                       <setting name="PortPinPus" value="false"/>
+                                       <setting name="PortPinSafeMode" value="false"/>
+                                       <setting name="PortPinDse" value="false"/>
+                                       <setting name="PortPinWithReadBack" value="false"/>
+                                       <setting name="PortPinPke" value="false"/>
+                                       <setting name="PortPinIfe" value="false"/>
+                                       <setting name="PortPinDirectionChangeable" value="true"/>
+                                       <setting name="PortPinModeChangeable" value="true"/>
+                                       <setting name="PortPinInvertControl" value="false"/>
+                                       <setting name="PortPinSiul2Instance" value="SIUL2_0"/>
+                                       <setting name="PortPinId" value="46"/>
+                                       <setting name="PortPinInitialMode" value="PORT_GPIO_MODE"/>
+                                       <setting name="OBEGroupSelect" value="NO_OBE_GROUP"/>
+                                       <setting name="MscrPdacSlot" value="VIRTUAL_WRAPPER_PDAC0"/>
+                                       <setting name="ImcrPdacSlot" value="VIRTUAL_WRAPPER_PDAC0"/>
+                                       <array name="IGFSettings"/>
+                                       <array name="PortPinEcucPartitionRef"/>
+                                    </struct>
                                  </array>
                               </struct>
                            </array>
@@ -2170,6 +2196,10 @@
                                     <struct name="1">
                                        <setting name="Name" value="FlexCan0"/>
                                        <setting name="McuClockFrequencySelect" value="FIRC_CLK"/>
+                                    </struct>
+                                    <struct name="2">
+                                       <setting name="Name" value="LpUart"/>
+                                       <setting name="McuClockFrequencySelect" value="AIPS_SLOW_CLK"/>
                                     </struct>
                                  </array>
                               </struct>
@@ -3216,7 +3246,7 @@
                               </struct>
                               <struct name="1">
                                  <setting name="Name" value="CanController_1"/>
-                                 <setting name="CanHwChannel" value="FLEXCAN_5"/>
+                                 <setting name="CanHwChannel" value="FLEXCAN_1"/>
                                  <setting name="CanControllerActivation" value="true"/>
                                  <setting name="CanControllerBaseAddress" value="0"/>
                                  <setting name="CanControllerId" value="1"/>
@@ -3261,7 +3291,7 @@
                               </struct>
                               <struct name="2">
                                  <setting name="Name" value="CanController_2"/>
-                                 <setting name="CanHwChannel" value="FLEXCAN_1"/>
+                                 <setting name="CanHwChannel" value="FLEXCAN_5"/>
                                  <setting name="CanControllerActivation" value="true"/>
                                  <setting name="CanControllerBaseAddress" value="0"/>
                                  <setting name="CanControllerId" value="2"/>
@@ -4657,11 +4687,11 @@
                                  <setting name="Name" value="UartChannel_0"/>
                                  <setting name="UartHwUsing" value="LPUART_IP"/>
                                  <setting name="UartChannelId" value="0"/>
-                                 <setting name="UartClockRef" value="/Mcu/Mcu/McuModuleConfiguration/McuClockSettingConfig_0/McuClockReferencePoint_0"/>
+                                 <setting name="UartClockRef" value="/Mcu/Mcu/McuModuleConfiguration/McuClockSettingConfig_0/LpUart"/>
                                  <array name="UartChannelEcucPartitionRef"/>
                                  <struct name="DetailModuleConfiguration">
                                     <setting name="Name" value="DetailModuleConfiguration"/>
-                                    <setting name="UartHwChannel" value="LPUART_0"/>
+                                    <setting name="UartHwChannel" value="LPUART_6"/>
                                     <setting name="DesireBaudrate" value="LPUART_UART_BAUDRATE_921600"/>
                                     <setting name="CustomBaudrateMantissa" value="1"/>
                                     <setting name="CustomBaudrateDivisor" value="4"/>

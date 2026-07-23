@@ -108,7 +108,7 @@ extern "C"{
 #define FEATURE_TSPC_PORT_IP_SUPPORT      (STD_OFF)
 
 /*! @brief User number of configured pins */
-#define NUM_OF_OBE_GROUP_CONFIG 45
+#define NUM_OF_OBE_GROUP_CONFIG 46
 
 #define PORT_START_SEC_CONFIG_DATA_UNSPECIFIED
 #include "Port_MemMap.h"
