@@ -107,6 +107,7 @@ int main(void)
 	//BrakeLight_Test();
 	//Cooling_Test();
 	//Inverters_Test();
+
 	Inverters_SetThrottle(LEFT_INVERTER, 25);
 	volatile uint64_t i;
 	while(1){

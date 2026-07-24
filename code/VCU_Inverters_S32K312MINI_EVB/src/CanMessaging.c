@@ -34,18 +34,18 @@ extern "C"{
 ==================================================================================================*/
 #define SEND_MASK 			0x80000000
 
-#define CAN_HTH_INVERTOR_STANGA				12U
-#define CAN_HTH_INVERTOR_DREAPTA			13U
-#define CAN_HTH_INVERTOARE					14U
-#define CAN_HTH_BORD						15U
-#define CAN_HTH_ACCELERATIE					16U
-#define CAN_HTH_FRANA						17U
-#define CAN_HTH_BATERIE						18U
-#define CAN_HTH_BATERIE_TENSIUNI_CELULE		19U
-#define CAN_HTH_BATERIE_TEMPERATURI_CELULE	20U
-#define CAN_HTH_BATERIE_2					21U
-#define CAN_HTH_BATERIE_CHARGER				22U
-#define CAN_HTH_COMUNICATII					23U
+#define CAN_HTH_INVERTOR_STANGA				16U
+#define CAN_HTH_INVERTOR_DREAPTA			17U
+#define CAN_HTH_INVERTOARE					18U
+#define CAN_HTH_BORD						19U
+#define CAN_HTH_ACCELERATIE					20U
+#define CAN_HTH_FRANA						21U
+#define CAN_HTH_BATERIE						22U
+#define CAN_HTH_BATERIE_TENSIUNI_CELULE		23U
+#define CAN_HTH_BATERIE_TEMPERATURI_CELULE	24U
+#define CAN_HTH_BATERIE_2					25U
+#define CAN_HTH_BATERIE_CHARGER				26U
+#define CAN_HTH_COMUNICATII					27U
 
 #define CAN_CONTROLLER_ID	0U
 #define CAN_LEFT_INVERTER_ID 1U
@@ -518,16 +518,16 @@ void Can_Receive_Interrupt_RIGHT_INVERTER_MSG2(PduIdType RxPduId, const PduInfoT
 ==================================================================================================*/
 void CanMessaging_Init(void){
 	Dio_WriteChannel(CAN_CHANNEL_EN, STD_HIGH); //CAN0_EN
-	volatile uint32_t i = 10000;
+	volatile uint32_t i = 100000;
 	while(i--);
 	Dio_WriteChannel(CAN_CHANNEL_STB_N, STD_HIGH); //CAN0_STB_N
-	i = 10000;
+	i = 100000;
 	while(i--);
 	Dio_WriteChannel(Pzz, STD_LOW);
-	i = 10000;
+	i = 100000;
 	while(i--);
 	Dio_WriteChannel(Pyy, STD_LOW);
-	i = 10000;
+	i = 100000;
 	while(i--);
 	Can_43_FLEXCAN_SetControllerMode(CAN_CONTROLLER_ID, CAN_CS_STARTED);
 	Can_43_FLEXCAN_SetControllerMode(CAN_LEFT_INVERTER_ID, CAN_CS_STARTED);
