@@ -40,6 +40,7 @@ typedef enum{
 	INVERTERS_OFF,
 	INVERTERS_WAITING_FOR_VOLTAGE,
 	INVERTERS_STARTING,
+	INVERTERS_DELAY,
 	INVERTERS_ON
 }Inverters_State;
 /*==================================================================================================

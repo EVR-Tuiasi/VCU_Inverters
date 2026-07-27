@@ -120,16 +120,7 @@ int main(void)
 		*/
 		WriteCanDataAtAddress((uint8_t)((((uint32_t)Inverters_ReadAcceleration(LEFT_INVERTER)) * (uint32_t)250U) / (uint32_t)16383U), &MonitoredValues.InvertersMonitoredValues.LeftInverterThrottle);
 		WriteCanDataAtAddress((uint8_t)((((uint32_t)Inverters_ReadAcceleration(RIGHT_INVERTER)) * (uint32_t)250U) / (uint32_t)16383U), &MonitoredValues.InvertersMonitoredValues.RightInverterThrottle);
-		//Inverters_SetThrottle(LEFT_INVERTER, MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1TravelPercentage.valueCan);
-
-		if(Inverters_GetState() == INVERTERS_ON){
-			i=10000000;
-			while(i--);
-			Inverters_SetThrottle(LEFT_INVERTER, 25);
-		}
-		else{
-			Inverters_SetThrottle(LEFT_INVERTER, 0);
-		}
+		Inverters_SetThrottle(LEFT_INVERTER, MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1TravelPercentage.valueCan);
 
 		Inverters_Update();
 		CanMessaging_Update();

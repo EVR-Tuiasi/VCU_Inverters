@@ -59,7 +59,7 @@ extern "C"{
 #define ADC_PRESSURE_2 AdcGroup_3
 #define ADC_ACCELERATION_LEFT AdcGroup_5
 #define ADC_ACCELERATION_RIGHT AdcGroup_4
-#define GPT_200MS_TIMER 30000000U
+#define GPT_200MS_TIMER 6000000U
 #define TRESHOLD_LOW_VOLTAGE 800U
 #define TRESHOLD_HIGH_VOLTAGE 900U
 /*==================================================================================================
@@ -154,14 +154,20 @@ void Inverters_SetThrottle(Inverter inverter, uint8_t percentage){
 	if(percentage > 100U){
 		percentage = 100U;
 	}
-	uint32_t value = ((uint32_t)percentage * MAX_DUTY_CYCLE) / 100U;
-	switch(inverter){
-		case LEFT_INVERTER:
-			Pwm_SetDutyCycle(THROTTLE1_CHANNEL, value);
-			break;
-		case RIGHT_INVERTER:
-			Pwm_SetDutyCycle(THROTTLE2_CHANNEL, value);
-			break;
+	if(Inverters_GetState() == INVERTERS_ON){
+		uint32_t value = ((uint32_t)percentage * MAX_DUTY_CYCLE) / 100U;
+		switch(inverter){
+			case LEFT_INVERTER:
+				Pwm_SetDutyCycle(THROTTLE1_CHANNEL, value);
+				break;
+			case RIGHT_INVERTER:
+				Pwm_SetDutyCycle(THROTTLE2_CHANNEL, value);
+				break;
+		}
+	}
+	else{
+		Pwm_SetDutyCycle(THROTTLE1_CHANNEL, 0);
+		Pwm_SetDutyCycle(THROTTLE2_CHANNEL, 0);
 	}
 }
 void Inverters_SetBrake(Inverter inverter, uint8_t percentage){
@@ -328,29 +334,30 @@ void Cooling_Test(void){
 }
 
 void Inverters_Test(void){
+	volatile uint64_t delay;
 	while(1){
-		volatile uint64_t delay;
-		for(uint64_t i=0;i<=MAX_DUTY_CYCLE;i++){
-			Pwm_SetDutyCycle(THROTTLE1_CHANNEL, i);
-			Pwm_SetDutyCycle(THROTTLE2_CHANNEL, i);
+		for(uint64_t i=0;i<=100/2;i++){
+			Inverters_Update();
+			Inverters_SetThrottle(LEFT_INVERTER, i);
+			Inverters_SetThrottle(RIGHT_INVERTER, i);
 			//Pwm_SetDutyCycle(BRAKE1_CHANNEL, i);
 			//Pwm_SetDutyCycle(BRAKE2_CHANNEL, i);
-			delay=1000;
+			delay=1000000;
 			while(delay--);
 		}
-		for(uint64_t i=MAX_DUTY_CYCLE;i>0;i--){
-			Pwm_SetDutyCycle(THROTTLE1_CHANNEL, i);
-			Pwm_SetDutyCycle(THROTTLE2_CHANNEL, i);
+		for(uint64_t i=100/2;i>0;i--){
+			Inverters_Update();
+			Inverters_SetThrottle(LEFT_INVERTER, i);
+			Inverters_SetThrottle(RIGHT_INVERTER, i);
 			//Pwm_SetDutyCycle(BRAKE1_CHANNEL, i);
 			//Pwm_SetDutyCycle(BRAKE2_CHANNEL, i);
-			delay=1000;
+			delay=1000000;
 			while(delay--);
 		}
 	}
 }
 
 void Inverters_Update(void){
-	volatile uint64_t i;
 	switch(currentState){
 		case INVERTERS_OFF:
 			if(inverters_state_timer_timeout == 1){
@@ -365,18 +372,6 @@ void Inverters_Update(void){
 				currentState = INVERTERS_OFF;
 			}
 			else if(MonitoredValues.InvertersMonitoredValues.LeftInverterInputVoltage.valueCan > TRESHOLD_HIGH_VOLTAGE){
-				/*Inverters_SetPower(0);
-				i=10000000;
-				while(i--);
-				Inverters_SetPower(1);
-				i=10000000;
-				while(i--);*/
-				/*Inverters_SetPower(0);
-				i=10000000;
-				while(i--);
-				Inverters_SetPower(1);
-				i=10000000;
-				while(i--);*/
 				Inverters_SetPower(0);
 				Inverters_ResetTimer();
 				currentState = INVERTERS_STARTING;
@@ -384,13 +379,14 @@ void Inverters_Update(void){
 			break;
 		case INVERTERS_STARTING:
 			if(inverters_state_timer_timeout == 1){
-				/*Inverters_SetPower(1);
-				i=10000000;
-				while(i--);
-				Inverters_SetPower(0);
-				i=10000000;
-				while(i--);*/
 				Inverters_SetPower(1);
+				Inverters_ResetTimer();
+				Inverters_ResetCanTimer();
+				currentState = INVERTERS_DELAY;
+			}
+			break;
+		case INVERTERS_DELAY:
+			if(inverters_state_timer_timeout == 1){
 				Inverters_ResetTimer();
 				Inverters_ResetCanTimer();
 				currentState = INVERTERS_ON;
