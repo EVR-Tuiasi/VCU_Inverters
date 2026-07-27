@@ -19,7 +19,9 @@ extern "C"{
 #include "Mcl.h"
 #include "Pwm.h"
 #include "Adc.h"
+#include "Gpt.h"
 #include "Inverters.h"
+#include "Messaging.h"
 
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
@@ -57,6 +59,9 @@ extern "C"{
 #define ADC_PRESSURE_2 AdcGroup_3
 #define ADC_ACCELERATION_LEFT AdcGroup_5
 #define ADC_ACCELERATION_RIGHT AdcGroup_4
+#define GPT_200MS_TIMER 30000000U
+#define TRESHOLD_LOW_VOLTAGE 800U
+#define TRESHOLD_HIGH_VOLTAGE 900U
 /*==================================================================================================
 *                                      LOCAL CONSTANTS
 ==================================================================================================*/
@@ -72,6 +77,11 @@ static Adc_ValueGroupType pres2;
 static Adc_ValueGroupType accLeft;
 static Adc_ValueGroupType accRight;
 
+volatile bool inverters_state_timer_timeout = 0;
+volatile bool inverters_can_timer_timeout = 0;
+static Inverters_State currentState = INVERTERS_OFF;
+volatile bool init_flag = 1;
+
 /*==================================================================================================
 *                                      GLOBAL CONSTANTS
 ==================================================================================================*/
@@ -81,7 +91,7 @@ static Adc_ValueGroupType accRight;
 *                                      GLOBAL VARIABLES
 ==================================================================================================*/
 
-
+extern MonitoredValues_t MonitoredValues;
 /*==================================================================================================
 *                                   LOCAL FUNCTION PROTOTYPES
 ==================================================================================================*/
@@ -135,15 +145,10 @@ void Inverters_Init(void){
 	Inverters_SetFunction(ACCELERATE, RIGHT_INVERTER, 0);
 	Inverters_SetFunction(BRAKE, LEFT_INVERTER, 0);
 	Inverters_SetFunction(BRAKE, RIGHT_INVERTER, 0);
-	Inverters_SetPower(1);
-	i=10000000;
-	while(i--);
-	Inverters_SetPower(0);
-	i=10000000;
-	while(i--);
-	Inverters_SetPower(1);
-	i=10000000;
-	while(i--);
+	Gpt_EnableNotification(0);
+	Gpt_EnableNotification(1);
+	Gpt_StartTimer(0, GPT_200MS_TIMER);
+	Gpt_StartTimer(1, GPT_200MS_TIMER);
 }
 void Inverters_SetThrottle(Inverter inverter, uint8_t percentage){
 	if(percentage > 100U){
@@ -341,27 +346,88 @@ void Inverters_Test(void){
 			delay=1000;
 			while(delay--);
 		}
-		/*Inverters_SetPower(1);
-
-		Inverters_SetFunction(FORWARD, LEFT_INVERTER, 0);
-		Inverters_SetFunction(FORWARD, RIGHT_INVERTER, 0);
-
-		Inverters_SetFunction(REVERSE, LEFT_INVERTER, 0);
-		Inverters_SetFunction(REVERSE, RIGHT_INVERTER, 0);
-
-		Inverters_SetFunction(ECO, LEFT_INVERTER, 0);
-		Inverters_SetFunction(ECO, RIGHT_INVERTER, 0);
-
-		Inverters_SetFunction(ACCELERATE, LEFT_INVERTER, 0);
-		Inverters_SetFunction(ACCELERATE, RIGHT_INVERTER, 0);
-
-		Inverters_SetFunction(BRAKE, LEFT_INVERTER, 0);
-		Inverters_SetFunction(BRAKE, RIGHT_INVERTER, 0);
-
-		delay=50000000;
-		while(delay--);
-		Inverters_SetPower(0);*/
 	}
+}
+
+void Inverters_Update(void){
+	volatile uint64_t i;
+	switch(currentState){
+		case INVERTERS_OFF:
+			if(inverters_state_timer_timeout == 1){
+				Inverters_SetPower(1);
+				Inverters_ResetTimer();
+				Inverters_ResetCanTimer();
+				currentState = INVERTERS_WAITING_FOR_VOLTAGE;
+			}
+			break;
+		case INVERTERS_WAITING_FOR_VOLTAGE:
+			if(inverters_can_timer_timeout == 1){
+				currentState = INVERTERS_OFF;
+			}
+			else if(MonitoredValues.InvertersMonitoredValues.LeftInverterInputVoltage.valueCan > TRESHOLD_HIGH_VOLTAGE){
+				/*Inverters_SetPower(0);
+				i=10000000;
+				while(i--);
+				Inverters_SetPower(1);
+				i=10000000;
+				while(i--);*/
+				/*Inverters_SetPower(0);
+				i=10000000;
+				while(i--);
+				Inverters_SetPower(1);
+				i=10000000;
+				while(i--);*/
+				Inverters_SetPower(0);
+				Inverters_ResetTimer();
+				currentState = INVERTERS_STARTING;
+			}
+			break;
+		case INVERTERS_STARTING:
+			if(inverters_state_timer_timeout == 1){
+				/*Inverters_SetPower(1);
+				i=10000000;
+				while(i--);
+				Inverters_SetPower(0);
+				i=10000000;
+				while(i--);*/
+				Inverters_SetPower(1);
+				Inverters_ResetTimer();
+				Inverters_ResetCanTimer();
+				currentState = INVERTERS_ON;
+			}
+			break;
+		case INVERTERS_ON:
+			if((MonitoredValues.InvertersMonitoredValues.LeftInverterInputVoltage.valueCan < TRESHOLD_LOW_VOLTAGE) || (inverters_can_timer_timeout == 1)){
+				Inverters_SetPower(0);
+				Inverters_ResetTimer();
+				currentState = INVERTERS_OFF;
+			}
+			break;
+	}
+}
+
+Inverters_State Inverters_GetState(void){
+	return currentState;
+}
+
+void Inverters_ResetTimer(void){
+	inverters_state_timer_timeout = 0;
+	Gpt_StopTimer(0);
+	Gpt_StartTimer(0, GPT_200MS_TIMER);
+}
+
+void Inverters_ResetCanTimer(void){
+	inverters_can_timer_timeout = 0;
+	Gpt_StopTimer(1);
+	Gpt_StartTimer(1, GPT_200MS_TIMER);
+}
+
+void Inverters_Timer_Timeout(void){
+	inverters_state_timer_timeout = 1;
+}
+
+void CanMessaging_Inverters_Timeout(void){
+	inverters_can_timer_timeout = 1;
 }
 
 #ifdef __cplusplus

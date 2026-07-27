@@ -559,6 +559,16 @@
                   <data type="Version">1.0.0</data>
                </feature>
             </dependency>
+            <dependency resourceType="SWComponent" resourceId="platform.driver.gpt" description="Gpt is not found in the toolchain/IDE project. The project will not compile!" problem_level="2" source="Peripherals">
+               <feature name="enabled" evaluation="equal">
+                  <data type="Boolean">true</data>
+               </feature>
+            </dependency>
+            <dependency resourceType="SWComponent" resourceId="platform.driver.gpt" description="An unsupported version of the Gpt in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. The project might not compile correctly." problem_level="1" source="Peripherals">
+               <feature name="version" evaluation="equivalent">
+                  <data type="Version">1.0.0</data>
+               </feature>
+            </dependency>
          </dependencies>
          <generated_project_files>
             <file path="board/Siul2_Port_Ip_Cfg.c" update_enabled="true"/>
@@ -603,6 +613,9 @@
             <file path="generate/include/Dma_Ip_Cfg_Devices.h" update_enabled="true"/>
             <file path="generate/include/Dma_Ip_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/EcuM_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/Emios_Gpt_Ip_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/Emios_Gpt_Ip_Cfg_Defines.h" update_enabled="true"/>
+            <file path="generate/include/Emios_Gpt_Ip_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Emios_Mcl_Ip_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Emios_Mcl_Ip_Cfg_Defines.h" update_enabled="true"/>
             <file path="generate/include/Emios_Mcl_Ip_Cfg_DeviceRegisters.h" update_enabled="true"/>
@@ -630,6 +643,9 @@
             <file path="generate/include/Flexio_Uart_Ip_CfgDefines.h" update_enabled="true"/>
             <file path="generate/include/Flexio_Uart_Ip_Defines.h" update_enabled="true"/>
             <file path="generate/include/Flexio_Uart_Ip_PBcfg.h" update_enabled="true"/>
+            <file path="generate/include/Gpt_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/Gpt_Ipw_PBcfg.h" update_enabled="true"/>
+            <file path="generate/include/Gpt_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Igf_Port_Ip_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Igf_Port_Ip_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/IntCtrl_Ip_Cfg.h" update_enabled="true"/>
@@ -651,6 +667,9 @@
             <file path="generate/include/Mpu_M7_Ip_Cfg_Defines.h" update_enabled="true"/>
             <file path="generate/include/OsIf_ArchCfg.h" update_enabled="true"/>
             <file path="generate/include/OsIf_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/Pit_Ip_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/Pit_Ip_Cfg_Defines.h" update_enabled="true"/>
+            <file path="generate/include/Pit_Ip_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Platform_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Platform_CfgDefines.h" update_enabled="true"/>
             <file path="generate/include/Platform_Ipw_Cfg.h" update_enabled="true"/>
@@ -665,6 +684,9 @@
             <file path="generate/include/Ram_Ip_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Ram_Ip_Cfg_Defines.h" update_enabled="true"/>
             <file path="generate/include/Ram_Ip_PBcfg.h" update_enabled="true"/>
+            <file path="generate/include/Rtc_Ip_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/Rtc_Ip_Cfg_Defines.h" update_enabled="true"/>
+            <file path="generate/include/Rtc_Ip_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Sdadc_Ip_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Sdadc_Ip_CfgDefines.h" update_enabled="true"/>
             <file path="generate/include/Sdadc_Ip_PBcfg.h" update_enabled="true"/>
@@ -672,6 +694,9 @@
             <file path="generate/include/Siul2_Port_Ip_Defines.h" update_enabled="true"/>
             <file path="generate/include/Siul2_Port_Ip_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Soc_Ips.h" update_enabled="true"/>
+            <file path="generate/include/Stm_Ip_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/Stm_Ip_Cfg_Defines.h" update_enabled="true"/>
+            <file path="generate/include/Stm_Ip_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/System_Ip_Cfg.h" update_enabled="true"/>
             <file path="generate/include/System_Ip_CfgDefines.h" update_enabled="true"/>
             <file path="generate/include/Trgmux_Ip_Cfg.h" update_enabled="true"/>
@@ -699,6 +724,7 @@
             <file path="generate/src/Dio_Cfg.c" update_enabled="true"/>
             <file path="generate/src/Dma_Ip_Cfg.c" update_enabled="true"/>
             <file path="generate/src/Dma_Ip_PBcfg.c" update_enabled="true"/>
+            <file path="generate/src/Emios_Gpt_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Emios_Mcl_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Emios_Pwm_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Etpu_Pwm_Ip_PBcfg.c" update_enabled="true"/>
@@ -707,6 +733,9 @@
             <file path="generate/src/Flexio_Mcl_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Flexio_Pwm_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Flexio_Uart_Ip_PBcfg.c" update_enabled="true"/>
+            <file path="generate/src/Gpt_Cfg.c" update_enabled="true"/>
+            <file path="generate/src/Gpt_Ipw_PBcfg.c" update_enabled="true"/>
+            <file path="generate/src/Gpt_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Igf_Port_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/IntCtrl_Ip_Cfg.c" update_enabled="true"/>
             <file path="generate/src/Lcu_Ip_Cfg.c" update_enabled="true"/>
@@ -716,6 +745,7 @@
             <file path="generate/src/Mcu_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Mpu_M7_Ip_Cfg.c" update_enabled="true"/>
             <file path="generate/src/OsIf_Cfg.c" update_enabled="true"/>
+            <file path="generate/src/Pit_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Platform_Cfg.c" update_enabled="true"/>
             <file path="generate/src/Platform_Ipw_Cfg.c" update_enabled="true"/>
             <file path="generate/src/Port_Cfg.c" update_enabled="true"/>
@@ -725,8 +755,10 @@
             <file path="generate/src/Pwm_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Ram_Ip_Cfg.c" update_enabled="true"/>
             <file path="generate/src/Ram_Ip_PBcfg.c" update_enabled="true"/>
+            <file path="generate/src/Rtc_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Sdadc_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Siul2_Port_Ip_PBcfg.c" update_enabled="true"/>
+            <file path="generate/src/Stm_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Trgmux_Ip_Cfg.c" update_enabled="true"/>
             <file path="generate/src/Trgmux_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Tspc_Port_Ip_PBcfg.c" update_enabled="true"/>
@@ -2804,6 +2836,13 @@
                                     <setting name="IsrEnabled" value="true"/>
                                     <setting name="IsrPriority" value="0"/>
                                     <setting name="IsrHandler" value="CAN5_ORED_0_31_MB_IRQHandler"/>
+                                 </struct>
+                                 <struct name="10">
+                                    <setting name="Name" value="PlatformIsrConfig_10"/>
+                                    <setting name="IsrName" value="PIT0_IRQn"/>
+                                    <setting name="IsrEnabled" value="true"/>
+                                    <setting name="IsrPriority" value="0"/>
+                                    <setting name="IsrHandler" value="PIT_0_ISR"/>
                                  </struct>
                               </array>
                               <array name="PlatformNvicEcucPartitionRef"/>
@@ -5699,6 +5738,322 @@
                            <setting name="VendorId" value="43"/>
                         </struct>
                         <setting name="Name" value="Pwm"/>
+                     </config_set>
+                  </instance>
+                  <instance name="Gpt" uuid="ccff8d84-c621-46a8-97c3-4427a8da6da9" type="Gpt" type_id="Gpt" mode="autosar" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
+                     <config_set name="Gpt">
+                        <setting name="Name" value="Gpt"/>
+                        <struct name="ConfigTimeSupport">
+                           <setting name="POST_BUILD_VARIANT_USED" value="false"/>
+                           <setting name="IMPLEMENTATION_CONFIG_VARIANT" value="VARIANT-PRE-COMPILE"/>
+                        </struct>
+                        <struct name="GptChannelConfigSet">
+                           <setting name="Name" value="GptChannelConfigSet"/>
+                           <array name="GptChannelConfiguration">
+                              <struct name="0">
+                                 <setting name="Name" value="GptChannelConfiguration_0"/>
+                                 <setting name="GptChannelId" value="0"/>
+                                 <setting name="GptHwIp" value="PIT"/>
+                                 <setting name="GptModuleRef" value="/Gpt/Gpt/GptChannelConfigSet/Pit_0/PitChannel_0"/>
+                                 <setting name="GptChannelMode" value="GPT_CH_MODE_ONESHOT"/>
+                                 <setting name="GptChannelClkSrcRef" value="/Gpt/Gpt/GptDriverConfiguration/GptClockReferencePoint_0"/>
+                                 <setting name="GptChannelTickValueMax" value="4294967295"/>
+                                 <setting name="GptEnableWakeup" value="false"/>
+                                 <array name="GptNotification">
+                                    <setting name="0" value="Inverters_Timer_Timeout"/>
+                                 </array>
+                                 <array name="GptChannelEcucPartitionRef"/>
+                                 <array name="GptWakeupConfiguration"/>
+                              </struct>
+                              <struct name="1">
+                                 <setting name="Name" value="GptChannelConfiguration_1"/>
+                                 <setting name="GptChannelId" value="1"/>
+                                 <setting name="GptHwIp" value="PIT"/>
+                                 <setting name="GptModuleRef" value="/Gpt/Gpt/GptChannelConfigSet/Pit_0/PitChannel_1"/>
+                                 <setting name="GptChannelMode" value="GPT_CH_MODE_CONTINUOUS"/>
+                                 <setting name="GptChannelClkSrcRef" value="/Gpt/Gpt/GptDriverConfiguration/GptClockReferencePoint_0"/>
+                                 <setting name="GptChannelTickValueMax" value="4294967295"/>
+                                 <setting name="GptEnableWakeup" value="false"/>
+                                 <array name="GptNotification">
+                                    <setting name="0" value="CanMessaging_Inverters_Timeout"/>
+                                 </array>
+                                 <array name="GptChannelEcucPartitionRef"/>
+                                 <array name="GptWakeupConfiguration"/>
+                              </struct>
+                           </array>
+                           <array name="GptPit">
+                              <struct name="0">
+                                 <setting name="Name" value="Pit_0"/>
+                                 <setting name="GptPitModule" value="PIT_0"/>
+                                 <setting name="PitFreezeEnable" value="false"/>
+                                 <array name="GptPitChannels">
+                                    <struct name="0">
+                                       <setting name="Name" value="PitChannel_0"/>
+                                       <setting name="GptPitChannel" value="CH_0"/>
+                                       <setting name="ChainMode" value="false"/>
+                                    </struct>
+                                    <struct name="1">
+                                       <setting name="Name" value="PitChannel_1"/>
+                                       <setting name="GptPitChannel" value="CH_1"/>
+                                       <setting name="ChainMode" value="false"/>
+                                    </struct>
+                                 </array>
+                              </struct>
+                           </array>
+                           <array name="GptStm"/>
+                           <array name="GptRtc"/>
+                           <array name="GptEmios"/>
+                        </struct>
+                        <array name="GptHwConfiguration">
+                           <struct name="0">
+                              <setting name="Name" value="GptHwConfiguration_0"/>
+                              <setting name="GptIsrHwId" value="STM_0_CH_0"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="1">
+                              <setting name="Name" value="GptHwConfiguration_1"/>
+                              <setting name="GptIsrHwId" value="STM_0_CH_1"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="2">
+                              <setting name="Name" value="GptHwConfiguration_2"/>
+                              <setting name="GptIsrHwId" value="STM_0_CH_2"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="3">
+                              <setting name="Name" value="GptHwConfiguration_3"/>
+                              <setting name="GptIsrHwId" value="STM_0_CH_3"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="4">
+                              <setting name="Name" value="GptHwConfiguration_4"/>
+                              <setting name="GptIsrHwId" value="PIT_0_CH_RTI"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="5">
+                              <setting name="Name" value="GptHwConfiguration_5"/>
+                              <setting name="GptIsrHwId" value="PIT_0_CH_0"/>
+                              <setting name="GptIsrEnable" value="true"/>
+                              <setting name="GptChannelIsUsed" value="true"/>
+                           </struct>
+                           <struct name="6">
+                              <setting name="Name" value="GptHwConfiguration_6"/>
+                              <setting name="GptIsrHwId" value="PIT_0_CH_1"/>
+                              <setting name="GptIsrEnable" value="true"/>
+                              <setting name="GptChannelIsUsed" value="true"/>
+                           </struct>
+                           <struct name="7">
+                              <setting name="Name" value="GptHwConfiguration_7"/>
+                              <setting name="GptIsrHwId" value="PIT_0_CH_2"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="8">
+                              <setting name="Name" value="GptHwConfiguration_8"/>
+                              <setting name="GptIsrHwId" value="PIT_0_CH_3"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="9">
+                              <setting name="Name" value="GptHwConfiguration_9"/>
+                              <setting name="GptIsrHwId" value="PIT_1_CH_0"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="10">
+                              <setting name="Name" value="GptHwConfiguration_10"/>
+                              <setting name="GptIsrHwId" value="PIT_1_CH_1"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="11">
+                              <setting name="Name" value="GptHwConfiguration_11"/>
+                              <setting name="GptIsrHwId" value="PIT_1_CH_2"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="12">
+                              <setting name="Name" value="GptHwConfiguration_12"/>
+                              <setting name="GptIsrHwId" value="PIT_1_CH_3"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="13">
+                              <setting name="Name" value="GptHwConfiguration_13"/>
+                              <setting name="GptIsrHwId" value="EMIOS_0_CH_0"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="14">
+                              <setting name="Name" value="GptHwConfiguration_14"/>
+                              <setting name="GptIsrHwId" value="EMIOS_0_CH_1"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="15">
+                              <setting name="Name" value="GptHwConfiguration_15"/>
+                              <setting name="GptIsrHwId" value="EMIOS_0_CH_2"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="16">
+                              <setting name="Name" value="GptHwConfiguration_16"/>
+                              <setting name="GptIsrHwId" value="EMIOS_0_CH_3"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="17">
+                              <setting name="Name" value="GptHwConfiguration_17"/>
+                              <setting name="GptIsrHwId" value="EMIOS_0_CH_4"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="18">
+                              <setting name="Name" value="GptHwConfiguration_18"/>
+                              <setting name="GptIsrHwId" value="EMIOS_0_CH_5"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="19">
+                              <setting name="Name" value="GptHwConfiguration_19"/>
+                              <setting name="GptIsrHwId" value="EMIOS_0_CH_6"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="20">
+                              <setting name="Name" value="GptHwConfiguration_20"/>
+                              <setting name="GptIsrHwId" value="EMIOS_0_CH_7"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="21">
+                              <setting name="Name" value="GptHwConfiguration_21"/>
+                              <setting name="GptIsrHwId" value="EMIOS_0_CH_8"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="22">
+                              <setting name="Name" value="GptHwConfiguration_22"/>
+                              <setting name="GptIsrHwId" value="EMIOS_0_CH_16"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="23">
+                              <setting name="Name" value="GptHwConfiguration_23"/>
+                              <setting name="GptIsrHwId" value="EMIOS_0_CH_22"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="24">
+                              <setting name="Name" value="GptHwConfiguration_24"/>
+                              <setting name="GptIsrHwId" value="EMIOS_0_CH_23"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="25">
+                              <setting name="Name" value="GptHwConfiguration_25"/>
+                              <setting name="GptIsrHwId" value="EMIOS_1_CH_0"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="26">
+                              <setting name="Name" value="GptHwConfiguration_26"/>
+                              <setting name="GptIsrHwId" value="EMIOS_1_CH_8"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="27">
+                              <setting name="Name" value="GptHwConfiguration_27"/>
+                              <setting name="GptIsrHwId" value="EMIOS_1_CH_16"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="28">
+                              <setting name="Name" value="GptHwConfiguration_28"/>
+                              <setting name="GptIsrHwId" value="EMIOS_1_CH_22"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="29">
+                              <setting name="Name" value="GptHwConfiguration_29"/>
+                              <setting name="GptIsrHwId" value="EMIOS_1_CH_23"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="30">
+                              <setting name="Name" value="GptHwConfiguration_30"/>
+                              <setting name="GptIsrHwId" value="RTC_0_CH_0"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                           <struct name="31">
+                              <setting name="Name" value="GptHwConfiguration_31"/>
+                              <setting name="GptIsrHwId" value="STM_0_PREDEF"/>
+                              <setting name="GptIsrEnable" value="false"/>
+                              <setting name="GptChannelIsUsed" value="false"/>
+                           </struct>
+                        </array>
+                        <struct name="GptConfigurationOfOptApiServices">
+                           <setting name="Name" value="GptConfigurationOfOptApiServices"/>
+                           <setting name="GptDeinitApi" value="false"/>
+                           <setting name="GptEnableDisableNotificationApi" value="true"/>
+                           <setting name="GptTimeElapsedApi" value="false"/>
+                           <setting name="GptTimeRemainingApi" value="false"/>
+                           <setting name="GptVersionInfoApi" value="false"/>
+                           <setting name="GptWakeupFunctionalityApi" value="false"/>
+                           <setting name="GptPredefTimerFunctionalityApi" value="false"/>
+                        </struct>
+                        <struct name="GptAutosarExt">
+                           <setting name="Name" value="GptAutosarExt"/>
+                           <setting name="GptEnableDualClockMode" value="false"/>
+                           <setting name="GptChangeNextTimeoutValueApi" value="false"/>
+                           <setting name="GptEnableUserModeSupport" value="false"/>
+                           <setting name="ChainModeApi" value="false"/>
+                           <setting name="GptStandbyWakeupSupport" value="false"/>
+                           <setting name="GptEnableTriggers" value="false"/>
+                        </struct>
+                        <struct name="GptDriverConfiguration">
+                           <setting name="Name" value="GptDriverConfiguration"/>
+                           <setting name="GptDevErrorDetect" value="true"/>
+                           <setting name="GptTimeoutMethod" value="OSIF_COUNTER_DUMMY"/>
+                           <setting name="GptTimeoutDuration" value="200"/>
+                           <setting name="GptReportWakeupSource" value="false"/>
+                           <setting name="GptMultiPartitionSupport" value="false"/>
+                           <setting name="GptPredefTimer100us32bitEnable" value="false"/>
+                           <setting name="GptPredefTimer1usEnablingGrade" value="GPT_PREDEF_TIMER_1US_DISABLED"/>
+                           <array name="GptEcucPartitionRef"/>
+                           <array name="GptKernelEcucPartitionRef"/>
+                           <array name="GptClockReferencePoint">
+                              <struct name="0">
+                                 <setting name="Name" value="GptClockReferencePoint_0"/>
+                                 <setting name="GptClockReference" value="/Mcu/Mcu/McuModuleConfiguration/McuClockSettingConfig_0/McuClockReferencePoint_0"/>
+                              </struct>
+                           </array>
+                        </struct>
+                        <struct name="GptPredefTimerConfiguration">
+                           <setting name="Name" value="GptPredefTimerConfiguration"/>
+                           <array name="GptPredefTimer_1us_16Bit"/>
+                           <array name="GptPredefTimer_1us_24Bit"/>
+                           <array name="GptPredefTimer_1us_32Bit"/>
+                           <array name="GptPredefTimer_100us_32Bit"/>
+                        </struct>
+                        <struct name="CommonPublishedInformation" quick_selection="Default">
+                           <setting name="Name" value="CommonPublishedInformation"/>
+                           <setting name="ArReleaseMajorVersion" value="4"/>
+                           <setting name="ArReleaseMinorVersion" value="9"/>
+                           <setting name="ArReleaseRevisionVersion" value="0"/>
+                           <setting name="ModuleId" value="100"/>
+                           <setting name="SwMajorVersion" value="7"/>
+                           <setting name="SwMinorVersion" value="0"/>
+                           <setting name="SwPatchVersion" value="1"/>
+                           <setting name="VendorId" value="43"/>
+                           <array name="VendorApiInfix"/>
+                        </struct>
                      </config_set>
                   </instance>
                </instances>

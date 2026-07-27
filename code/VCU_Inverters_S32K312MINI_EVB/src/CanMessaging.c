@@ -24,6 +24,7 @@ extern "C"{
 #include "Mcl.h"
 #include "CanMessaging.h"
 #include "Messaging.h"
+#include "Inverters.h"
 
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
@@ -477,6 +478,9 @@ void Can_Receive_Interrupt_COMUNICATII(PduIdType RxPduId, const PduInfoType * Pd
 }
 
 void Can_Receive_Interrupt_LEFT_INVERTER_MSG1(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
+	if((Inverters_GetState() == INVERTERS_ON) ||(Inverters_GetState() == INVERTERS_WAITING_FOR_VOLTAGE)){
+		Inverters_ResetCanTimer();
+	}
 	(void)RxPduId;
 	WriteCanDataAtAddress(((uint16_t)PduInfoPtr->SduDataPtr[1] << 8) | (PduInfoPtr->SduDataPtr[0]), &MonitoredValues.InvertersMonitoredValues.LeftMotorRpm);
 	WriteCanDataAtAddress(((uint16_t)PduInfoPtr->SduDataPtr[3] << 8) | (PduInfoPtr->SduDataPtr[2]), &MonitoredValues.InvertersMonitoredValues.LeftInverterCurrent);
@@ -485,6 +489,9 @@ void Can_Receive_Interrupt_LEFT_INVERTER_MSG1(PduIdType RxPduId, const PduInfoTy
 }
 
 void Can_Receive_Interrupt_RIGHT_INVERTER_MSG1(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
+	if((Inverters_GetState() == INVERTERS_ON) ||(Inverters_GetState() == INVERTERS_WAITING_FOR_VOLTAGE)){
+		Inverters_ResetCanTimer();
+	}
 	(void)RxPduId;
 	WriteCanDataAtAddress(((uint16_t)PduInfoPtr->SduDataPtr[1] << 8) | (PduInfoPtr->SduDataPtr[0]), &MonitoredValues.InvertersMonitoredValues.RightMotorRpm);
 	WriteCanDataAtAddress(((uint16_t)PduInfoPtr->SduDataPtr[3] << 8) | (PduInfoPtr->SduDataPtr[2]), &MonitoredValues.InvertersMonitoredValues.RightInverterCurrent);
@@ -493,6 +500,9 @@ void Can_Receive_Interrupt_RIGHT_INVERTER_MSG1(PduIdType RxPduId, const PduInfoT
 }
 
 void Can_Receive_Interrupt_LEFT_INVERTER_MSG2(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
+	if((Inverters_GetState() == INVERTERS_ON) ||(Inverters_GetState() == INVERTERS_WAITING_FOR_VOLTAGE)){
+		Inverters_ResetCanTimer();
+	}
 	(void)RxPduId;
 	WriteCanDataAtAddress(PduInfoPtr->SduDataPtr[0], &MonitoredValues.InvertersMonitoredValues.LeftInverterThrottleFeedback);
 	WriteCanDataAtAddress(PduInfoPtr->SduDataPtr[1], &MonitoredValues.InvertersMonitoredValues.LeftInverterTemperature);
@@ -504,6 +514,9 @@ void Can_Receive_Interrupt_LEFT_INVERTER_MSG2(PduIdType RxPduId, const PduInfoTy
 }
 
 void Can_Receive_Interrupt_RIGHT_INVERTER_MSG2(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
+	if((Inverters_GetState() == INVERTERS_ON) ||(Inverters_GetState() == INVERTERS_WAITING_FOR_VOLTAGE)){
+		Inverters_ResetCanTimer();
+	}
 	(void)RxPduId;
 	WriteCanDataAtAddress(PduInfoPtr->SduDataPtr[0], &MonitoredValues.InvertersMonitoredValues.RightInverterThrottleFeedback);
 	WriteCanDataAtAddress(PduInfoPtr->SduDataPtr[1], &MonitoredValues.InvertersMonitoredValues.RightInverterTemperature);

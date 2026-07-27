@@ -22,6 +22,7 @@ extern "C" {
 #include "Mcl.h"
 #include "Adc.h"
 #include "Pwm.h"
+#include "Gpt.h"
 #include "CanMessaging.h"
 #include "UartMessaging.h"
 #include "Messaging.h"
@@ -98,17 +99,17 @@ int main(void)
 	Can_43_FLEXCAN_Init(NULL_PTR);
 	CanIf_Init(NULL_PTR);
 	Pwm_Init(NULL_PTR);
+	Gpt_Init(NULL_PTR);
 
 	Cooling_Init();
 	CanMessaging_Init();
 	UartMessaging_Init();
+
 	Inverters_Init();
 
 	//BrakeLight_Test();
 	//Cooling_Test();
 	//Inverters_Test();
-
-	Inverters_SetThrottle(LEFT_INVERTER, 25);
 	volatile uint64_t i;
 	while(1){
 		/*volatile uint16_t tmp1 = Cooling_ReadTemp(ONE);
@@ -117,10 +118,20 @@ int main(void)
 		volatile uint16_t pres1 = Cooling_ReadPressure(ONE);
 		volatile uint16_t pres2 = Cooling_ReadPressure(TWO);
 		*/
-
 		WriteCanDataAtAddress((uint8_t)((((uint32_t)Inverters_ReadAcceleration(LEFT_INVERTER)) * (uint32_t)250U) / (uint32_t)16383U), &MonitoredValues.InvertersMonitoredValues.LeftInverterThrottle);
 		WriteCanDataAtAddress((uint8_t)((((uint32_t)Inverters_ReadAcceleration(RIGHT_INVERTER)) * (uint32_t)250U) / (uint32_t)16383U), &MonitoredValues.InvertersMonitoredValues.RightInverterThrottle);
 		//Inverters_SetThrottle(LEFT_INVERTER, MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1TravelPercentage.valueCan);
+
+		if(Inverters_GetState() == INVERTERS_ON){
+			i=10000000;
+			while(i--);
+			Inverters_SetThrottle(LEFT_INVERTER, 25);
+		}
+		else{
+			Inverters_SetThrottle(LEFT_INVERTER, 0);
+		}
+
+		Inverters_Update();
 		CanMessaging_Update();
 		i=2000000;
 		while(i--);

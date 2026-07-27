@@ -35,6 +35,13 @@ typedef enum{
 	ACCELERATE,
 	BRAKE
 }Function;
+
+typedef enum{
+	INVERTERS_OFF,
+	INVERTERS_WAITING_FOR_VOLTAGE,
+	INVERTERS_STARTING,
+	INVERTERS_ON
+}Inverters_State;
 /*==================================================================================================
 *                                       LOCAL MACROS
 ==================================================================================================*/
@@ -81,6 +88,11 @@ void Inverters_SetBrake(Inverter inverter, uint8_t percentage);
 void Inverters_SetPower(bool value);
 void Inverters_SetFunction(Function name, Inverter inverter, bool value);
 uint16_t Inverters_ReadAcceleration(Inverter inverter);
+void Inverters_Timer_Timeout(void);
+void Inverters_Update(void);
+Inverters_State Inverters_GetState(void);
+void Inverters_ResetTimer(void);
+void Inverters_ResetCanTimer(void);
 
 void Cooling_Init(void);
 void Cooling_Test(void);
@@ -88,6 +100,8 @@ void Cooling_SetFanSpeed(PartNum num, uint8_t percentage);
 void Cooling_SetPumpSpeed(PartNum num, uint8_t percentage);
 uint16_t Cooling_ReadTemp(PartNum num);
 uint16_t Cooling_ReadPressure(PartNum num);
+
+void CanMessaging_Inverters_Timeout(void);
 
 #ifdef __cplusplus
 }
