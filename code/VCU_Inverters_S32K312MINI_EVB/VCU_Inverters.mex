@@ -4063,7 +4063,9 @@
                                     <setting name="0" value="EXTENDED_CAN"/>
                                  </array>
                                  <setting name="CanIfTxPduId" value="0"/>
-                                 <array name="CanIfTxPduUserTxConfirmationName"/>
+                                 <array name="CanIfTxPduUserTxConfirmationName">
+                                    <setting name="0" value="Can_Transmit_Interrupt_INVERTOR_STANGA"/>
+                                 </array>
                                  <array name="CanIfTxPduUserTxConfirmationUL"/>
                                  <setting name="CanIfTxPduBufferRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfBufferCfg_INVERTOR_STANGA"/>
                               </struct>
@@ -4076,7 +4078,9 @@
                                     <setting name="0" value="EXTENDED_CAN"/>
                                  </array>
                                  <setting name="CanIfTxPduId" value="1"/>
-                                 <array name="CanIfTxPduUserTxConfirmationName"/>
+                                 <array name="CanIfTxPduUserTxConfirmationName">
+                                    <setting name="0" value="Can_Transmit_Interrupt_INVERTOR_DREAPTA"/>
+                                 </array>
                                  <array name="CanIfTxPduUserTxConfirmationUL"/>
                                  <setting name="CanIfTxPduBufferRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfBufferCfg_INVERTOR_DREAPTA"/>
                               </struct>
@@ -4089,7 +4093,9 @@
                                     <setting name="0" value="EXTENDED_CAN"/>
                                  </array>
                                  <setting name="CanIfTxPduId" value="2"/>
-                                 <array name="CanIfTxPduUserTxConfirmationName"/>
+                                 <array name="CanIfTxPduUserTxConfirmationName">
+                                    <setting name="0" value="Can_Transmit_Interrupt_INVERTOARE"/>
+                                 </array>
                                  <array name="CanIfTxPduUserTxConfirmationUL"/>
                                  <setting name="CanIfTxPduBufferRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfBufferCfg_INVERTOARE"/>
                               </struct>
@@ -4102,7 +4108,9 @@
                                     <setting name="0" value="EXTENDED_CAN"/>
                                  </array>
                                  <setting name="CanIfTxPduId" value="3"/>
-                                 <array name="CanIfTxPduUserTxConfirmationName"/>
+                                 <array name="CanIfTxPduUserTxConfirmationName">
+                                    <setting name="0" value="Can_Transmit_Interrupt_BORD"/>
+                                 </array>
                                  <array name="CanIfTxPduUserTxConfirmationUL"/>
                                  <setting name="CanIfTxPduBufferRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfBufferCfg_BORD"/>
                               </struct>
@@ -4115,7 +4123,9 @@
                                     <setting name="0" value="EXTENDED_CAN"/>
                                  </array>
                                  <setting name="CanIfTxPduId" value="4"/>
-                                 <array name="CanIfTxPduUserTxConfirmationName"/>
+                                 <array name="CanIfTxPduUserTxConfirmationName">
+                                    <setting name="0" value="Can_Transmit_Interrupt_ACCELERATIE"/>
+                                 </array>
                                  <array name="CanIfTxPduUserTxConfirmationUL"/>
                                  <setting name="CanIfTxPduBufferRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfBufferCfg_ACCELERATIE"/>
                               </struct>
@@ -4128,7 +4138,9 @@
                                     <setting name="0" value="EXTENDED_CAN"/>
                                  </array>
                                  <setting name="CanIfTxPduId" value="5"/>
-                                 <array name="CanIfTxPduUserTxConfirmationName"/>
+                                 <array name="CanIfTxPduUserTxConfirmationName">
+                                    <setting name="0" value="Can_Transmit_Interrupt_FRANA"/>
+                                 </array>
                                  <array name="CanIfTxPduUserTxConfirmationUL"/>
                                  <setting name="CanIfTxPduBufferRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfBufferCfg_FRANA"/>
                               </struct>
@@ -4141,7 +4153,9 @@
                                     <setting name="0" value="EXTENDED_CAN"/>
                                  </array>
                                  <setting name="CanIfTxPduId" value="6"/>
-                                 <array name="CanIfTxPduUserTxConfirmationName"/>
+                                 <array name="CanIfTxPduUserTxConfirmationName">
+                                    <setting name="0" value="Can_Transmit_Interrupt_BATERIE"/>
+                                 </array>
                                  <array name="CanIfTxPduUserTxConfirmationUL"/>
                                  <setting name="CanIfTxPduBufferRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfBufferCfg_BATERIE"/>
                               </struct>
@@ -4154,7 +4168,9 @@
                                     <setting name="0" value="EXTENDED_CAN"/>
                                  </array>
                                  <setting name="CanIfTxPduId" value="7"/>
-                                 <array name="CanIfTxPduUserTxConfirmationName"/>
+                                 <array name="CanIfTxPduUserTxConfirmationName">
+                                    <setting name="0" value="Can_Transmit_Interrupt_BATERIE_TENSIUNI_CELULE"/>
+                                 </array>
                                  <array name="CanIfTxPduUserTxConfirmationUL"/>
                                  <setting name="CanIfTxPduBufferRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfBufferCfg_BATERIE_TENSIUNI_CELULE"/>
                               </struct>
@@ -4167,7 +4183,9 @@
                                     <setting name="0" value="EXTENDED_CAN"/>
                                  </array>
                                  <setting name="CanIfTxPduId" value="8"/>
-                                 <array name="CanIfTxPduUserTxConfirmationName"/>
+                                 <array name="CanIfTxPduUserTxConfirmationName">
+                                    <setting name="0" value="Can_Transmit_Interrupt_BATERIE_TEMPERATURI_CELULE"/>
+                                 </array>
                                  <array name="CanIfTxPduUserTxConfirmationUL"/>
                                  <setting name="CanIfTxPduBufferRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfBufferCfg_BATERIE_TEMPERATURI_CELULE"/>
                               </struct>
@@ -4180,7 +4198,9 @@
                                     <setting name="0" value="EXTENDED_CAN"/>
                                  </array>
                                  <setting name="CanIfTxPduId" value="9"/>
-                                 <array name="CanIfTxPduUserTxConfirmationName"/>
+                                 <array name="CanIfTxPduUserTxConfirmationName">
+                                    <setting name="0" value="Can_Transmit_Interrupt_BATERIE_2"/>
+                                 </array>
                                  <array name="CanIfTxPduUserTxConfirmationUL"/>
                                  <setting name="CanIfTxPduBufferRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfBufferCfg_BATERIE_2"/>
                               </struct>
@@ -4193,7 +4213,9 @@
                                     <setting name="0" value="EXTENDED_CAN"/>
                                  </array>
                                  <setting name="CanIfTxPduId" value="10"/>
-                                 <array name="CanIfTxPduUserTxConfirmationName"/>
+                                 <array name="CanIfTxPduUserTxConfirmationName">
+                                    <setting name="0" value="Can_Transmit_Interrupt_BATERIE_CHARGER"/>
+                                 </array>
                                  <array name="CanIfTxPduUserTxConfirmationUL"/>
                                  <setting name="CanIfTxPduBufferRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfBufferCfg_BATERIE_CHARGER"/>
                               </struct>
@@ -4206,7 +4228,9 @@
                                     <setting name="0" value="EXTENDED_CAN"/>
                                  </array>
                                  <setting name="CanIfTxPduId" value="11"/>
-                                 <array name="CanIfTxPduUserTxConfirmationName"/>
+                                 <array name="CanIfTxPduUserTxConfirmationName">
+                                    <setting name="0" value="Can_Transmit_Interrupt_COMUNICATII"/>
+                                 </array>
                                  <array name="CanIfTxPduUserTxConfirmationUL"/>
                                  <setting name="CanIfTxPduBufferRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfBufferCfg_COMUNICATII"/>
                               </struct>
@@ -5780,6 +5804,21 @@
                                  <array name="GptChannelEcucPartitionRef"/>
                                  <array name="GptWakeupConfiguration"/>
                               </struct>
+                              <struct name="2">
+                                 <setting name="Name" value="GptChannelConfiguration_2"/>
+                                 <setting name="GptChannelId" value="2"/>
+                                 <setting name="GptHwIp" value="PIT"/>
+                                 <setting name="GptModuleRef" value="/Gpt/Gpt/GptChannelConfigSet/Pit_0/PitChannel_2"/>
+                                 <setting name="GptChannelMode" value="GPT_CH_MODE_CONTINUOUS"/>
+                                 <setting name="GptChannelClkSrcRef" value="/Gpt/Gpt/GptDriverConfiguration/GptClockReferencePoint_0"/>
+                                 <setting name="GptChannelTickValueMax" value="4294967295"/>
+                                 <setting name="GptEnableWakeup" value="false"/>
+                                 <array name="GptNotification">
+                                    <setting name="0" value="Can_Timer_Timeout"/>
+                                 </array>
+                                 <array name="GptChannelEcucPartitionRef"/>
+                                 <array name="GptWakeupConfiguration"/>
+                              </struct>
                            </array>
                            <array name="GptPit">
                               <struct name="0">
@@ -5795,6 +5834,11 @@
                                     <struct name="1">
                                        <setting name="Name" value="PitChannel_1"/>
                                        <setting name="GptPitChannel" value="CH_1"/>
+                                       <setting name="ChainMode" value="false"/>
+                                    </struct>
+                                    <struct name="2">
+                                       <setting name="Name" value="PitChannel_2"/>
+                                       <setting name="GptPitChannel" value="CH_2"/>
                                        <setting name="ChainMode" value="false"/>
                                     </struct>
                                  </array>
@@ -5850,8 +5894,8 @@
                            <struct name="7">
                               <setting name="Name" value="GptHwConfiguration_7"/>
                               <setting name="GptIsrHwId" value="PIT_0_CH_2"/>
-                              <setting name="GptIsrEnable" value="false"/>
-                              <setting name="GptChannelIsUsed" value="false"/>
+                              <setting name="GptIsrEnable" value="true"/>
+                              <setting name="GptChannelIsUsed" value="true"/>
                            </struct>
                            <struct name="8">
                               <setting name="Name" value="GptHwConfiguration_8"/>

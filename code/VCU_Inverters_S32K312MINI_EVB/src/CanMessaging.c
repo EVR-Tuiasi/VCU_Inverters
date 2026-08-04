@@ -22,6 +22,7 @@ extern "C"{
 #include "CDD_Uart.h"
 #include "Dio.h"
 #include "Mcl.h"
+#include "Gpt.h"
 #include "CanMessaging.h"
 #include "Messaging.h"
 #include "Inverters.h"
@@ -57,6 +58,33 @@ extern "C"{
 #define Pyy 42U
 #define Pzz 41U
 
+#define CAN_TIMER_CHANNEL 2U
+#define GPT_1MS_TIMER 30000U
+
+#define CAN_PEDALS_SCHEDULE_PERIOD 1U
+#define CAN_INVERTERS_SCHEDULE_PERIOD 20U
+#define CAN_DASHBOARD_SCHEDULE_PERIOD 200U
+#define CAN_BATTERY_SCHEDULE_PERIOD 20U
+#define CAN_COMMUNICATIONS_SCHEDULE_PERIOD 200U
+
+#define CAN_PEDALS_TIMEOUT_PERIOD 1U
+#define CAN_INVERTERS_TIMEOUT_PERIOD 5U
+#define CAN_DASHBOARD_TIMEOUT_PERIOD 200U
+#define CAN_BATTERY_TIMEOUT_PERIOD 20U
+#define CAN_COMMUNICATIONS_TIMEOUT_PERIOD 200U
+
+#define CAN_PEDALS_RECEIVE_TIMEOUT_PERIOD 1U
+#define CAN_INVERTERS_RECEIVE_TIMEOUT_PERIOD 20U
+#define CAN_DASHBOARD_RECEIVE_TIMEOUT_PERIOD 200U
+#define CAN_BATTERY_RECEIVE_TIMEOUT_PERIOD 20U
+#define CAN_COMMUNICATIONS_RECEIVE_TIMEOUT_PERIOD 200U
+
+#define INVERTERS_VCU STD_ON
+#define PEDALS_VCU STD_OFF
+#define BATTERY_VCU STD_OFF
+#define COMMUNICATIONS_VCU STD_OFF
+#define DASHBOARD_VCU STD_OFF
+
 /*Takes a uint64_t argument and any xMonitoredValue_t type of argument.*/
 #define ReadDataFromAddressAndWriteInRawBufferCan(rawBufferU64, xMonitoredValue_t_Address) \
 		(rawBufferU64) |= ((((uint64_t)((xMonitoredValue_t_Address)->valueCan) & (~(0xFFFFFFFFFFFFFFFFULL << (xMonitoredValue_t_Address)->nrOfBits))) << (xMonitoredValue_t_Address)->shift))
@@ -81,6 +109,57 @@ static uint8_t bufferCan_BATERIE_TEMPERATURI_CELULE[8];
 static uint8_t bufferCan_BATERIE_2[8];
 static uint8_t bufferCan_BATERIE_CHARGER[8];
 static uint8_t bufferCan_COMUNICATII[8];
+
+volatile uint8_t cells_voltage_last_index = 0;
+volatile uint8_t cells_temperature_last_index = 0;
+
+volatile bool inverters_transmission_confirmation[3] = {0, 0, 0};
+volatile bool pedals_transmission_confirmation[2] = {0, 0};
+volatile bool dashboard_transmission_confirmation = 0;
+volatile bool battery_transmission_confirmation[5] = {0, 0, 0, 0, 0};
+volatile bool communications_transmission_confirmation = 0;
+
+volatile bool transmission_schedule = 0;
+volatile bool transmission_timeout = 0;
+volatile bool transmission_data_updated = 0;
+
+volatile bool inverters_transmission_schedule = 0;
+volatile bool pedals_transmission_schedule = 0;
+volatile bool dashboard_transmission_schedule = 0;
+volatile bool battery_transmission_schedule = 0;
+volatile bool communications_transmission_schedule = 0;
+
+volatile bool inverters_transmission_timeout = 0;
+volatile bool pedals_transmission_timeout = 0;
+volatile bool dashboard_transmission_timeout = 0;
+volatile bool battery_transmission_timeout = 0;
+volatile bool communications_transmission_timeout = 0;
+
+volatile bool inverters_receive_timeout = 0;
+volatile bool pedals_receive_timeout = 0;
+volatile bool dashboard_receive_timeout = 0;
+volatile bool battery_receive_timeout = 0;
+volatile bool communications_receive_timeout = 0;
+
+volatile uint8_t inverters_transmission_contor = 0;
+volatile uint8_t pedals_transmission_contor = 0;
+volatile uint8_t dashboard_transmission_contor = 0;
+volatile uint8_t battery_transmission_contor = 0;
+volatile uint8_t communications_transmission_contor = 0;
+
+volatile uint8_t inverters_timeout_contor = 0;
+volatile uint8_t pedals_timeout_contor = 0;
+volatile uint8_t dashboard_timeout_contor = 0;
+volatile uint8_t battery_timeout_contor = 0;
+volatile uint8_t communications_timeout_contor = 0;
+
+volatile uint8_t inverters_receive_timeout_contor = 0;
+volatile uint8_t pedals_receive_timeout_contor = 0;
+volatile uint8_t dashboard_receive_timeout_contor = 0;
+volatile uint8_t battery_receive_timeout_contor = 0;
+volatile uint8_t communications_receive_timeout_contor = 0;
+
+static CAN_STATE currentState = CAN_IDLE;
 
 static Can_PduType pduInfo_INVERTOR_STANGA = {
 		ID_CAN_INVERTOR_STANGA | SEND_MASK,
@@ -195,6 +274,88 @@ static void CanMessaging_CreateCellTemperatureBuffer(uint16_t index, uint8_t *bu
 	buffer[7] = CanMessaging_ReadCellTemperature(index*5+4) & (0x00FF); //PENTRU URMATORUL NEFERICIT, DACA APAR PROBLEME INSEAMNA CA AI MODIFICAT FUNCTIA DE READ VALUE SI AI SCORS SIGURANTA (god have mercy on your soul)
 }
 
+static void CanMessaging_ResetInverters(void){
+	WriteCanDataAtAddress(0, &MonitoredValues.InvertersMonitoredValues.LeftInverterTemperature);
+	WriteCanDataAtAddress(0, &MonitoredValues.InvertersMonitoredValues.LeftMotorTemperature);
+	WriteCanDataAtAddress(0, &MonitoredValues.InvertersMonitoredValues.LeftInverterInputVoltage);
+	WriteCanDataAtAddress(0, &MonitoredValues.InvertersMonitoredValues.LeftInverterCurrent);
+	WriteCanDataAtAddress(0, &MonitoredValues.InvertersMonitoredValues.LeftMotorRpm);
+	WriteCanDataAtAddress(0, &MonitoredValues.InvertersMonitoredValues.LeftMotorSpeedKmh);
+	WriteCanDataAtAddress(0, &MonitoredValues.InvertersMonitoredValues.LeftInverterThrottle);
+	WriteCanDataAtAddress(0, &MonitoredValues.InvertersMonitoredValues.LeftInverterThrottleFeedback);
+	WriteCanDataAtAddress(0, &MonitoredValues.InvertersMonitoredValues.RightInverterTemperature);
+	WriteCanDataAtAddress(0, &MonitoredValues.InvertersMonitoredValues.RightMotorTemperature);
+	WriteCanDataAtAddress(0, &MonitoredValues.InvertersMonitoredValues.RightInverterInputVoltage);
+	WriteCanDataAtAddress(0, &MonitoredValues.InvertersMonitoredValues.RightInverterCurrent);
+	WriteCanDataAtAddress(0, &MonitoredValues.InvertersMonitoredValues.RightMotorRpm);
+	WriteCanDataAtAddress(0, &MonitoredValues.InvertersMonitoredValues.RightMotorSpeedKmh);
+	WriteCanDataAtAddress(0, &MonitoredValues.InvertersMonitoredValues.RightInverterThrottle);
+	WriteCanDataAtAddress(0, &MonitoredValues.InvertersMonitoredValues.RightInverterThrottleFeedback);
+}
+static void CanMessaging_ResetPedals(void){
+	WriteCanDataAtAddress(0, &MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1Voltage);
+	WriteCanDataAtAddress(0, &MonitoredValues.PedalsMonitoredValues.AcceleratorSensor2Voltage);
+	WriteCanDataAtAddress(0, &MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1TravelPercentage);
+	WriteCanDataAtAddress(0, &MonitoredValues.PedalsMonitoredValues.AcceleratorSensor2TravelPercentage);
+	WriteCanDataAtAddress(0, &MonitoredValues.PedalsMonitoredValues.BrakeSensor1Voltage);
+	WriteCanDataAtAddress(0, &MonitoredValues.PedalsMonitoredValues.BrakeSensor2Voltage);
+	WriteCanDataAtAddress(0, &MonitoredValues.PedalsMonitoredValues.BrakeSensor1TravelPercentage);
+	WriteCanDataAtAddress(0, &MonitoredValues.PedalsMonitoredValues.BrakeSensor2TravelPercentage);
+	WriteCanDataAtAddress(0, &MonitoredValues.PedalsMonitoredValues.PressureSensorVoltage);
+	WriteCanDataAtAddress(0, &MonitoredValues.PedalsMonitoredValues.PressureSensorBars);
+	WriteCanDataAtAddress(1, &MonitoredValues.PedalsMonitoredValues.Accel_Sensor1_ShortToGnd);
+	WriteCanDataAtAddress(1, &MonitoredValues.PedalsMonitoredValues.Accel_Sensor1_ShortToVcc);
+	WriteCanDataAtAddress(1, &MonitoredValues.PedalsMonitoredValues.Accel_Sensor1_OutOfRangeOutput);
+	WriteCanDataAtAddress(1, &MonitoredValues.PedalsMonitoredValues.Accel_Sensor2_ShortToGnd);
+	WriteCanDataAtAddress(1, &MonitoredValues.PedalsMonitoredValues.Accel_Sensor2_ShortToVcc);
+	WriteCanDataAtAddress(1, &MonitoredValues.PedalsMonitoredValues.Accel_Sensor2_OutOfRangeOutput);
+	WriteCanDataAtAddress(1, &MonitoredValues.PedalsMonitoredValues.Accel_Implausibility);
+	WriteCanDataAtAddress(1, &MonitoredValues.PedalsMonitoredValues.Brake_Sensor1_ShortToGnd);
+	WriteCanDataAtAddress(1, &MonitoredValues.PedalsMonitoredValues.Brake_Sensor1_ShortToVcc);
+	WriteCanDataAtAddress(1, &MonitoredValues.PedalsMonitoredValues.Brake_Sensor1_OutOfRangeOutput);
+	WriteCanDataAtAddress(1, &MonitoredValues.PedalsMonitoredValues.Brake_Sensor2_ShortToGnd);
+	WriteCanDataAtAddress(1, &MonitoredValues.PedalsMonitoredValues.Brake_Sensor2_ShortToVcc);
+	WriteCanDataAtAddress(1, &MonitoredValues.PedalsMonitoredValues.Brake_Sensor2_OutOfRangeOutput);
+	WriteCanDataAtAddress(1, &MonitoredValues.PedalsMonitoredValues.Brake_Implausibility);
+}
+static void CanMessaging_ResetBattery(void){
+	WriteCanDataAtAddress(0, &MonitoredValues.TsacMonitoredValues.MedianCellTemperature);
+	WriteCanDataAtAddress(0, &MonitoredValues.TsacMonitoredValues.HighestCellTemperature);
+	WriteCanDataAtAddress(0, &MonitoredValues.TsacMonitoredValues.LowestCellTemperature);
+	WriteCanDataAtAddress(0, &MonitoredValues.TsacMonitoredValues.MedianCellVoltage);
+	WriteCanDataAtAddress(0, &MonitoredValues.TsacMonitoredValues.HighestCellVoltage);
+	WriteCanDataAtAddress(0, &MonitoredValues.TsacMonitoredValues.LowestCellVoltage);
+	WriteCanDataAtAddress(0, &MonitoredValues.TsacMonitoredValues.OverallVoltage);
+	WriteCanDataAtAddress(0, &MonitoredValues.TsacMonitoredValues.OverallCurrent);
+
+	WriteCanDataAtAddress(1, &MonitoredValues.TsacMonitoredValues.AmsError);
+	WriteCanDataAtAddress(1, &MonitoredValues.TsacMonitoredValues.TransceiverError);
+	WriteCanDataAtAddress(1, &MonitoredValues.TsacMonitoredValues.ShuntError);
+	WriteCanDataAtAddress(1, &MonitoredValues.TsacMonitoredValues.Bms0Error);
+	WriteCanDataAtAddress(1, &MonitoredValues.TsacMonitoredValues.Bms1Error);
+	WriteCanDataAtAddress(1, &MonitoredValues.TsacMonitoredValues.ThermistorsError);
+
+	for(uint16_t index = 0; index < CELLS_NUM; index++){
+		CanMessaging_SetCellVoltageErrors(1, index);
+		CanMessaging_SetCellVoltage(0, index);
+	}
+
+	for(uint16_t index = 0; index < THERMISTORS_NUM; index++){
+		CanMessaging_SetCellTemperatureErrors(1, index);
+		CanMessaging_SetCellTemperature(0, index);
+	}
+
+}
+static void CanMessaging_ResetDashboard(void){
+	WriteCanDataAtAddress(1, &MonitoredValues.DashboardMonitoredValues.ActivationButtonPressed);
+	WriteCanDataAtAddress(1, &MonitoredValues.DashboardMonitoredValues.CarReverseCommandPressed);
+	WriteCanDataAtAddress(1, &MonitoredValues.DashboardMonitoredValues.IsDisplayWorking);
+	WriteCanDataAtAddress(1, &MonitoredValues.DashboardMonitoredValues.IsSegmentsDriverWorking);
+
+}
+static void CanMessaging_ResetCommunications(void){
+
+}
 
 static void CanMessaging_CreateBuffer(MessageId_t type, uint8_t *buffer){
 	uint64_t buffer_merged = 0;
@@ -317,6 +478,8 @@ static void CanMessaging_CreateBuffer(MessageId_t type, uint8_t *buffer){
 
 void Can_Receive_Interrupt_INVERTOR_STANGA(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
 	uint64_t data_merged;
+	inverters_receive_timeout_contor = 0;
+	inverters_receive_timeout = 0;
 	data_merged = (((uint64_t)PduInfoPtr->SduDataPtr[0]) << 56) + (((uint64_t)PduInfoPtr->SduDataPtr[1]) << 48) + (((uint64_t)PduInfoPtr->SduDataPtr[2]) << 40) + (((uint64_t)PduInfoPtr->SduDataPtr[3]) << 32) + (((uint64_t)PduInfoPtr->SduDataPtr[4]) << 24) + (((uint64_t)PduInfoPtr->SduDataPtr[5]) << 16) + (((uint64_t)PduInfoPtr->SduDataPtr[6]) << 8) + (uint64_t)PduInfoPtr->SduDataPtr[7];
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.InvertersMonitoredValues.LeftMotorTemperature);
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.InvertersMonitoredValues.LeftInverterTemperature);
@@ -330,6 +493,8 @@ void Can_Receive_Interrupt_INVERTOR_STANGA(PduIdType RxPduId, const PduInfoType 
 
 void Can_Receive_Interrupt_INVERTOR_DREAPTA(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
 	uint64_t data_merged;
+	inverters_receive_timeout_contor = 0;
+	inverters_receive_timeout = 0;
 	data_merged = (((uint64_t)PduInfoPtr->SduDataPtr[0]) << 56) + (((uint64_t)PduInfoPtr->SduDataPtr[1]) << 48) + (((uint64_t)PduInfoPtr->SduDataPtr[2]) << 40) + (((uint64_t)PduInfoPtr->SduDataPtr[3]) << 32) + (((uint64_t)PduInfoPtr->SduDataPtr[4]) << 24) + (((uint64_t)PduInfoPtr->SduDataPtr[5]) << 16) + (((uint64_t)PduInfoPtr->SduDataPtr[6]) << 8) + (uint64_t)PduInfoPtr->SduDataPtr[7];
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.InvertersMonitoredValues.RightMotorTemperature);
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.InvertersMonitoredValues.RightInverterTemperature);
@@ -343,6 +508,8 @@ void Can_Receive_Interrupt_INVERTOR_DREAPTA(PduIdType RxPduId, const PduInfoType
 
 void Can_Receive_Interrupt_INVERTOARE(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
 	uint64_t data_merged;
+	inverters_receive_timeout_contor = 0;
+	inverters_receive_timeout = 0;
 	data_merged = (((uint64_t)PduInfoPtr->SduDataPtr[0]) << 56) + (((uint64_t)PduInfoPtr->SduDataPtr[1]) << 48) + (((uint64_t)PduInfoPtr->SduDataPtr[2]) << 40) + (((uint64_t)PduInfoPtr->SduDataPtr[3]) << 32) + (((uint64_t)PduInfoPtr->SduDataPtr[4]) << 24) + (((uint64_t)PduInfoPtr->SduDataPtr[5]) << 16) + (((uint64_t)PduInfoPtr->SduDataPtr[6]) << 8) + (uint64_t)PduInfoPtr->SduDataPtr[7];
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.InvertersMonitoredValues.IsCarRunning);
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.InvertersMonitoredValues.IsCarInReverse);
@@ -353,6 +520,8 @@ void Can_Receive_Interrupt_INVERTOARE(PduIdType RxPduId, const PduInfoType * Pdu
 
 void Can_Receive_Interrupt_BORD(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
 	uint64_t data_merged;
+	dashboard_receive_timeout_contor = 0;
+	dashboard_receive_timeout = 0;
 	data_merged = (((uint64_t)PduInfoPtr->SduDataPtr[0]) << 56) + (((uint64_t)PduInfoPtr->SduDataPtr[1]) << 48) + (((uint64_t)PduInfoPtr->SduDataPtr[2]) << 40) + (((uint64_t)PduInfoPtr->SduDataPtr[3]) << 32) + (((uint64_t)PduInfoPtr->SduDataPtr[4]) << 24) + (((uint64_t)PduInfoPtr->SduDataPtr[5]) << 16) + (((uint64_t)PduInfoPtr->SduDataPtr[6]) << 8) + (uint64_t)PduInfoPtr->SduDataPtr[7];
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.DashboardMonitoredValues.ActivationButtonPressed);
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.DashboardMonitoredValues.CarReverseCommandPressed);
@@ -363,6 +532,8 @@ void Can_Receive_Interrupt_BORD(PduIdType RxPduId, const PduInfoType * PduInfoPt
 
 void Can_Receive_Interrupt_ACCELERATIE(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
 	uint64_t data_merged;
+	pedals_receive_timeout_contor = 0;
+	pedals_receive_timeout = 0;
 	data_merged = (((uint64_t)PduInfoPtr->SduDataPtr[0]) << 56) + (((uint64_t)PduInfoPtr->SduDataPtr[1]) << 48) + (((uint64_t)PduInfoPtr->SduDataPtr[2]) << 40) + (((uint64_t)PduInfoPtr->SduDataPtr[3]) << 32) + (((uint64_t)PduInfoPtr->SduDataPtr[4]) << 24) + (((uint64_t)PduInfoPtr->SduDataPtr[5]) << 16) + (((uint64_t)PduInfoPtr->SduDataPtr[6]) << 8) + (uint64_t)PduInfoPtr->SduDataPtr[7];
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1Voltage);
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.PedalsMonitoredValues.AcceleratorSensor2Voltage);
@@ -376,12 +547,13 @@ void Can_Receive_Interrupt_ACCELERATIE(PduIdType RxPduId, const PduInfoType * Pd
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.PedalsMonitoredValues.Accel_Sensor2_OutOfRangeOutput);
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.PedalsMonitoredValues.Accel_Sensor2_ShortToVcc);
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.PedalsMonitoredValues.Accel_Sensor2_ShortToGnd);
-
 	(void)RxPduId;
 }
 
 void Can_Receive_Interrupt_FRANA(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
 	uint64_t data_merged;
+	pedals_receive_timeout_contor = 0;
+	pedals_receive_timeout = 0;
 	data_merged = (((uint64_t)PduInfoPtr->SduDataPtr[0]) << 56) + (((uint64_t)PduInfoPtr->SduDataPtr[1]) << 48) + (((uint64_t)PduInfoPtr->SduDataPtr[2]) << 40) + (((uint64_t)PduInfoPtr->SduDataPtr[3]) << 32) + (((uint64_t)PduInfoPtr->SduDataPtr[4]) << 24) + (((uint64_t)PduInfoPtr->SduDataPtr[5]) << 16) + (((uint64_t)PduInfoPtr->SduDataPtr[6]) << 8) + (uint64_t)PduInfoPtr->SduDataPtr[7];
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.PedalsMonitoredValues.BrakeSensor1Voltage);
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.PedalsMonitoredValues.BrakeSensor2Voltage);
@@ -400,6 +572,8 @@ void Can_Receive_Interrupt_FRANA(PduIdType RxPduId, const PduInfoType * PduInfoP
 
 void Can_Receive_Interrupt_BATERIE(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
 	uint64_t data_merged;
+	battery_receive_timeout_contor = 0;
+	battery_receive_timeout = 0;
 	data_merged = (((uint64_t)PduInfoPtr->SduDataPtr[0]) << 56) + (((uint64_t)PduInfoPtr->SduDataPtr[1]) << 48) + (((uint64_t)PduInfoPtr->SduDataPtr[2]) << 40) + (((uint64_t)PduInfoPtr->SduDataPtr[3]) << 32) + (((uint64_t)PduInfoPtr->SduDataPtr[4]) << 24) + (((uint64_t)PduInfoPtr->SduDataPtr[5]) << 16) + (((uint64_t)PduInfoPtr->SduDataPtr[6]) << 8) + (uint64_t)PduInfoPtr->SduDataPtr[7];
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.TsacMonitoredValues.OverallCurrent);
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.TsacMonitoredValues.OverallVoltage);
@@ -411,6 +585,8 @@ void Can_Receive_Interrupt_BATERIE(PduIdType RxPduId, const PduInfoType * PduInf
 }
 
 void Can_Receive_Interrupt_BATERIE_TENSIUNI_CELULE(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
+	battery_receive_timeout_contor = 0;
+	battery_receive_timeout = 0;
 	uint8_t index = ((uint8_t)(PduInfoPtr->SduDataPtr[0])) & (0x07);
 	index = index * 5;
 	CanMessaging_SetCellVoltageErrors(((PduInfoPtr->SduDataPtr[0] & (1<<7)) >> 7), index + 0);
@@ -427,6 +603,8 @@ void Can_Receive_Interrupt_BATERIE_TENSIUNI_CELULE(PduIdType RxPduId, const PduI
 }
 
 void Can_Receive_Interrupt_BATERIE_TEMPERATURI_CELULE(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
+	battery_receive_timeout_contor = 0;
+	battery_receive_timeout = 0;
 	uint16_t index = (uint16_t)((PduInfoPtr->SduDataPtr[0] << 2) | (PduInfoPtr->SduDataPtr[1] >> 6)) & (0x001F);
 	index = index * 5;
 	CanMessaging_SetCellTemperatureErrors(((PduInfoPtr->SduDataPtr[0] & (1<<7)) >> 7), index + 0);
@@ -444,6 +622,8 @@ void Can_Receive_Interrupt_BATERIE_TEMPERATURI_CELULE(PduIdType RxPduId, const P
 
 void Can_Receive_Interrupt_BATERIE_2(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
 	uint64_t data_merged;
+	battery_receive_timeout_contor = 0;
+	battery_receive_timeout = 0;
 	data_merged = (((uint64_t)PduInfoPtr->SduDataPtr[0]) << 56) + (((uint64_t)PduInfoPtr->SduDataPtr[1]) << 48) + (((uint64_t)PduInfoPtr->SduDataPtr[2]) << 40) + (((uint64_t)PduInfoPtr->SduDataPtr[3]) << 32) + (((uint64_t)PduInfoPtr->SduDataPtr[4]) << 24) + (((uint64_t)PduInfoPtr->SduDataPtr[5]) << 16) + (((uint64_t)PduInfoPtr->SduDataPtr[6]) << 8) + (uint64_t)PduInfoPtr->SduDataPtr[7];
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.TsacMonitoredValues.MedianCellTemperature);
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.TsacMonitoredValues.MedianCellVoltage);
@@ -460,6 +640,8 @@ void Can_Receive_Interrupt_BATERIE_2(PduIdType RxPduId, const PduInfoType * PduI
 
 void Can_Receive_Interrupt_BATERIE_CHARGER(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
 	uint64_t data_merged;
+	battery_receive_timeout_contor = 0;
+	battery_receive_timeout = 0;
 	data_merged = (((uint64_t)PduInfoPtr->SduDataPtr[0]) << 56) + (((uint64_t)PduInfoPtr->SduDataPtr[1]) << 48) + (((uint64_t)PduInfoPtr->SduDataPtr[2]) << 40) + (((uint64_t)PduInfoPtr->SduDataPtr[3]) << 32) + (((uint64_t)PduInfoPtr->SduDataPtr[4]) << 24) + (((uint64_t)PduInfoPtr->SduDataPtr[5]) << 16) + (((uint64_t)PduInfoPtr->SduDataPtr[6]) << 8) + (uint64_t)PduInfoPtr->SduDataPtr[7];
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.TsacMonitoredValues.ReportedChargingCurrent);
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.TsacMonitoredValues.ReportedChargingVolts);
@@ -469,6 +651,8 @@ void Can_Receive_Interrupt_BATERIE_CHARGER(PduIdType RxPduId, const PduInfoType 
 
 void Can_Receive_Interrupt_COMUNICATII(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
 	uint64_t data_merged;
+	communications_receive_timeout_contor = 0;
+	communications_receive_timeout = 0;
 	data_merged = (((uint64_t)PduInfoPtr->SduDataPtr[0]) << 56) + (((uint64_t)PduInfoPtr->SduDataPtr[1]) << 48) + (((uint64_t)PduInfoPtr->SduDataPtr[2]) << 40) + (((uint64_t)PduInfoPtr->SduDataPtr[3]) << 32) + (((uint64_t)PduInfoPtr->SduDataPtr[4]) << 24) + (((uint64_t)PduInfoPtr->SduDataPtr[5]) << 16) + (((uint64_t)PduInfoPtr->SduDataPtr[6]) << 8) + (uint64_t)PduInfoPtr->SduDataPtr[7];
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.CommunicationsMonitoredValues.IsInvertersVCUSimulated);
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.CommunicationsMonitoredValues.IsTsacVCUSimulated);
@@ -478,7 +662,7 @@ void Can_Receive_Interrupt_COMUNICATII(PduIdType RxPduId, const PduInfoType * Pd
 }
 
 void Can_Receive_Interrupt_LEFT_INVERTER_MSG1(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
-	if((Inverters_GetState() == INVERTERS_ON) ||(Inverters_GetState() == INVERTERS_WAITING_FOR_VOLTAGE)){
+	if((Inverters_GetState() == INVERTERS_ON) || (Inverters_GetState() == INVERTERS_WAITING_FOR_VOLTAGE)){
 		Inverters_ResetCanTimer();
 	}
 	(void)RxPduId;
@@ -489,7 +673,7 @@ void Can_Receive_Interrupt_LEFT_INVERTER_MSG1(PduIdType RxPduId, const PduInfoTy
 }
 
 void Can_Receive_Interrupt_RIGHT_INVERTER_MSG1(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
-	if((Inverters_GetState() == INVERTERS_ON) ||(Inverters_GetState() == INVERTERS_WAITING_FOR_VOLTAGE)){
+	if((Inverters_GetState() == INVERTERS_ON) || (Inverters_GetState() == INVERTERS_WAITING_FOR_VOLTAGE)){
 		Inverters_ResetCanTimer();
 	}
 	(void)RxPduId;
@@ -500,7 +684,7 @@ void Can_Receive_Interrupt_RIGHT_INVERTER_MSG1(PduIdType RxPduId, const PduInfoT
 }
 
 void Can_Receive_Interrupt_LEFT_INVERTER_MSG2(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
-	if((Inverters_GetState() == INVERTERS_ON) ||(Inverters_GetState() == INVERTERS_WAITING_FOR_VOLTAGE)){
+	if((Inverters_GetState() == INVERTERS_ON) || (Inverters_GetState() == INVERTERS_WAITING_FOR_VOLTAGE)){
 		Inverters_ResetCanTimer();
 	}
 	(void)RxPduId;
@@ -514,7 +698,7 @@ void Can_Receive_Interrupt_LEFT_INVERTER_MSG2(PduIdType RxPduId, const PduInfoTy
 }
 
 void Can_Receive_Interrupt_RIGHT_INVERTER_MSG2(PduIdType RxPduId, const PduInfoType * PduInfoPtr){
-	if((Inverters_GetState() == INVERTERS_ON) ||(Inverters_GetState() == INVERTERS_WAITING_FOR_VOLTAGE)){
+	if((Inverters_GetState() == INVERTERS_ON) || (Inverters_GetState() == INVERTERS_WAITING_FOR_VOLTAGE)){
 		Inverters_ResetCanTimer();
 	}
 	(void)RxPduId;
@@ -524,6 +708,280 @@ void Can_Receive_Interrupt_RIGHT_INVERTER_MSG2(PduIdType RxPduId, const PduInfoT
 	volatile uint8_t right_controller_status = PduInfoPtr->SduDataPtr[4];
 	volatile uint8_t right_switch_signals_status = PduInfoPtr->SduDataPtr[5];
 	WriteCanDataAtAddress((uint8_t)(((uint64_t)MonitoredValues.InvertersMonitoredValues.RightMotorRpm.valueCan * (uint64_t)2459403U) / ((uint64_t)100000000U)), &MonitoredValues.InvertersMonitoredValues.RightMotorSpeedKmh);
+}
+
+void Can_Transmit_Interrupt_INVERTOR_STANGA(void){
+	inverters_transmission_confirmation[0] = 1;
+}
+
+void Can_Transmit_Interrupt_INVERTOR_DREAPTA(void){
+	inverters_transmission_confirmation[1] = 1;
+}
+
+void Can_Transmit_Interrupt_INVERTOARE(void){
+	inverters_transmission_confirmation[2] = 1;
+}
+
+void Can_Transmit_Interrupt_BORD(void){
+	dashboard_transmission_confirmation = 1;
+}
+
+void Can_Transmit_Interrupt_ACCELERATIE(void){
+	pedals_transmission_confirmation[0] = 1;
+}
+
+void Can_Transmit_Interrupt_FRANA(void){
+	pedals_transmission_confirmation[1] = 1;
+}
+
+void Can_Transmit_Interrupt_BATERIE(void){
+	battery_transmission_confirmation[0] = 1;
+}
+
+void Can_Transmit_Interrupt_BATERIE_TENSIUNI_CELULE(void){
+	battery_transmission_confirmation[1] = 1;
+}
+
+void Can_Transmit_Interrupt_BATERIE_TEMPERATURI_CELULE(void){
+	battery_transmission_confirmation[2] = 1;
+}
+
+void Can_Transmit_Interrupt_BATERIE_2(void){
+	battery_transmission_confirmation[3] = 1;
+}
+
+void Can_Transmit_Interrupt_BATERIE_CHARGER(void){
+	battery_transmission_confirmation[4] = 1;
+}
+
+void Can_Transmit_Interrupt_COMUNICATII(void){
+	communications_transmission_confirmation = 1;
+}
+
+void Can_Timer_Timeout(void){
+	//general transmission counters increment
+#if INVERTERS_VCU == STD_ON
+	inverters_transmission_contor++;
+	if(inverters_transmission_contor >= CAN_INVERTERS_SCHEDULE_PERIOD){
+		inverters_transmission_contor = 0;
+		inverters_transmission_schedule = 1;
+		transmission_schedule = 1;
+	}
+#endif
+#if INVERTERS_VCU == STD_OFF
+	//receive timeout
+	if(inverters_receive_timeout_contor >= CAN_INVERTERS_RECEIVE_TIMEOUT_PERIOD){
+		inverters_receive_timeout = 1;
+		CanMessaging_ResetInverters();
+	}
+	else{
+		inverters_receive_timeout_contor++;
+	}
+#endif
+#if PEDALS_VCU == STD_ON
+	pedals_transmission_contor++;
+	if(pedals_transmission_contor >= CAN_PEDALS_SCHEDULE_PERIOD){
+		pedals_transmission_contor = 0;
+		pedals_transmission_schedule = 1;
+		transmission_schedule = 1;
+	}
+#endif
+#if PEDALS_VCU == STD_OFF
+	//receive timeout
+	if(pedals_receive_timeout_contor >= CAN_PEDALS_RECEIVE_TIMEOUT_PERIOD){
+		pedals_receive_timeout = 1;
+		CanMessaging_ResetPedals();
+	}
+	else{
+		pedals_receive_timeout_contor++;
+	}
+#endif
+#if DASHBOARD_VCU == STD_ON
+	dashboard_transmission_contor++;
+	if(dashboard_transmission_contor >= CAN_DASHBOARD_SCHEDULE_PERIOD){
+		dashboard_transmission_contor = 0;
+		dashboard_transmission_schedule = 1;
+		transmission_schedule = 1;
+	}
+#endif
+#if DASHBOARD_VCU == STD_OFF
+	//receive timeout
+	if(dashboard_receive_timeout_contor >= CAN_DASHBOARD_RECEIVE_TIMEOUT_PERIOD){
+		dashboard_receive_timeout = 1;
+		CanMessaging_ResetDashboard();
+	}
+	if(dashboard_receive_timeout){
+		dashboard_receive_timeout_contor++;
+	}
+#endif
+#if BATTERY_VCU == STD_ON
+	battery_transmission_contor++;
+	if(battery_transmission_contor >= CAN_BATTERY_SCHEDULE_PERIOD){
+		battery_transmission_contor = 0;
+		battery_transmission_schedule = 1;
+		transmission_schedule = 1;
+	}
+#endif
+#if BATTERY_VCU == STD_OFF
+	//receive timeout
+	if(battery_receive_timeout_contor >= CAN_BATTERY_RECEIVE_TIMEOUT_PERIOD){
+		battery_receive_timeout = 1;
+		CanMessaging_ResetBattery();
+	}
+	else{
+		battery_receive_timeout_contor++;
+	}
+#endif
+#if COMMUNICATIONS_VCU == STD_ON
+	communications_transmission_contor++;
+	if(communications_transmission_contor >= CAN_COMMUNICATIONS_SCHEDULE_PERIOD){
+		communications_transmission_contor = 0;
+		communications_transmission_schedule = 1;
+		transmission_schedule = 1;
+	}
+#endif
+#if COMMUNICATIONS_VCU == STD_OFF
+	//receive timeout
+	if(communications_receive_timeout_contor >= CAN_COMMUNICATIONS_RECEIVE_TIMEOUT_PERIOD){
+		communications_receive_timeout = 1;
+		CanMessaging_ResetCommunications();
+	}
+	else{
+		communications_receive_timeout_contor++;
+	}
+#endif
+	//
+	if(currentState == CAN_TRANSMITTING){
+		//timeout transmission counters increment
+#if INVERTERS_VCU == STD_ON
+		inverters_timeout_contor++;
+		if((inverters_timeout_contor >= CAN_INVERTERS_TIMEOUT_PERIOD) && (!inverters_transmission_confirmation[0] || !inverters_transmission_confirmation[1] || !inverters_transmission_confirmation[2])){
+			inverters_timeout_contor = 0;
+			inverters_transmission_timeout = 1;
+			transmission_timeout = 1;
+		}
+#endif
+#if PEDALS_VCU == STD_ON
+		pedals_timeout_contor++;
+		if((pedals_timeout_contor >= CAN_PEDALS_TIMEOUT_PERIOD) && (!pedals_transmission_confirmation[0] && !pedals_transmission_confirmation[1])){
+			pedals_timeout_contor = 0;
+			pedals_transmission_timeout = 1;
+			transmission_timeout = 1;
+		}
+#endif
+#if DASHBOARD_VCU == STD_ON
+		dashboard_timeout_contor++;
+		if((dashboard_timeout_contor >= CAN_DASHBOARD_TIMEOUT_PERIOD) && (!dashboard_transmission_confirmation)){
+			dashboard_timeout_contor = 0;
+			dashboard_transmission_timeout = 1;
+			transmission_timeout = 1;
+		}
+#endif
+#if BATTERY_VCU == STD_ON
+		battery_timeout_contor++;
+		if((battery_timeout_contor >= CAN_BATTERY_TIMEOUT_PERIOD) && (!battery_transmission_confirmation[0] && !battery_transmission_confirmation[1] && !battery_transmission_confirmation[2] && !battery_transmission_confirmation[3] && !battery_transmission_confirmation[4])){
+			battery_timeout_contor = 0;
+			battery_transmission_timeout = 1;
+			transmission_timeout = 1;
+		}
+#endif
+#if COMMUNICATIONS_VCU == STD_ON
+		communications_timeout_contor++;
+		if((communications_timeout_contor >= CAN_COMMUNICATIONS_TIMEOUT_PERIOD) && (!communications_transmission_confirmation)){
+			communications_timeout_contor = 0;
+			communications_transmission_timeout = 1;
+			transmission_timeout = 1;
+		}
+#endif
+	}
+	else{
+#if INVERTERS_VCU == STD_ON
+	inverters_timeout_contor = 0;
+#endif
+#if PEDALS_VCU == STD_ON
+	pedals_timeout_contor = 0;
+#endif
+#if DASHBOARD_VCU == STD_ON
+	dashboard_timeout_contor = 0;
+#endif
+#if BATTERY_VCU == STD_ON
+	battery_timeout_contor = 0;
+#endif
+#if COMMUNICATIONS_VCU == STD_ON
+	communications_timeout_contor = 0;
+#endif
+	}
+}
+
+static void CanMessaging_SendData(void){
+#if STD_ON == INVERTERS_VCU
+	if(inverters_transmission_schedule){
+		inverters_transmission_schedule = 0;
+
+		CanMessaging_CreateBuffer(ID_CAN_INVERTOR_STANGA, bufferCan_INVERTOR_STANGA);
+		Can_43_FLEXCAN_Write(CAN_HTH_INVERTOR_STANGA, &pduInfo_INVERTOR_STANGA);
+
+		CanMessaging_CreateBuffer(ID_CAN_INVERTOR_DREAPTA, bufferCan_INVERTOR_DREAPTA);
+		Can_43_FLEXCAN_Write(CAN_HTH_INVERTOR_DREAPTA, &pduInfo_INVERTOR_DREAPTA);
+
+		CanMessaging_CreateBuffer(ID_CAN_INVERTOARE, bufferCan_INVERTOARE);
+		Can_43_FLEXCAN_Write(CAN_HTH_INVERTOARE, &pduInfo_INVERTOARE);
+	}
+#endif
+
+#if STD_ON == PEDALS_VCU
+	if(pedals_transmission_schedule){
+		pedals_transmission_schedule = 0;
+
+		CanMessaging_CreateBuffer(ID_CAN_ACCELERATIE, bufferCan_ACCELERATIE);
+		Can_43_FLEXCAN_Write(CAN_HTH_ACCELERATIE, &pduInfo_ACCELERATIE);
+
+		CanMessaging_CreateBuffer(ID_CAN_FRANA, bufferCan_FRANA);
+		Can_43_FLEXCAN_Write(CAN_HTH_FRANA, &pduInfo_FRANA);
+	}
+#endif
+
+#if STD_ON == DASHBOARD_VCU
+	if(dashboard_transmission_schedule){
+		dashboard_transmission_schedule = 0;
+
+		CanMessaging_CreateBuffer(ID_CAN_BORD, bufferCan_BORD);
+		Can_43_FLEXCAN_Write(CAN_HTH_BORD, &pduInfo_BORD);
+	}
+#endif
+
+#if STD_ON == BATTERY_VCU
+	if(battery_transmission_schedule){
+		battery_transmission_schedule = 0;
+
+		CanMessaging_CreateBuffer(ID_CAN_BATERIE, bufferCan_BATERIE);
+		Can_43_FLEXCAN_Write(CAN_HTH_BATERIE, &pduInfo_BATERIE);
+
+		CanMessaging_CreateCellVoltageBuffer(cells_voltage_last_index, bufferCan_BATERIE_TENSIUNI_CELULE);
+		Can_43_FLEXCAN_Write(CAN_HTH_BATERIE_TENSIUNI_CELULE, &pduInfo_BATERIE_TENSIUNI_CELULE);
+
+		CanMessaging_CreateCellTemperatureBuffer(cells_temperature_last_index, bufferCan_BATERIE_TEMPERATURI_CELULE);
+		Can_43_FLEXCAN_Write(CAN_HTH_BATERIE_TEMPERATURI_CELULE, &pduInfo_BATERIE_TEMPERATURI_CELULE);
+
+		CanMessaging_CreateBuffer(ID_CAN_BATERIE_2, bufferCan_BATERIE_2);
+		Can_43_FLEXCAN_Write(CAN_HTH_BATERIE_2, &pduInfo_BATERIE_2);
+
+		CanMessaging_CreateBuffer(ID_CAN_BATERIE_CHARGER, bufferCan_BATERIE_CHARGER);
+		Can_43_FLEXCAN_Write(CAN_HTH_BATERIE_CHARGER, &pduInfo_BATERIE_CHARGER);
+
+		cells_voltage_last_index = (cells_voltage_last_index + 1) % CELLS_LINES;
+		cells_temperature_last_index = (cells_temperature_last_index + 1) % THERMISTORS_LINES;
+	}
+#endif
+
+#if STD_ON == COMMUNICATIONS_VCU
+	if(communications_transmission_schedule){
+		communications_transmission_schedule = 0;
+
+		CanMessaging_CreateBuffer(ID_CAN_COMUNICATII, bufferCan_COMUNICATII);
+		Can_43_FLEXCAN_Write(CAN_HTH_COMUNICATII, &pduInfo_COMUNICATII);
+	}
+#endif
 }
 
 /*==================================================================================================
@@ -548,142 +1006,208 @@ void CanMessaging_Init(void){
 	Can_43_FLEXCAN_EnableControllerInterrupts(CAN_CONTROLLER_ID);
 	Can_43_FLEXCAN_EnableControllerInterrupts(CAN_LEFT_INVERTER_ID);
 	Can_43_FLEXCAN_EnableControllerInterrupts(CAN_RIGHT_INVERTER_ID);
+
+	Gpt_EnableNotification(CAN_TIMER_CHANNEL);
+	Gpt_StartTimer(CAN_TIMER_CHANNEL, GPT_1MS_TIMER);
 }
 
 void CanMessaging_Test(void){
 	uint64_t cnt = 0;
-	volatile uint64_t i;
+	volatile uint64_t i = 0;
 	while(1){
-		WriteCanDataAtAddress(cnt%(MonitoredValues.TsacMonitoredValues.MedianCellTemperature.maxValue+1), &MonitoredValues.TsacMonitoredValues.MedianCellTemperature);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.TsacMonitoredValues.HighestCellTemperature.maxValue+1), &MonitoredValues.TsacMonitoredValues.HighestCellTemperature);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.TsacMonitoredValues.LowestCellTemperature.maxValue+1), &MonitoredValues.TsacMonitoredValues.LowestCellTemperature);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.TsacMonitoredValues.MedianCellVoltage.maxValue+1), &MonitoredValues.TsacMonitoredValues.MedianCellVoltage);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.TsacMonitoredValues.HighestCellVoltage.maxValue+1), &MonitoredValues.TsacMonitoredValues.HighestCellVoltage);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.TsacMonitoredValues.LowestCellVoltage.maxValue+1), &MonitoredValues.TsacMonitoredValues.LowestCellVoltage);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.TsacMonitoredValues.OverallVoltage.maxValue+1), &MonitoredValues.TsacMonitoredValues.OverallVoltage);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.TsacMonitoredValues.OverallCurrent.maxValue+1), &MonitoredValues.TsacMonitoredValues.OverallCurrent);
+		i++;
+		if(i == 50000){
+			WriteCanDataAtAddress(cnt%(MonitoredValues.TsacMonitoredValues.MedianCellTemperature.maxValue+1), &MonitoredValues.TsacMonitoredValues.MedianCellTemperature);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.TsacMonitoredValues.HighestCellTemperature.maxValue+1), &MonitoredValues.TsacMonitoredValues.HighestCellTemperature);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.TsacMonitoredValues.LowestCellTemperature.maxValue+1), &MonitoredValues.TsacMonitoredValues.LowestCellTemperature);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.TsacMonitoredValues.MedianCellVoltage.maxValue+1), &MonitoredValues.TsacMonitoredValues.MedianCellVoltage);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.TsacMonitoredValues.HighestCellVoltage.maxValue+1), &MonitoredValues.TsacMonitoredValues.HighestCellVoltage);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.TsacMonitoredValues.LowestCellVoltage.maxValue+1), &MonitoredValues.TsacMonitoredValues.LowestCellVoltage);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.TsacMonitoredValues.OverallVoltage.maxValue+1), &MonitoredValues.TsacMonitoredValues.OverallVoltage);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.TsacMonitoredValues.OverallCurrent.maxValue+1), &MonitoredValues.TsacMonitoredValues.OverallCurrent);
 
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.TsacMonitoredValues.AmsError);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.TsacMonitoredValues.TransceiverError);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.TsacMonitoredValues.ShuntError);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.TsacMonitoredValues.Bms0Error);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.TsacMonitoredValues.Bms1Error);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.TsacMonitoredValues.ThermistorsError);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.TsacMonitoredValues.ChargerStatus);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.TsacMonitoredValues.ChargerCommand);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.TsacMonitoredValues.AmsError);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.TsacMonitoredValues.TransceiverError);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.TsacMonitoredValues.ShuntError);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.TsacMonitoredValues.Bms0Error);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.TsacMonitoredValues.Bms1Error);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.TsacMonitoredValues.ThermistorsError);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.TsacMonitoredValues.ChargerStatus);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.TsacMonitoredValues.ChargerCommand);
 
-		WriteCanDataAtAddress(cnt%(MonitoredValues.TsacMonitoredValues.ReportedChargingCurrent.maxValue+1), &MonitoredValues.TsacMonitoredValues.ReportedChargingCurrent);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.TsacMonitoredValues.ReportedChargingVolts.maxValue+1), &MonitoredValues.TsacMonitoredValues.ReportedChargingVolts);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.TsacMonitoredValues.DesiredChargingCurrent.maxValue+1), &MonitoredValues.TsacMonitoredValues.DesiredChargingCurrent);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.TsacMonitoredValues.DesiredChargingVoltage.maxValue+1), &MonitoredValues.TsacMonitoredValues.DesiredChargingVoltage);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.TsacMonitoredValues.ReportedChargingCurrent.maxValue+1), &MonitoredValues.TsacMonitoredValues.ReportedChargingCurrent);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.TsacMonitoredValues.ReportedChargingVolts.maxValue+1), &MonitoredValues.TsacMonitoredValues.ReportedChargingVolts);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.TsacMonitoredValues.DesiredChargingCurrent.maxValue+1), &MonitoredValues.TsacMonitoredValues.DesiredChargingCurrent);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.TsacMonitoredValues.DesiredChargingVoltage.maxValue+1), &MonitoredValues.TsacMonitoredValues.DesiredChargingVoltage);
 
-		for(uint16_t index = 0; index < CELLS_NUM; index++){
-			CanMessaging_SetCellVoltageErrors(cnt & 1, index);
-			CanMessaging_SetCellVoltage(cnt%1024, index);
+			for(uint16_t index = 0; index < CELLS_NUM; index++){
+				CanMessaging_SetCellVoltageErrors(cnt & 1, index);
+				CanMessaging_SetCellVoltage(cnt%1024, index);
+			}
+
+			for(uint16_t index = 0; index < THERMISTORS_NUM; index++){
+				CanMessaging_SetCellTemperatureErrors(cnt & 1, index);
+				CanMessaging_SetCellTemperature(cnt%1024, index);
+			}
+
+			WriteCanDataAtAddress(cnt%(MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1Voltage.maxValue+1), &MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1Voltage);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.PedalsMonitoredValues.AcceleratorSensor2Voltage.maxValue+1), &MonitoredValues.PedalsMonitoredValues.AcceleratorSensor2Voltage);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1TravelPercentage.maxValue+1), &MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1TravelPercentage);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.PedalsMonitoredValues.AcceleratorSensor2TravelPercentage.maxValue+1), &MonitoredValues.PedalsMonitoredValues.AcceleratorSensor2TravelPercentage);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.PedalsMonitoredValues.BrakeSensor1Voltage.maxValue+1), &MonitoredValues.PedalsMonitoredValues.BrakeSensor1Voltage);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.PedalsMonitoredValues.BrakeSensor2Voltage.maxValue+1), &MonitoredValues.PedalsMonitoredValues.BrakeSensor2Voltage);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.PedalsMonitoredValues.BrakeSensor1TravelPercentage.maxValue+1), &MonitoredValues.PedalsMonitoredValues.BrakeSensor1TravelPercentage);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.PedalsMonitoredValues.BrakeSensor2TravelPercentage.maxValue+1), &MonitoredValues.PedalsMonitoredValues.BrakeSensor2TravelPercentage);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.PedalsMonitoredValues.PressureSensorVoltage.maxValue+1), &MonitoredValues.PedalsMonitoredValues.PressureSensorVoltage);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.PedalsMonitoredValues.PressureSensorBars.maxValue+1), &MonitoredValues.PedalsMonitoredValues.PressureSensorBars);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Accel_Sensor1_ShortToGnd);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Accel_Sensor1_ShortToVcc);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Accel_Sensor1_OutOfRangeOutput);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Accel_Sensor2_ShortToGnd);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Accel_Sensor2_ShortToVcc);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Accel_Sensor2_OutOfRangeOutput);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Accel_Implausibility);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Brake_Sensor1_ShortToGnd);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Brake_Sensor1_ShortToVcc);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Brake_Sensor1_OutOfRangeOutput);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Brake_Sensor2_ShortToGnd);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Brake_Sensor2_ShortToVcc);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Brake_Sensor2_OutOfRangeOutput);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Brake_Implausibility);
+
+			WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.LeftInverterTemperature.maxValue+1), &MonitoredValues.InvertersMonitoredValues.LeftInverterTemperature);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.LeftMotorTemperature.maxValue+1), &MonitoredValues.InvertersMonitoredValues.LeftMotorTemperature);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.LeftInverterInputVoltage.maxValue+1), &MonitoredValues.InvertersMonitoredValues.LeftInverterInputVoltage);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.LeftInverterCurrent.maxValue+1), &MonitoredValues.InvertersMonitoredValues.LeftInverterCurrent);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.LeftMotorRpm.maxValue+1), &MonitoredValues.InvertersMonitoredValues.LeftMotorRpm);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.LeftMotorSpeedKmh.maxValue+1), &MonitoredValues.InvertersMonitoredValues.LeftMotorSpeedKmh);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.LeftInverterThrottle.maxValue+1), &MonitoredValues.InvertersMonitoredValues.LeftInverterThrottle);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.LeftInverterThrottleFeedback.maxValue+1), &MonitoredValues.InvertersMonitoredValues.LeftInverterThrottleFeedback);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.RightInverterTemperature.maxValue+1), &MonitoredValues.InvertersMonitoredValues.RightInverterTemperature);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.RightMotorTemperature.maxValue+1), &MonitoredValues.InvertersMonitoredValues.RightMotorTemperature);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.RightInverterInputVoltage.maxValue+1), &MonitoredValues.InvertersMonitoredValues.RightInverterInputVoltage);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.RightInverterCurrent.maxValue+1), &MonitoredValues.InvertersMonitoredValues.RightInverterCurrent);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.RightMotorRpm.maxValue+1), &MonitoredValues.InvertersMonitoredValues.RightMotorRpm);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.RightMotorSpeedKmh.maxValue+1), &MonitoredValues.InvertersMonitoredValues.RightMotorSpeedKmh);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.RightInverterThrottle.maxValue+1), &MonitoredValues.InvertersMonitoredValues.RightInverterThrottle);
+			WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.RightInverterThrottleFeedback.maxValue+1), &MonitoredValues.InvertersMonitoredValues.RightInverterThrottleFeedback);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.InvertersMonitoredValues.IsCarInReverse);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.InvertersMonitoredValues.IsCarRunning);
+
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.DashboardMonitoredValues.ActivationButtonPressed);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.DashboardMonitoredValues.CarReverseCommandPressed);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.DashboardMonitoredValues.IsDisplayWorking);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.DashboardMonitoredValues.IsSegmentsDriverWorking);
+
+			cnt++;
+			i = 0;
 		}
-
-		for(uint16_t index = 0; index < THERMISTORS_NUM; index++){
-			CanMessaging_SetCellTemperatureErrors(cnt & 1, index);
-			CanMessaging_SetCellTemperature(cnt%1024, index);
-		}
-
-		WriteCanDataAtAddress(cnt%(MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1Voltage.maxValue+1), &MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1Voltage);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.PedalsMonitoredValues.AcceleratorSensor2Voltage.maxValue+1), &MonitoredValues.PedalsMonitoredValues.AcceleratorSensor2Voltage);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1TravelPercentage.maxValue+1), &MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1TravelPercentage);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.PedalsMonitoredValues.AcceleratorSensor2TravelPercentage.maxValue+1), &MonitoredValues.PedalsMonitoredValues.AcceleratorSensor2TravelPercentage);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.PedalsMonitoredValues.BrakeSensor1Voltage.maxValue+1), &MonitoredValues.PedalsMonitoredValues.BrakeSensor1Voltage);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.PedalsMonitoredValues.BrakeSensor2Voltage.maxValue+1), &MonitoredValues.PedalsMonitoredValues.BrakeSensor2Voltage);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.PedalsMonitoredValues.BrakeSensor1TravelPercentage.maxValue+1), &MonitoredValues.PedalsMonitoredValues.BrakeSensor1TravelPercentage);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.PedalsMonitoredValues.BrakeSensor2TravelPercentage.maxValue+1), &MonitoredValues.PedalsMonitoredValues.BrakeSensor2TravelPercentage);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.PedalsMonitoredValues.PressureSensorVoltage.maxValue+1), &MonitoredValues.PedalsMonitoredValues.PressureSensorVoltage);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.PedalsMonitoredValues.PressureSensorBars.maxValue+1), &MonitoredValues.PedalsMonitoredValues.PressureSensorBars);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Accel_Sensor1_ShortToGnd);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Accel_Sensor1_ShortToVcc);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Accel_Sensor1_OutOfRangeOutput);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Accel_Sensor2_ShortToGnd);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Accel_Sensor2_ShortToVcc);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Accel_Sensor2_OutOfRangeOutput);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Accel_Implausibility);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Brake_Sensor1_ShortToGnd);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Brake_Sensor1_ShortToVcc);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Brake_Sensor1_OutOfRangeOutput);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Brake_Sensor2_ShortToGnd);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Brake_Sensor2_ShortToVcc);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Brake_Sensor2_OutOfRangeOutput);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.PedalsMonitoredValues.Brake_Implausibility);
-
-		WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.LeftInverterTemperature.maxValue+1), &MonitoredValues.InvertersMonitoredValues.LeftInverterTemperature);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.LeftMotorTemperature.maxValue+1), &MonitoredValues.InvertersMonitoredValues.LeftMotorTemperature);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.LeftInverterInputVoltage.maxValue+1), &MonitoredValues.InvertersMonitoredValues.LeftInverterInputVoltage);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.LeftInverterCurrent.maxValue+1), &MonitoredValues.InvertersMonitoredValues.LeftInverterCurrent);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.LeftMotorRpm.maxValue+1), &MonitoredValues.InvertersMonitoredValues.LeftMotorRpm);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.LeftMotorSpeedKmh.maxValue+1), &MonitoredValues.InvertersMonitoredValues.LeftMotorSpeedKmh);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.LeftInverterThrottle.maxValue+1), &MonitoredValues.InvertersMonitoredValues.LeftInverterThrottle);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.LeftInverterThrottleFeedback.maxValue+1), &MonitoredValues.InvertersMonitoredValues.LeftInverterThrottleFeedback);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.RightInverterTemperature.maxValue+1), &MonitoredValues.InvertersMonitoredValues.RightInverterTemperature);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.RightMotorTemperature.maxValue+1), &MonitoredValues.InvertersMonitoredValues.RightMotorTemperature);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.RightInverterInputVoltage.maxValue+1), &MonitoredValues.InvertersMonitoredValues.RightInverterInputVoltage);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.RightInverterCurrent.maxValue+1), &MonitoredValues.InvertersMonitoredValues.RightInverterCurrent);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.RightMotorRpm.maxValue+1), &MonitoredValues.InvertersMonitoredValues.RightMotorRpm);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.RightMotorSpeedKmh.maxValue+1), &MonitoredValues.InvertersMonitoredValues.RightMotorSpeedKmh);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.RightInverterThrottle.maxValue+1), &MonitoredValues.InvertersMonitoredValues.RightInverterThrottle);
-		WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.RightInverterThrottleFeedback.maxValue+1), &MonitoredValues.InvertersMonitoredValues.RightInverterThrottleFeedback);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.InvertersMonitoredValues.IsCarInReverse);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.InvertersMonitoredValues.IsCarRunning);
-
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.DashboardMonitoredValues.ActivationButtonPressed);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.DashboardMonitoredValues.CarReverseCommandPressed);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.DashboardMonitoredValues.IsDisplayWorking);
-		WriteCanDataAtAddress(cnt&1, &MonitoredValues.DashboardMonitoredValues.IsSegmentsDriverWorking);
-
-		cnt++;
 		CanMessaging_Update();
-		i=10000000;
-		while(i--);
 	}
 }
 
 void CanMessaging_Update(void){
-	CanMessaging_CreateBuffer(ID_CAN_INVERTOR_STANGA, bufferCan_INVERTOR_STANGA);
-	Can_43_FLEXCAN_Write(CAN_HTH_INVERTOR_STANGA, &pduInfo_INVERTOR_STANGA);
-	//Can_43_FLEXCAN_AbortMb(CAN_HTH_INVERTOR_STANGA);
-
-	CanMessaging_CreateBuffer(ID_CAN_INVERTOR_DREAPTA, bufferCan_INVERTOR_DREAPTA);
-	Can_43_FLEXCAN_Write(CAN_HTH_INVERTOR_DREAPTA, &pduInfo_INVERTOR_DREAPTA);
-
-	CanMessaging_CreateBuffer(ID_CAN_INVERTOARE, bufferCan_INVERTOARE);
-	Can_43_FLEXCAN_Write(CAN_HTH_INVERTOARE, &pduInfo_INVERTOARE);
-
-	CanMessaging_CreateBuffer(ID_CAN_BORD, bufferCan_BORD);
-	Can_43_FLEXCAN_Write(CAN_HTH_BORD, &pduInfo_BORD);
-
-	CanMessaging_CreateBuffer(ID_CAN_ACCELERATIE, bufferCan_ACCELERATIE);
-	Can_43_FLEXCAN_Write(CAN_HTH_ACCELERATIE, &pduInfo_ACCELERATIE);
-
-	CanMessaging_CreateBuffer(ID_CAN_FRANA, bufferCan_FRANA);
-	Can_43_FLEXCAN_Write(CAN_HTH_FRANA, &pduInfo_FRANA);
-
-	CanMessaging_CreateBuffer(ID_CAN_BATERIE, bufferCan_BATERIE);
-	Can_43_FLEXCAN_Write(CAN_HTH_BATERIE, &pduInfo_BATERIE);
-
-	for(uint16_t index = 0; index < CELLS_LINES; index++){
-		CanMessaging_CreateCellVoltageBuffer(index, bufferCan_BATERIE_TENSIUNI_CELULE);
-		Can_43_FLEXCAN_Write(CAN_HTH_BATERIE_TENSIUNI_CELULE, &pduInfo_BATERIE_TENSIUNI_CELULE);
+	switch(currentState){
+		case CAN_IDLE:
+			if((transmission_schedule == 1) && (transmission_data_updated == 1)){
+				transmission_data_updated = 0;
+				transmission_schedule = 0;
+				CanMessaging_SendData();
+				currentState = CAN_TRANSMITTING;
+			}
+			break;
+		case CAN_TRANSMITTING:
+			if(transmission_timeout == 1){
+				#if STD_ON == INVERTERS_VCU
+					if(inverters_transmission_timeout == 1){
+						inverters_transmission_timeout = 0;
+						inverters_transmission_confirmation[0] = 0;
+						inverters_transmission_confirmation[1] = 0;
+						inverters_transmission_confirmation[2] = 0;
+						Can_43_FLEXCAN_AbortMb(CAN_HTH_INVERTOR_STANGA);
+						Can_43_FLEXCAN_AbortMb(CAN_HTH_INVERTOR_DREAPTA);
+						Can_43_FLEXCAN_AbortMb(CAN_HTH_INVERTOARE);
+					}
+				#endif
+				#if STD_ON == PEDALS_VCU
+					if(pedals_transmission_timeout == 1){
+						pedals_transmission_timeout = 0;
+						pedals_transmission_confirmation[0] = 0;
+						pedals_transmission_confirmation[1] = 0;
+						Can_43_FLEXCAN_AbortMb(CAN_HTH_ACCELERATIE);
+						Can_43_FLEXCAN_AbortMb(CAN_HTH_FRANA);
+					}
+				#endif
+				#if STD_ON == DASHBOARD_VCU
+					if(dashboard_transmission_timeout == 1){
+						dashboard_transmission_timeout = 0;
+						dashboard_transmission_confirmation = 0;
+						Can_43_FLEXCAN_AbortMb(CAN_HTH_BORD);
+					}
+				#endif
+				#if STD_ON == BATTERY_VCU
+					if(battery_transmission_timeout == 1){
+						battery_transmission_timeout = 0;
+						battery_transmission_confirmation[0] = 0;
+						battery_transmission_confirmation[1] = 0;
+						battery_transmission_confirmation[2] = 0;
+						battery_transmission_confirmation[3] = 0;
+						battery_transmission_confirmation[4] = 0;
+						Can_43_FLEXCAN_AbortMb(CAN_HTH_BATERIE);
+						Can_43_FLEXCAN_AbortMb(CAN_HTH_BATERIE_TENSIUNI_CELULE);
+						Can_43_FLEXCAN_AbortMb(CAN_HTH_BATERIE_TEMPERATURI_CELULE);
+						Can_43_FLEXCAN_AbortMb(CAN_HTH_BATERIE_2);
+						Can_43_FLEXCAN_AbortMb(CAN_HTH_BATERIE_CHARGER);
+					}
+				#endif
+				#if STD_ON == COMMUNICATIONS_VCU
+					if(communications_transmission_timeout == 1){
+						communications_transmission_timeout = 0;
+						Can_43_FLEXCAN_AbortMb(CAN_HTH_COMUNICATII);
+					}
+				#endif
+				transmission_timeout = 0;
+				currentState = CAN_IDLE;
+			}
+			else{
+				#if STD_ON == INVERTERS_VCU
+				if(inverters_transmission_confirmation[0] && inverters_transmission_confirmation[1] && inverters_transmission_confirmation[2])
+				#endif
+				#if STD_ON == PEDALS_VCU
+				if(pedals_transmission_confirmation[0] && pedals_transmission_confirmation[1])
+				#endif
+				#if STD_ON == DASHBOARD_VCU
+				if(dashboard_transmission_confirmation)
+				#endif
+				#if STD_ON == BATTERY_VCU
+				if(battery_transmission_confirmation[0] && battery_transmission_confirmation[1] && battery_transmission_confirmation[2] && battery_transmission_confirmation[3] && battery_transmission_confirmation[4])
+				#endif
+				#if STD_ON == COMMUNICATIONS_VCU
+				if(communications_transmission_confirmation)
+				#endif
+				{
+					inverters_timeout_contor = 0;
+					pedals_timeout_contor = 0;
+					battery_timeout_contor = 0;
+					dashboard_timeout_contor = 0;
+					communications_timeout_contor = 0;
+					inverters_transmission_confirmation[0] = 0;
+					inverters_transmission_confirmation[1] = 0;
+					inverters_transmission_confirmation[2] = 0;
+					pedals_transmission_confirmation[0] = 0;
+					pedals_transmission_confirmation[1] = 0;
+					battery_transmission_confirmation[0] = 0;
+					battery_transmission_confirmation[1] = 0;
+					battery_transmission_confirmation[2] = 0;
+					battery_transmission_confirmation[3] = 0;
+					battery_transmission_confirmation[4] = 0;
+					dashboard_transmission_confirmation = 0;
+					communications_transmission_confirmation = 0;
+					currentState = CAN_IDLE;
+				}
+			}
+			break;
 	}
-
-	for(uint16_t index = 0; index < THERMISTORS_LINES; index++){
-		CanMessaging_CreateCellTemperatureBuffer(index, bufferCan_BATERIE_TEMPERATURI_CELULE);
-		Can_43_FLEXCAN_Write(CAN_HTH_BATERIE_TEMPERATURI_CELULE, &pduInfo_BATERIE_TEMPERATURI_CELULE);
-	}
-
-	CanMessaging_CreateBuffer(ID_CAN_BATERIE_2, bufferCan_BATERIE_2);
-	Can_43_FLEXCAN_Write(CAN_HTH_BATERIE_2, &pduInfo_BATERIE_2);
-
-	CanMessaging_CreateBuffer(ID_CAN_BATERIE_CHARGER, bufferCan_BATERIE_CHARGER);
-	Can_43_FLEXCAN_Write(CAN_HTH_BATERIE_CHARGER, &pduInfo_BATERIE_CHARGER);
-
-	CanMessaging_CreateBuffer(ID_CAN_COMUNICATII, bufferCan_COMUNICATII);
-	Can_43_FLEXCAN_Write(CAN_HTH_COMUNICATII, &pduInfo_COMUNICATII);
 }
 
 uint16_t CanMessaging_ReadCellVoltage(uint16_t index){

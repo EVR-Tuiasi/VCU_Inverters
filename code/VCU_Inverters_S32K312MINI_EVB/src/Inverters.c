@@ -62,6 +62,8 @@ extern "C"{
 #define GPT_200MS_TIMER 6000000U
 #define TRESHOLD_LOW_VOLTAGE 800U
 #define TRESHOLD_HIGH_VOLTAGE 900U
+#define GPT_INVERTER_STATE_TIMER_CHANNEL 0U
+#define GPT_INVERTER_CAN_TIMER_CHANNEL 1U
 /*==================================================================================================
 *                                      LOCAL CONSTANTS
 ==================================================================================================*/
@@ -145,10 +147,10 @@ void Inverters_Init(void){
 	Inverters_SetFunction(ACCELERATE, RIGHT_INVERTER, 0);
 	Inverters_SetFunction(BRAKE, LEFT_INVERTER, 0);
 	Inverters_SetFunction(BRAKE, RIGHT_INVERTER, 0);
-	Gpt_EnableNotification(0);
-	Gpt_EnableNotification(1);
-	Gpt_StartTimer(0, GPT_200MS_TIMER);
-	Gpt_StartTimer(1, GPT_200MS_TIMER);
+	Gpt_EnableNotification(GPT_INVERTER_STATE_TIMER_CHANNEL);
+	Gpt_EnableNotification(GPT_INVERTER_CAN_TIMER_CHANNEL);
+	Gpt_StartTimer(GPT_INVERTER_STATE_TIMER_CHANNEL, GPT_200MS_TIMER);
+	Gpt_StartTimer(GPT_INVERTER_CAN_TIMER_CHANNEL, GPT_200MS_TIMER);
 }
 void Inverters_SetThrottle(Inverter inverter, uint8_t percentage){
 	if(percentage > 100U){
@@ -408,14 +410,14 @@ Inverters_State Inverters_GetState(void){
 
 void Inverters_ResetTimer(void){
 	inverters_state_timer_timeout = 0;
-	Gpt_StopTimer(0);
-	Gpt_StartTimer(0, GPT_200MS_TIMER);
+	Gpt_StopTimer(GPT_INVERTER_STATE_TIMER_CHANNEL);
+	Gpt_StartTimer(GPT_INVERTER_STATE_TIMER_CHANNEL, GPT_200MS_TIMER);
 }
 
 void Inverters_ResetCanTimer(void){
 	inverters_can_timer_timeout = 0;
-	Gpt_StopTimer(1);
-	Gpt_StartTimer(1, GPT_200MS_TIMER);
+	Gpt_StopTimer(GPT_INVERTER_CAN_TIMER_CHANNEL);
+	Gpt_StartTimer(GPT_INVERTER_CAN_TIMER_CHANNEL, GPT_200MS_TIMER);
 }
 
 void Inverters_Timer_Timeout(void){
