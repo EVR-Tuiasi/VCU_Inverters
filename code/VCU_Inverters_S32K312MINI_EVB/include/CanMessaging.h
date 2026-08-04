@@ -95,7 +95,7 @@ void Can_Timer_Timeout(void);
 *                                       GLOBAL FUNCTIONS
 ==================================================================================================*/
 #define ReadCanDataFromAddress(xMonitoredValue_t_Address) (xMonitoredValue_t_Address)->valueCan
-#define WriteCanDataAtAddress(data, xMonitoredValue_t_Address) (xMonitoredValue_t_Address)->valueCan = ((data) <= (xMonitoredValue_t_Address)->maxValue) ? (data) : ((xMonitoredValue_t_Address)->maxValue)
+#define WriteCanDataAtAddress(data, xMonitoredValue_t_Address) ((xMonitoredValue_t_Address)->valueCan = ((data) <= (xMonitoredValue_t_Address)->maxValue) ? (data) : ((xMonitoredValue_t_Address)->maxValue), transmission_data_updated = 1)
 
 void CanMessaging_Init(void);
 void CanMessaging_Test(void);

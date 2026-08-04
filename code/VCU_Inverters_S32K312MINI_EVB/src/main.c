@@ -110,6 +110,7 @@ int main(void)
 	//BrakeLight_Test();
 	//Cooling_Test();
 	//Inverters_Test();
+	CanMessaging_Test();
 	volatile uint64_t i;
 	while(1){
 		/*volatile uint16_t tmp1 = Cooling_ReadTemp(ONE);

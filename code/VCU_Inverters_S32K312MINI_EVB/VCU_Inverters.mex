@@ -2233,6 +2233,10 @@
                                        <setting name="Name" value="LpUart"/>
                                        <setting name="McuClockFrequencySelect" value="AIPS_SLOW_CLK"/>
                                     </struct>
+                                    <struct name="3">
+                                       <setting name="Name" value="pit0"/>
+                                       <setting name="McuClockFrequencySelect" value="AIPS_SLOW_CLK"/>
+                                    </struct>
                                  </array>
                               </struct>
                            </array>
@@ -3264,13 +3268,13 @@
                                        <setting name="Name" value="CanControllerBaudrateConfig_0"/>
                                        <setting name="CanBaudrateTypeSuport" value="NORMAL_CBT"/>
                                        <setting name="CanAdvancedSetting" value="true"/>
-                                       <setting name="CanBusLength" value="40"/>
+                                       <setting name="CanBusLength" value="10"/>
                                        <setting name="CanPropDelayTranceiver" value="150"/>
                                        <setting name="CanTxArbitrationStartDelay" value="12"/>
-                                       <setting name="CanControllerPrescaller" value="12"/>
+                                       <setting name="CanControllerPrescaller" value="3"/>
                                        <setting name="CanControllerPrescallerAlternate" value="10"/>
                                        <setting name="CanControllerBaudRateConfigID" value="0"/>
-                                       <setting name="CanControllerBaudRate" value="250"/>
+                                       <setting name="CanControllerBaudRate" value="1000"/>
                                        <setting name="CanControllerSyncSeg" value="1"/>
                                        <setting name="CanControllerPropSeg" value="5"/>
                                        <setting name="CanControllerSeg1" value="5"/>
@@ -6075,7 +6079,7 @@
                            <array name="GptClockReferencePoint">
                               <struct name="0">
                                  <setting name="Name" value="GptClockReferencePoint_0"/>
-                                 <setting name="GptClockReference" value="/Mcu/Mcu/McuModuleConfiguration/McuClockSettingConfig_0/McuClockReferencePoint_0"/>
+                                 <setting name="GptClockReference" value="/Mcu/Mcu/McuModuleConfiguration/McuClockSettingConfig_0/pit0"/>
                               </struct>
                            </array>
                         </struct>
