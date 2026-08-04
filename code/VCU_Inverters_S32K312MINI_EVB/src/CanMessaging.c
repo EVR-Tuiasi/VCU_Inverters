@@ -61,7 +61,7 @@ extern "C"{
 #define CAN_TIMER_CHANNEL 2U
 #define GPT_1MS_TIMER 30000U
 
-#define CAN_PEDALS_SCHEDULE_PERIOD 1U
+#define CAN_PEDALS_SCHEDULE_PERIOD 2U
 #define CAN_INVERTERS_SCHEDULE_PERIOD 20U
 #define CAN_DASHBOARD_SCHEDULE_PERIOD 200U
 #define CAN_BATTERY_SCHEDULE_PERIOD 20U
@@ -69,15 +69,15 @@ extern "C"{
 
 #define CAN_PEDALS_TIMEOUT_PERIOD 1U
 #define CAN_INVERTERS_TIMEOUT_PERIOD 5U
-#define CAN_DASHBOARD_TIMEOUT_PERIOD 200U
-#define CAN_BATTERY_TIMEOUT_PERIOD 20U
-#define CAN_COMMUNICATIONS_TIMEOUT_PERIOD 200U
+#define CAN_DASHBOARD_TIMEOUT_PERIOD 5U
+#define CAN_BATTERY_TIMEOUT_PERIOD 5U
+#define CAN_COMMUNICATIONS_TIMEOUT_PERIOD 5U
 
-#define CAN_PEDALS_RECEIVE_TIMEOUT_PERIOD 1U
-#define CAN_INVERTERS_RECEIVE_TIMEOUT_PERIOD 20U
-#define CAN_DASHBOARD_RECEIVE_TIMEOUT_PERIOD 200U
-#define CAN_BATTERY_RECEIVE_TIMEOUT_PERIOD 20U
-#define CAN_COMMUNICATIONS_RECEIVE_TIMEOUT_PERIOD 200U
+#define CAN_PEDALS_RECEIVE_TIMEOUT_PERIOD 20U
+#define CAN_INVERTERS_RECEIVE_TIMEOUT_PERIOD 200U
+#define CAN_DASHBOARD_RECEIVE_TIMEOUT_PERIOD 1000U
+#define CAN_BATTERY_RECEIVE_TIMEOUT_PERIOD 200U
+#define CAN_COMMUNICATIONS_RECEIVE_TIMEOUT_PERIOD 1000U
 
 #define INVERTERS_VCU STD_ON
 #define PEDALS_VCU STD_OFF
@@ -141,23 +141,23 @@ volatile bool dashboard_receive_timeout = 0;
 volatile bool battery_receive_timeout = 0;
 volatile bool communications_receive_timeout = 0;
 
-volatile uint8_t inverters_transmission_contor = 0;
-volatile uint8_t pedals_transmission_contor = 0;
-volatile uint8_t dashboard_transmission_contor = 0;
-volatile uint8_t battery_transmission_contor = 0;
-volatile uint8_t communications_transmission_contor = 0;
+volatile uint32_t inverters_transmission_contor = 0;
+volatile uint32_t pedals_transmission_contor = 0;
+volatile uint32_t dashboard_transmission_contor = 0;
+volatile uint32_t battery_transmission_contor = 0;
+volatile uint32_t communications_transmission_contor = 0;
 
-volatile uint8_t inverters_timeout_contor = 0;
-volatile uint8_t pedals_timeout_contor = 0;
-volatile uint8_t dashboard_timeout_contor = 0;
-volatile uint8_t battery_timeout_contor = 0;
-volatile uint8_t communications_timeout_contor = 0;
+volatile uint32_t inverters_timeout_contor = 0;
+volatile uint32_t pedals_timeout_contor = 0;
+volatile uint32_t dashboard_timeout_contor = 0;
+volatile uint32_t battery_timeout_contor = 0;
+volatile uint32_t communications_timeout_contor = 0;
 
-volatile uint8_t inverters_receive_timeout_contor = 0;
-volatile uint8_t pedals_receive_timeout_contor = 0;
-volatile uint8_t dashboard_receive_timeout_contor = 0;
-volatile uint8_t battery_receive_timeout_contor = 0;
-volatile uint8_t communications_receive_timeout_contor = 0;
+volatile uint32_t inverters_receive_timeout_contor = 0;
+volatile uint32_t pedals_receive_timeout_contor = 0;
+volatile uint32_t dashboard_receive_timeout_contor = 0;
+volatile uint32_t battery_receive_timeout_contor = 0;
+volatile uint32_t communications_receive_timeout_contor = 0;
 
 static CAN_STATE currentState = CAN_IDLE;
 

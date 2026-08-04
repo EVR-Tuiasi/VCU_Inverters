@@ -1,7 +1,7 @@
 eclipse.preferences.version=1
 environment/project/com.nxp.s32ds.cle.arm.mbs.arm32.bare.gnu.10.2.exe.debug.815680533/PATH/delimiter=;
-environment/project/com.nxp.s32ds.cle.arm.mbs.arm32.bare.gnu.10.2.exe.debug.815680533/PATH/operation=prepend
-environment/project/com.nxp.s32ds.cle.arm.mbs.arm32.bare.gnu.10.2.exe.debug.815680533/PATH/value=
+environment/project/com.nxp.s32ds.cle.arm.mbs.arm32.bare.gnu.10.2.exe.debug.815680533/PATH/operation=replace
+environment/project/com.nxp.s32ds.cle.arm.mbs.arm32.bare.gnu.10.2.exe.debug.815680533/PATH/value=C\:\\NXP\\S32DS.3.6.7\\S32DS\\build_tools\\gcc_v11.4\\gcc-11.4-arm32-eabi\\bin;C\:\\NXP\\S32DS.3.6.6\\S32DS\\build_tools\\msys32\\usr\\bin;C\:/NXP/S32DS.3.6.6/eclipse//jre/bin/server;C\:/NXP/S32DS.3.6.6/eclipse//jre/bin;C\:\\WINDOWS\\system32;C\:\\WINDOWS;C\:\\WINDOWS\\System32\\Wbem;C\:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C\:\\WINDOWS\\System32\\OpenSSH\\;C\:\\Users\\viorel\\AppData\\Local\\Microsoft\\WindowsApps;C\:\\Users\\viorel\\AppData\\Local\\GitHubDesktop\\bin;C\:\\NXP\\S32DS.3.6.6\\eclipse;C\:\\NXP\\S32DS.3.6.6\\S32DS\\build_tools\\gcc_v11.4\\gcc-11.4-arm32-eabi\\bin;C\:\\NXP\\S32DS.3.6.7\\S32DS\\build_tools\\msys32\\usr\\bin\\
 environment/project/com.nxp.s32ds.cle.arm.mbs.arm32.bare.gnu.10.2.exe.debug.815680533/append=true
 environment/project/com.nxp.s32ds.cle.arm.mbs.arm32.bare.gnu.10.2.exe.debug.815680533/appendContributed=true
 environment/project/com.nxp.s32ds.cle.arm.mbs.arm32.bare.gnu.10.2.exe.debug.ram.1641842274/PATH/delimiter=;
