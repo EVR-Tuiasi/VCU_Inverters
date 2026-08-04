@@ -569,11 +569,6 @@
                   <data type="Version">1.0.0</data>
                </feature>
             </dependency>
-            <dependency resourceType="Tool" resourceId="Clocks" description="The Clocks tool is required by the Peripherals tool, but it is disabled." problem_level="2" source="Peripherals">
-               <feature name="enabled" evaluation="equal">
-                  <data>true</data>
-               </feature>
-            </dependency>
          </dependencies>
          <generated_project_files>
             <file path="board/Siul2_Port_Ip_Cfg.c" update_enabled="true"/>
@@ -3503,7 +3498,7 @@
                                  <array name="CanHwFilter">
                                     <struct name="0">
                                        <setting name="Name" value="Can_aHwFilter_Object_0"/>
-                                       <setting name="CanHwFilterCode" value="0x330"/>
+                                       <setting name="CanHwFilterCode" value="0x100"/>
                                        <setting name="CanHwFilterMask" value="0x1FFFFFFF"/>
                                        <setting name="CanHwFilterIDE" value="false"/>
                                     </struct>
@@ -3528,7 +3523,7 @@
                                  <array name="CanHwFilter">
                                     <struct name="0">
                                        <setting name="Name" value="Can_aHwFilter_Object_0"/>
-                                       <setting name="CanHwFilterCode" value="0x331"/>
+                                       <setting name="CanHwFilterCode" value="0x101"/>
                                        <setting name="CanHwFilterMask" value="0x1FFFFFFF"/>
                                        <setting name="CanHwFilterIDE" value="false"/>
                                     </struct>
@@ -4126,7 +4121,7 @@
                               <struct name="4">
                                  <setting name="Name" value="CanIfTxPduCfg_ACCELERATIE"/>
                                  <array name="CanIfTxPduCanId">
-                                    <setting name="0" value="0x330"/>
+                                    <setting name="0" value="0x100"/>
                                  </array>
                                  <array name="CanIfTxPduCanIdType">
                                     <setting name="0" value="EXTENDED_CAN"/>
@@ -4141,7 +4136,7 @@
                               <struct name="5">
                                  <setting name="Name" value="CanIfTxPduCfg_FRANA"/>
                                  <array name="CanIfTxPduCanId">
-                                    <setting name="0" value="0x331"/>
+                                    <setting name="0" value="0x101"/>
                                  </array>
                                  <array name="CanIfTxPduCanIdType">
                                     <setting name="0" value="EXTENDED_CAN"/>
