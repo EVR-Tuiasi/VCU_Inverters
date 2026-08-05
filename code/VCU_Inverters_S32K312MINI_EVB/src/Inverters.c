@@ -81,7 +81,7 @@ static Adc_ValueGroupType accRight;
 
 volatile bool inverters_state_timer_timeout = 0;
 volatile bool inverters_can_timer_timeout = 0;
-static Inverters_State currentState = INVERTERS_OFF;
+static InvertersState_t currentState = INVERTERS_OFF;
 volatile bool init_flag = 1;
 
 /*==================================================================================================
@@ -149,7 +149,7 @@ void Inverters_Init(void){
 	Gpt_StartTimer(GPT_INVERTER_STATE_TIMER_CHANNEL, GPT_200MS_TIMER);
 	Gpt_StartTimer(GPT_INVERTER_CAN_TIMER_CHANNEL, GPT_200MS_TIMER);
 }
-void Inverters_SetThrottle(Inverter inverter, uint8_t percentage){
+void Inverters_SetThrottle(Inverter_t inverter, uint8_t percentage){
 	if(percentage > 100U){
 		percentage = 100U;
 	}
@@ -169,7 +169,7 @@ void Inverters_SetThrottle(Inverter inverter, uint8_t percentage){
 		Pwm_SetDutyCycle(THROTTLE2_CHANNEL, 0);
 	}
 }
-void Inverters_SetBrake(Inverter inverter, uint8_t percentage){
+void Inverters_SetBrake(Inverter_t inverter, uint8_t percentage){
 	if(percentage > 100U){
 			percentage = 100U;
 	}
@@ -183,7 +183,7 @@ void Inverters_SetBrake(Inverter inverter, uint8_t percentage){
 			break;
 	}
 }
-void Cooling_SetFanSpeed(PartNum num, uint8_t percentage){
+void Cooling_SetFanSpeed(PartNum_t num, uint8_t percentage){
 	if(percentage > 100U){
 		percentage = 100U;
 	}
@@ -197,7 +197,7 @@ void Cooling_SetFanSpeed(PartNum num, uint8_t percentage){
 			break;
 	}
 }
-void Cooling_SetPumpSpeed(PartNum num, uint8_t percentage){
+void Cooling_SetPumpSpeed(PartNum_t num, uint8_t percentage){
 	if(percentage > 100U){
 		percentage = 100U;
 	}
@@ -220,7 +220,7 @@ void Inverters_SetPower(bool value){
 	}
 }
 
-void Inverters_SetFunction(Function name, Inverter inverter, bool value){
+void Inverters_SetFunction(Function_t name, Inverter_t inverter, bool value){
 	Dio_LevelType pinValue = STD_HIGH;
 	if(value == STD_ON){
 		pinValue = STD_LOW;
@@ -268,7 +268,7 @@ void Cooling_Init(){
 	Pwm_SetDutyCycle(PUMP1_CHANNEL, 0U);
 	Pwm_SetDutyCycle(PUMP2_CHANNEL, 0U);
 }
-uint16_t Cooling_ReadTemp(PartNum num){
+uint16_t Cooling_ReadTemp(PartNum_t num){
 	if(num == ONE){
 		Adc_StartGroupConversion(ADC_TEMP_1);
 		while(Adc_GetGroupStatus(ADC_TEMP_1) == ADC_BUSY);
@@ -282,7 +282,7 @@ uint16_t Cooling_ReadTemp(PartNum num){
 		return temp2;
 	}
 }
-uint16_t Cooling_ReadPressure(PartNum num){
+uint16_t Cooling_ReadPressure(PartNum_t num){
 	if(num == ONE){
 		Adc_StartGroupConversion(ADC_PRESSURE_1);
 		while(Adc_GetGroupStatus(ADC_PRESSURE_1) == ADC_BUSY);
@@ -296,7 +296,7 @@ uint16_t Cooling_ReadPressure(PartNum num){
 		return pres2;
 	}
 }
-uint16_t Inverters_ReadAcceleration(Inverter inverter){
+uint16_t Inverters_ReadAcceleration(Inverter_t inverter){
 	if(inverter == LEFT_INVERTER){
 		Adc_StartGroupConversion(ADC_ACCELERATION_LEFT);
 		while(Adc_GetGroupStatus(ADC_ACCELERATION_LEFT) == ADC_BUSY);
@@ -401,7 +401,7 @@ void Inverters_Update(void){
 	}
 }
 
-Inverters_State Inverters_GetState(void){
+InvertersState_t Inverters_GetState(void){
 	return currentState;
 }
 
@@ -445,10 +445,10 @@ void Inverters_Shutdown(void){
 	Inverters_SetFunction(BRAKE, RIGHT_INVERTER, 0);
 }
 
-void Inverters_SetDirection(InvertersDirection direction){
+void Inverters_SetDirection(InvertersDirection_t direction){
 	Dio_WriteChannel(DAC_WAKE_UP_PIN, STD_HIGH);
 
-	if(direction == REVERSE){
+	if(direction == INVERTERS_DIRECTION_REVERSE){
 		Inverters_Reverse();
 	}
 	else{

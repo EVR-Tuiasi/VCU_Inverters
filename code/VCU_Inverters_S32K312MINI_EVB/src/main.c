@@ -185,41 +185,27 @@ int main(void)
 		WriteCanDataAtAddress((uint8_t)((((uint32_t)Inverters_ReadAcceleration(LEFT_INVERTER)) * (uint32_t)250U) / (uint32_t)16383U), &MonitoredValues.InvertersMonitoredValues.LeftInverterThrottle);
 		WriteCanDataAtAddress((uint8_t)((((uint32_t)Inverters_ReadAcceleration(RIGHT_INVERTER)) * (uint32_t)250U) / (uint32_t)16383U), &MonitoredValues.InvertersMonitoredValues.RightInverterThrottle);
 
+		acc_sensor_1_travel_percentage = MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1TravelPercentage.valueCan;
+		acc_sensor_2_travel_percentage = MonitoredValues.PedalsMonitoredValues.AcceleratorSensor2TravelPercentage.valueCan;
+		brake_sensor_1_travel_percentage = MonitoredValues.PedalsMonitoredValues.BrakeSensor1TravelPercentage.valueCan;
+		brake_sensor_2_travel_percentage = MonitoredValues.PedalsMonitoredValues.BrakeSensor1TravelPercentage.valueCan;
+
+		if((brake_sensor_1_travel_percentage >= BRAKE_PERCENTAGE_THRESHOLD) || (brake_sensor_2_travel_percentage >= BRAKE_PERCENTAGE_THRESHOLD)){
+			travel_percentage = 0U;
+		}
+		else{
+			travel_percentage = acc_sensor_1_travel_percentage;
+			if(travel_percentage > acc_sensor_2_travel_percentage){
+				travel_percentage = acc_sensor_2_travel_percentage;
+			}
+		}
+
 		if(currentState == INVERTERS_FORWARD){
-			acc_sensor_1_travel_percentage = MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1TravelPercentage.valueCan;
-			acc_sensor_2_travel_percentage = MonitoredValues.PedalsMonitoredValues.AcceleratorSensor2TravelPercentage.valueCan;
-			brake_sensor_1_travel_percentage = MonitoredValues.PedalsMonitoredValues.BrakeSensor1TravelPercentage.valueCan;
-			brake_sensor_2_travel_percentage = MonitoredValues.PedalsMonitoredValues.BrakeSensor1TravelPercentage.valueCan;
-
-			if((brake_sensor_1_travel_percentage >= BRAKE_PERCENTAGE_THRESHOLD) || (brake_sensor_2_travel_percentage >= BRAKE_PERCENTAGE_THRESHOLD)){
-				travel_percentage = 0U;
-			}
-			else{
-				travel_percentage = acc_sensor_1_travel_percentage;
-				if(travel_percentage > acc_sensor_2_travel_percentage){
-					travel_percentage = acc_sensor_2_travel_percentage;
-				}
-			}
-
 			Inverters_SetThrottle(LEFT_INVERTER, travel_percentage);
 			Inverters_SetThrottle(RIGHT_INVERTER, travel_percentage);
 		}
 
 		if(currentState == INVERTERS_REVERSE){
-			acc_sensor_1_travel_percentage = MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1TravelPercentage.valueCan;
-			acc_sensor_2_travel_percentage = MonitoredValues.PedalsMonitoredValues.AcceleratorSensor2TravelPercentage.valueCan;
-			brake_sensor_1_travel_percentage = MonitoredValues.PedalsMonitoredValues.BrakeSensor1TravelPercentage.valueCan;
-			brake_sensor_2_travel_percentage = MonitoredValues.PedalsMonitoredValues.BrakeSensor1TravelPercentage.valueCan;
-
-			if((brake_sensor_1_travel_percentage >= BRAKE_PERCENTAGE_THRESHOLD) || (brake_sensor_2_travel_percentage >= BRAKE_PERCENTAGE_THRESHOLD)){
-				travel_percentage = 0U;
-			}
-			else{
-				travel_percentage = acc_sensor_1_travel_percentage;
-				if(travel_percentage > acc_sensor_2_travel_percentage){
-					travel_percentage = acc_sensor_2_travel_percentage;
-				}
-			}
 			travel_percentage /= 5U;
 			Inverters_SetThrottle(LEFT_INVERTER, travel_percentage);
 			Inverters_SetThrottle(RIGHT_INVERTER, travel_percentage);
