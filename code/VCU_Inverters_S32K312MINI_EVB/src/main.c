@@ -195,6 +195,7 @@ int main(void)
 			BrakeLight_SetState(STD_ON);
 		}
 		else{
+			BrakeLight_SetState(STD_OFF);
 			travel_percentage = acc_sensor_1_travel_percentage;
 			if(travel_percentage > acc_sensor_2_travel_percentage){
 				travel_percentage = acc_sensor_2_travel_percentage;
