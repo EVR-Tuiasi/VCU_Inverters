@@ -428,10 +428,10 @@ void CanMessaging_Inverters_Timeout(void){
 void Inverters_Shutdown(void){
 	Dio_WriteChannel(DAC_WAKE_UP_PIN, STD_LOW);
 
-	Pwm_SetDutyCycle(THROTTLE1_CHANNEL, 0U);
-	Pwm_SetDutyCycle(THROTTLE2_CHANNEL, 0U);
-	Pwm_SetDutyCycle(BRAKE1_CHANNEL, 0U);
-	Pwm_SetDutyCycle(BRAKE2_CHANNEL, 0U);
+	Inverters_SetThrottle(LEFT_INVERTER, 0U);
+	Inverters_SetThrottle(RIGHT_INVERTER, 0U);
+	Inverters_SetBrake(LEFT_INVERTER, 0U);
+	Inverters_SetBrake(RIGHT_INVERTER, 0U);
 
 	Inverters_SetFunction(FORWARD, LEFT_INVERTER, 0);
 	Inverters_SetFunction(FORWARD, RIGHT_INVERTER, 0);

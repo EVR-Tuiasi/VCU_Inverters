@@ -192,24 +192,21 @@ int main(void)
 
 		if((brake_sensor_1_travel_percentage >= BRAKE_PERCENTAGE_THRESHOLD) || (brake_sensor_2_travel_percentage >= BRAKE_PERCENTAGE_THRESHOLD)){
 			travel_percentage = 0U;
+			BrakeLight_SetState(STD_ON);
 		}
 		else{
 			travel_percentage = acc_sensor_1_travel_percentage;
 			if(travel_percentage > acc_sensor_2_travel_percentage){
 				travel_percentage = acc_sensor_2_travel_percentage;
 			}
+			if(currentState == INVERTERS_REVERSE){
+				travel_percentage /= 5U;
+			}
 		}
 
-		if(currentState == INVERTERS_FORWARD){
+		if((currentState == INVERTERS_FORWARD) || (currentState == INVERTERS_REVERSE)){
 			Inverters_SetThrottle(LEFT_INVERTER, travel_percentage);
 			Inverters_SetThrottle(RIGHT_INVERTER, travel_percentage);
-		}
-
-		if(currentState == INVERTERS_REVERSE){
-			travel_percentage /= 5U;
-			Inverters_SetThrottle(LEFT_INVERTER, travel_percentage);
-			Inverters_SetThrottle(RIGHT_INVERTER, travel_percentage);
-
 		}
 
 		Inverters_Update();
