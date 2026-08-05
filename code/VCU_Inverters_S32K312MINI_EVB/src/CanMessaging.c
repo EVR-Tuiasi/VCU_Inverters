@@ -1357,6 +1357,26 @@ void CanMessaging_AppTest(void){
 	}
 }
 
+bool CanMessaging_GetInvertersReceiveTimeout(void){
+	return inverters_receive_timeout;
+}
+
+bool CanMessaging_GetPedalsReceiveTimeout(void){
+	return pedals_receive_timeout;
+}
+
+bool CanMessaging_GetBatteryReceiveTimeout(void){
+	return battery_receive_timeout;
+}
+
+bool CanMessaging_GetDashboardReceiveTimeout(void){
+	return dashboard_receive_timeout;
+}
+
+bool CanMessaging_GetCommunicationsReceiveTimeout(void){
+	return communications_receive_timeout;
+}
+
 #ifdef __cplusplus
 }
 #endif

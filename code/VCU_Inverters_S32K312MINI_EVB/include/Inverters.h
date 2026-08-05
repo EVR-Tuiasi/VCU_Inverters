@@ -94,6 +94,8 @@ void Inverters_Update(void);
 Inverters_State Inverters_GetState(void);
 void Inverters_ResetTimer(void);
 void Inverters_ResetCanTimer(void);
+void Inverters_Forward(void);
+void Inverters_Reverse(void);
 
 void Cooling_Init(void);
 void Cooling_Test(void);
@@ -103,6 +105,9 @@ uint16_t Cooling_ReadTemp(PartNum num);
 uint16_t Cooling_ReadPressure(PartNum num);
 
 void CanMessaging_Inverters_Timeout(void);
+
+void Shutdown(void);
+void Recover(bool reverseActive);
 
 #ifdef __cplusplus
 }

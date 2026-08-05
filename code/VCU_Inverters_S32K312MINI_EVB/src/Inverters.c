@@ -137,14 +137,11 @@ void Inverters_Init(void){
 	Adc_SetupResultBuffer(ADC_ACCELERATION_LEFT, &accLeft);
 	Adc_SetupResultBuffer(ADC_ACCELERATION_RIGHT, &accRight);
 	Dio_WriteChannel(DAC_WAKE_UP_PIN, STD_HIGH);
-	Inverters_SetFunction(FORWARD, LEFT_INVERTER, 1);
-	Inverters_SetFunction(FORWARD, RIGHT_INVERTER, 0);
-	Inverters_SetFunction(REVERSE, LEFT_INVERTER, 0);
-	Inverters_SetFunction(REVERSE, RIGHT_INVERTER, 0);
+	Inverters_Forward();
 	Inverters_SetFunction(ECO, LEFT_INVERTER, 0);
 	Inverters_SetFunction(ECO, RIGHT_INVERTER, 0);
 	Inverters_SetFunction(ACCELERATE, LEFT_INVERTER, 1);
-	Inverters_SetFunction(ACCELERATE, RIGHT_INVERTER, 0);
+	Inverters_SetFunction(ACCELERATE, RIGHT_INVERTER, 1);
 	Inverters_SetFunction(BRAKE, LEFT_INVERTER, 0);
 	Inverters_SetFunction(BRAKE, RIGHT_INVERTER, 0);
 	Gpt_EnableNotification(GPT_INVERTER_STATE_TIMER_CHANNEL);
@@ -426,6 +423,56 @@ void Inverters_Timer_Timeout(void){
 
 void CanMessaging_Inverters_Timeout(void){
 	inverters_can_timer_timeout = 1;
+}
+
+void Shutdown(void){
+	Dio_WriteChannel(DAC_WAKE_UP_PIN, STD_LOW);
+
+	Pwm_SetDutyCycle(THROTTLE1_CHANNEL, 0U);
+	Pwm_SetDutyCycle(THROTTLE2_CHANNEL, 0U);
+	Pwm_SetDutyCycle(BRAKE1_CHANNEL, 0U);
+	Pwm_SetDutyCycle(BRAKE2_CHANNEL, 0U);
+
+	Inverters_SetFunction(FORWARD, LEFT_INVERTER, 0);
+	Inverters_SetFunction(FORWARD, RIGHT_INVERTER, 0);
+	Inverters_SetFunction(REVERSE, LEFT_INVERTER, 0);
+	Inverters_SetFunction(REVERSE, RIGHT_INVERTER, 0);
+	Inverters_SetFunction(ECO, LEFT_INVERTER, 0);
+	Inverters_SetFunction(ECO, RIGHT_INVERTER, 0);
+	Inverters_SetFunction(ACCELERATE, LEFT_INVERTER, 0);
+	Inverters_SetFunction(ACCELERATE, RIGHT_INVERTER, 0);
+	Inverters_SetFunction(BRAKE, LEFT_INVERTER, 0);
+	Inverters_SetFunction(BRAKE, RIGHT_INVERTER, 0);
+}
+
+void Recover(bool reverseActive){
+	Dio_WriteChannel(DAC_WAKE_UP_PIN, STD_HIGH);
+
+	if(reverseActive){
+		Inverters_Reverse();
+	}
+	else{
+		Inverters_Forward();
+	}
+	Inverters_SetFunction(ECO, LEFT_INVERTER, 0);
+	Inverters_SetFunction(ECO, RIGHT_INVERTER, 0);
+	Inverters_SetFunction(ACCELERATE, LEFT_INVERTER, 1);
+	Inverters_SetFunction(ACCELERATE, RIGHT_INVERTER, 1);
+	Inverters_SetFunction(BRAKE, LEFT_INVERTER, 0);
+	Inverters_SetFunction(BRAKE, RIGHT_INVERTER, 0);
+}
+
+void Inverters_Forward(void){
+	Inverters_SetFunction(FORWARD, LEFT_INVERTER, 1);
+	Inverters_SetFunction(FORWARD, RIGHT_INVERTER, 0);
+	Inverters_SetFunction(REVERSE, LEFT_INVERTER, 0);
+	Inverters_SetFunction(REVERSE, RIGHT_INVERTER, 1);
+}
+void Inverters_Reverse(void){
+	Inverters_SetFunction(FORWARD, LEFT_INVERTER, 0);
+	Inverters_SetFunction(FORWARD, RIGHT_INVERTER, 1);
+	Inverters_SetFunction(REVERSE, LEFT_INVERTER, 1);
+	Inverters_SetFunction(REVERSE, RIGHT_INVERTER, 0);
 }
 
 #ifdef __cplusplus
