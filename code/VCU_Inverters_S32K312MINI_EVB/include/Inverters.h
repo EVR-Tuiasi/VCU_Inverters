@@ -43,6 +43,11 @@ typedef enum{
 	INVERTERS_DELAY,
 	INVERTERS_ON
 }Inverters_State;
+
+typedef enum{
+	INVERTERS_DIRECTION_FORWARD,
+	INVERTERS_DIRECTION_REVERSE
+}INVERTERS_DIRECTION;
 /*==================================================================================================
 *                                       LOCAL MACROS
 ==================================================================================================*/
@@ -96,6 +101,8 @@ void Inverters_ResetTimer(void);
 void Inverters_ResetCanTimer(void);
 void Inverters_Forward(void);
 void Inverters_Reverse(void);
+void Inverters_Shutdown(void);
+void Inverters_SetDirection(INVERTERS_DIRECTION direction);
 
 void Cooling_Init(void);
 void Cooling_Test(void);
@@ -105,9 +112,6 @@ uint16_t Cooling_ReadTemp(PartNum num);
 uint16_t Cooling_ReadPressure(PartNum num);
 
 void CanMessaging_Inverters_Timeout(void);
-
-void Shutdown(void);
-void Recover(bool reverseActive);
 
 #ifdef __cplusplus
 }

@@ -31,7 +31,11 @@ extern "C" {
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
 ==================================================================================================*/
-
+typedef enum{
+	INVERTERS_ERROR,
+	INVERTERS_FORWARD,
+	INVERTERS_REVERSE
+} INVERTERS_DIRECTION_STATE;
 /*==================================================================================================
 *                                       LOCAL MACROS
 ==================================================================================================*/
@@ -54,6 +58,8 @@ bool shutdown_error_flag = 0;
 *                                      GLOBAL VARIABLES
 ==================================================================================================*/
 extern MonitoredValues_t MonitoredValues;
+INVERTERS_DIRECTION_STATE currentState = INVERTERS_FORWARD;
+
 /*==================================================================================================
 *                                   LOCAL FUNCTION PROTOTYPES
 ==================================================================================================*/
@@ -102,6 +108,8 @@ int main(void)
 	bool tsac_timeout, pedals_timeout, dashboard_timeout;
 	bool activation_logic_pressed, reverse_command;
 
+	uint8_t left_motor_speed, right_motor_speed;
+
 	while(1){
 		volatile uint16_t tmp1 = Cooling_ReadTemp(ONE);
 		volatile uint16_t tmp2 = Cooling_ReadTemp(TWO);
@@ -110,88 +118,76 @@ int main(void)
 		volatile uint16_t pres2 = Cooling_ReadPressure(TWO);
 
 		reverse_command = MonitoredValues.DashboardMonitoredValues.CarReverseCommandPressed.valueCan;
-		if(reverse_command){
-			Inverters_Reverse();
-		}
-		else{
-			Inverters_Forward();
-		}
 
-		if(
-				MonitoredValues.TsacMonitoredValues.AmsError.valueCan ||
-				MonitoredValues.TsacMonitoredValues.Bms0Error.valueCan ||
-				MonitoredValues.TsacMonitoredValues.Bms1Error.valueCan ||
-				MonitoredValues.TsacMonitoredValues.ShuntError.valueCan ||
-				MonitoredValues.TsacMonitoredValues.ThermistorsError.valueCan ||
-				MonitoredValues.TsacMonitoredValues.TransceiverError.valueCan
-				){
-			tsac_errors = 1;
-		}
-		else{
-			tsac_errors = 0;
-		}
+		tsac_errors =
+				MonitoredValues.TsacMonitoredValues.AmsError.valueCan |
+				MonitoredValues.TsacMonitoredValues.Bms0Error.valueCan |
+				MonitoredValues.TsacMonitoredValues.Bms1Error.valueCan |
+				MonitoredValues.TsacMonitoredValues.ShuntError.valueCan |
+				MonitoredValues.TsacMonitoredValues.ThermistorsError.valueCan |
+				MonitoredValues.TsacMonitoredValues.TransceiverError.valueCan;
 
-		if(
-				MonitoredValues.PedalsMonitoredValues.Accel_Implausibility.valueCan ||
-				MonitoredValues.PedalsMonitoredValues.Accel_Sensor1_OutOfRangeOutput.valueCan ||
-				MonitoredValues.PedalsMonitoredValues.Accel_Sensor1_ShortToGnd.valueCan ||
-				MonitoredValues.PedalsMonitoredValues.Accel_Sensor1_ShortToVcc.valueCan ||
-				MonitoredValues.PedalsMonitoredValues.Accel_Sensor2_OutOfRangeOutput.valueCan ||
-				MonitoredValues.PedalsMonitoredValues.Accel_Sensor2_ShortToGnd.valueCan ||
-				MonitoredValues.PedalsMonitoredValues.Accel_Sensor2_ShortToVcc.valueCan ||
-				MonitoredValues.PedalsMonitoredValues.Brake_Implausibility.valueCan ||
-				MonitoredValues.PedalsMonitoredValues.Brake_Sensor1_OutOfRangeOutput.valueCan ||
-				MonitoredValues.PedalsMonitoredValues.Brake_Sensor1_ShortToGnd.valueCan ||
-				MonitoredValues.PedalsMonitoredValues.Brake_Sensor1_ShortToVcc.valueCan ||
-				MonitoredValues.PedalsMonitoredValues.Brake_Sensor2_OutOfRangeOutput.valueCan ||
-				MonitoredValues.PedalsMonitoredValues.Brake_Sensor2_ShortToGnd.valueCan ||
-				MonitoredValues.PedalsMonitoredValues.Brake_Sensor2_ShortToVcc.valueCan
-				){
-			pedals_errors = 1;
-		}
-		else{
-			pedals_errors = 0;
-		}
+		pedals_errors =
+				MonitoredValues.PedalsMonitoredValues.Accel_Implausibility.valueCan |
+				MonitoredValues.PedalsMonitoredValues.Accel_Sensor1_OutOfRangeOutput.valueCan |
+				MonitoredValues.PedalsMonitoredValues.Accel_Sensor1_ShortToGnd.valueCan |
+				MonitoredValues.PedalsMonitoredValues.Accel_Sensor1_ShortToVcc.valueCan |
+				MonitoredValues.PedalsMonitoredValues.Accel_Sensor2_OutOfRangeOutput.valueCan |
+				MonitoredValues.PedalsMonitoredValues.Accel_Sensor2_ShortToGnd.valueCan |
+				MonitoredValues.PedalsMonitoredValues.Accel_Sensor2_ShortToVcc.valueCan |
+				MonitoredValues.PedalsMonitoredValues.Brake_Implausibility.valueCan |
+				MonitoredValues.PedalsMonitoredValues.Brake_Sensor1_OutOfRangeOutput.valueCan |
+				MonitoredValues.PedalsMonitoredValues.Brake_Sensor1_ShortToGnd.valueCan |
+				MonitoredValues.PedalsMonitoredValues.Brake_Sensor1_ShortToVcc.valueCan |
+				MonitoredValues.PedalsMonitoredValues.Brake_Sensor2_OutOfRangeOutput.valueCan |
+				MonitoredValues.PedalsMonitoredValues.Brake_Sensor2_ShortToGnd.valueCan |
+				MonitoredValues.PedalsMonitoredValues.Brake_Sensor2_ShortToVcc.valueCan;
 
 		activation_logic_pressed = MonitoredValues.DashboardMonitoredValues.ActivationButtonPressed.valueCan;
-		if(!activation_logic_pressed){
-			dashboard_errors = 1;
-		}
-		else{
-			dashboard_errors = 0;
-		}
+		dashboard_errors = !activation_logic_pressed;
 
 		tsac_timeout = CanMessaging_GetBatteryReceiveTimeout();
 		pedals_timeout = CanMessaging_GetPedalsReceiveTimeout();
 		dashboard_timeout = CanMessaging_GetDashboardReceiveTimeout();
 
-		if(
-				tsac_errors || tsac_timeout ||
-				pedals_errors || pedals_timeout ||
-				dashboard_errors || dashboard_timeout
-				){
-			errors = 1;
-		}
-		else{
-			errors = 0;
-		}
+		errors = tsac_errors | tsac_timeout | pedals_errors | pedals_timeout | dashboard_errors | dashboard_timeout;
 
-		if(errors){
-			shutdown_error_flag = 1;
-			Shutdown();
+		switch(currentState){
+			case INVERTERS_FORWARD:
+				if((errors == 1) || (reverse_command == 1)){
+					Inverters_Shutdown();
+					currentState = INVERTERS_ERROR;
+				}
+				break;
+			case INVERTERS_REVERSE:
+				if((errors == 1) || (reverse_command == 0)){
+					Inverters_Shutdown();
+					currentState = INVERTERS_ERROR;
+				}
+				break;
+			case INVERTERS_ERROR:
+				left_motor_speed = MonitoredValues.InvertersMonitoredValues.LeftMotorSpeedKmh.valueCan;
+				right_motor_speed = MonitoredValues.InvertersMonitoredValues.RightMotorSpeedKmh.valueCan;
+				if((errors == 0) && (reverse_command == 0) && (left_motor_speed == 0) && (right_motor_speed == 0)){
+					Inverters_SetDirection(INVERTERS_DIRECTION_FORWARD);
+				}
+				if((errors == 0) && (reverse_command == 1) && (left_motor_speed == 0) && (right_motor_speed == 0)){
+					Inverters_SetDirection(INVERTERS_DIRECTION_REVERSE);
+				}
+				break;
 		}
-		else{
-			if(shutdown_error_flag){
-				shutdown_error_flag = 0;
-				Recover(reverse_command);
-			}
-		}
-
 
 		WriteCanDataAtAddress((uint8_t)((((uint32_t)Inverters_ReadAcceleration(LEFT_INVERTER)) * (uint32_t)250U) / (uint32_t)16383U), &MonitoredValues.InvertersMonitoredValues.LeftInverterThrottle);
 		WriteCanDataAtAddress((uint8_t)((((uint32_t)Inverters_ReadAcceleration(RIGHT_INVERTER)) * (uint32_t)250U) / (uint32_t)16383U), &MonitoredValues.InvertersMonitoredValues.RightInverterThrottle);
-		Inverters_SetThrottle(LEFT_INVERTER, MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1TravelPercentage.valueCan);
-		Inverters_SetThrottle(RIGHT_INVERTER, MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1TravelPercentage.valueCan);
+
+		if(currentState == INVERTERS_FORWARD){
+			Inverters_SetThrottle(LEFT_INVERTER, MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1TravelPercentage.valueCan);
+			Inverters_SetThrottle(RIGHT_INVERTER, MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1TravelPercentage.valueCan);
+		}
+
+		if(currentState == INVERTERS_REVERSE){
+
+		}
 
 		Inverters_Update();
 		CanMessaging_Update();

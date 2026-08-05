@@ -425,7 +425,7 @@ void CanMessaging_Inverters_Timeout(void){
 	inverters_can_timer_timeout = 1;
 }
 
-void Shutdown(void){
+void Inverters_Shutdown(void){
 	Dio_WriteChannel(DAC_WAKE_UP_PIN, STD_LOW);
 
 	Pwm_SetDutyCycle(THROTTLE1_CHANNEL, 0U);
@@ -445,10 +445,10 @@ void Shutdown(void){
 	Inverters_SetFunction(BRAKE, RIGHT_INVERTER, 0);
 }
 
-void Recover(bool reverseActive){
+void Inverters_SetDirection(INVERTERS_DIRECTION direction){
 	Dio_WriteChannel(DAC_WAKE_UP_PIN, STD_HIGH);
 
-	if(reverseActive){
+	if(direction == REVERSE){
 		Inverters_Reverse();
 	}
 	else{
