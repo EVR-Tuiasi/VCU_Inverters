@@ -47,7 +47,7 @@ typedef enum{
 typedef enum{
 	INVERTERS_DIRECTION_FORWARD,
 	INVERTERS_DIRECTION_REVERSE
-}INVERTERS_DIRECTION;
+}InvertersDirection;
 /*==================================================================================================
 *                                       LOCAL MACROS
 ==================================================================================================*/
@@ -102,7 +102,7 @@ void Inverters_ResetCanTimer(void);
 void Inverters_Forward(void);
 void Inverters_Reverse(void);
 void Inverters_Shutdown(void);
-void Inverters_SetDirection(INVERTERS_DIRECTION direction);
+void Inverters_SetDirection(InvertersDirection direction);
 
 void Cooling_Init(void);
 void Cooling_Test(void);

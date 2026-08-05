@@ -31,11 +31,13 @@ extern "C" {
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
 ==================================================================================================*/
+#define BRAKE_PERCENTAGE_THRESHOLD 10U
+
 typedef enum{
 	INVERTERS_ERROR,
 	INVERTERS_FORWARD,
 	INVERTERS_REVERSE
-} INVERTERS_DIRECTION_STATE;
+} InvertersDirectionState_t;
 /*==================================================================================================
 *                                       LOCAL MACROS
 ==================================================================================================*/
@@ -58,7 +60,7 @@ bool shutdown_error_flag = 0;
 *                                      GLOBAL VARIABLES
 ==================================================================================================*/
 extern MonitoredValues_t MonitoredValues;
-INVERTERS_DIRECTION_STATE currentState = INVERTERS_FORWARD;
+InvertersDirectionState_t currentState = INVERTERS_FORWARD;
 
 /*==================================================================================================
 *                                   LOCAL FUNCTION PROTOTYPES
@@ -108,14 +110,15 @@ int main(void)
 	bool tsac_timeout, pedals_timeout, dashboard_timeout;
 	bool activation_logic_pressed, reverse_command;
 
-	uint8_t left_motor_speed, right_motor_speed;
+	uint8_t left_motor_speed, right_motor_speed, acc_sensor_1_travel_percentage, acc_sensor_2_travel_percentage, brake_sensor_1_travel_percentage, brake_sensor_2_travel_percentage, travel_percentage;
+	volatile uint16_t tmp1, tmp2, pres1, pres2;
 
 	while(1){
-		volatile uint16_t tmp1 = Cooling_ReadTemp(ONE);
-		volatile uint16_t tmp2 = Cooling_ReadTemp(TWO);
+		tmp1 = Cooling_ReadTemp(ONE);
+		tmp2 = Cooling_ReadTemp(TWO);
 
-		volatile uint16_t pres1 = Cooling_ReadPressure(ONE);
-		volatile uint16_t pres2 = Cooling_ReadPressure(TWO);
+		pres1 = Cooling_ReadPressure(ONE);
+		pres2 = Cooling_ReadPressure(TWO);
 
 		reverse_command = MonitoredValues.DashboardMonitoredValues.CarReverseCommandPressed.valueCan;
 
@@ -170,9 +173,11 @@ int main(void)
 				right_motor_speed = MonitoredValues.InvertersMonitoredValues.RightMotorSpeedKmh.valueCan;
 				if((errors == 0) && (reverse_command == 0) && (left_motor_speed == 0) && (right_motor_speed == 0)){
 					Inverters_SetDirection(INVERTERS_DIRECTION_FORWARD);
+					currentState = INVERTERS_FORWARD;
 				}
 				if((errors == 0) && (reverse_command == 1) && (left_motor_speed == 0) && (right_motor_speed == 0)){
 					Inverters_SetDirection(INVERTERS_DIRECTION_REVERSE);
+					currentState = INVERTERS_REVERSE;
 				}
 				break;
 		}
@@ -181,11 +186,43 @@ int main(void)
 		WriteCanDataAtAddress((uint8_t)((((uint32_t)Inverters_ReadAcceleration(RIGHT_INVERTER)) * (uint32_t)250U) / (uint32_t)16383U), &MonitoredValues.InvertersMonitoredValues.RightInverterThrottle);
 
 		if(currentState == INVERTERS_FORWARD){
-			Inverters_SetThrottle(LEFT_INVERTER, MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1TravelPercentage.valueCan);
-			Inverters_SetThrottle(RIGHT_INVERTER, MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1TravelPercentage.valueCan);
+			acc_sensor_1_travel_percentage = MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1TravelPercentage.valueCan;
+			acc_sensor_2_travel_percentage = MonitoredValues.PedalsMonitoredValues.AcceleratorSensor2TravelPercentage.valueCan;
+			brake_sensor_1_travel_percentage = MonitoredValues.PedalsMonitoredValues.BrakeSensor1TravelPercentage.valueCan;
+			brake_sensor_2_travel_percentage = MonitoredValues.PedalsMonitoredValues.BrakeSensor1TravelPercentage.valueCan;
+
+			if((brake_sensor_1_travel_percentage >= BRAKE_PERCENTAGE_THRESHOLD) || (brake_sensor_2_travel_percentage >= BRAKE_PERCENTAGE_THRESHOLD)){
+				travel_percentage = 0U;
+			}
+			else{
+				travel_percentage = acc_sensor_1_travel_percentage;
+				if(travel_percentage > acc_sensor_2_travel_percentage){
+					travel_percentage = acc_sensor_2_travel_percentage;
+				}
+			}
+
+			Inverters_SetThrottle(LEFT_INVERTER, travel_percentage);
+			Inverters_SetThrottle(RIGHT_INVERTER, travel_percentage);
 		}
 
 		if(currentState == INVERTERS_REVERSE){
+			acc_sensor_1_travel_percentage = MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1TravelPercentage.valueCan;
+			acc_sensor_2_travel_percentage = MonitoredValues.PedalsMonitoredValues.AcceleratorSensor2TravelPercentage.valueCan;
+			brake_sensor_1_travel_percentage = MonitoredValues.PedalsMonitoredValues.BrakeSensor1TravelPercentage.valueCan;
+			brake_sensor_2_travel_percentage = MonitoredValues.PedalsMonitoredValues.BrakeSensor1TravelPercentage.valueCan;
+
+			if((brake_sensor_1_travel_percentage >= BRAKE_PERCENTAGE_THRESHOLD) || (brake_sensor_2_travel_percentage >= BRAKE_PERCENTAGE_THRESHOLD)){
+				travel_percentage = 0U;
+			}
+			else{
+				travel_percentage = acc_sensor_1_travel_percentage;
+				if(travel_percentage > acc_sensor_2_travel_percentage){
+					travel_percentage = acc_sensor_2_travel_percentage;
+				}
+			}
+			travel_percentage /= 5U;
+			Inverters_SetThrottle(LEFT_INVERTER, travel_percentage);
+			Inverters_SetThrottle(RIGHT_INVERTER, travel_percentage);
 
 		}
 

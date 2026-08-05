@@ -445,7 +445,7 @@ void Inverters_Shutdown(void){
 	Inverters_SetFunction(BRAKE, RIGHT_INVERTER, 0);
 }
 
-void Inverters_SetDirection(INVERTERS_DIRECTION direction){
+void Inverters_SetDirection(InvertersDirection direction){
 	Dio_WriteChannel(DAC_WAKE_UP_PIN, STD_HIGH);
 
 	if(direction == REVERSE){
