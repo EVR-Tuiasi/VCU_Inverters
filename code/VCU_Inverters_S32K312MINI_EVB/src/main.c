@@ -60,7 +60,7 @@ bool shutdown_error_flag = 0;
 *                                      GLOBAL VARIABLES
 ==================================================================================================*/
 extern MonitoredValues_t MonitoredValues;
-InvertersDirectionState_t currentState = INVERTERS_FORWARD;
+InvertersDirectionState_t directionState = INVERTERS_FORWARD;
 
 /*==================================================================================================
 *                                   LOCAL FUNCTION PROTOTYPES
@@ -153,19 +153,19 @@ int main(void)
 		pedals_timeout = CanMessaging_GetPedalsReceiveTimeout();
 		dashboard_timeout = CanMessaging_GetDashboardReceiveTimeout();
 
-		errors = tsac_errors | tsac_timeout | pedals_errors | pedals_timeout | dashboard_errors | dashboard_timeout;
+		errors = /*tsac_errors | tsac_timeout |*/ pedals_errors | pedals_timeout | dashboard_errors | dashboard_timeout;
 
-		switch(currentState){
+		switch(directionState){
 			case INVERTERS_FORWARD:
 				if((errors == 1) || (reverse_command == 1)){
 					Inverters_Shutdown();
-					currentState = INVERTERS_ERROR;
+					directionState = INVERTERS_ERROR;
 				}
 				break;
 			case INVERTERS_REVERSE:
 				if((errors == 1) || (reverse_command == 0)){
 					Inverters_Shutdown();
-					currentState = INVERTERS_ERROR;
+					directionState = INVERTERS_ERROR;
 				}
 				break;
 			case INVERTERS_ERROR:
@@ -173,11 +173,11 @@ int main(void)
 				right_motor_speed = MonitoredValues.InvertersMonitoredValues.RightMotorSpeedKmh.valueCan;
 				if((errors == 0) && (reverse_command == 0) && (left_motor_speed == 0) && (right_motor_speed == 0)){
 					Inverters_SetDirection(INVERTERS_DIRECTION_FORWARD);
-					currentState = INVERTERS_FORWARD;
+					directionState = INVERTERS_FORWARD;
 				}
 				if((errors == 0) && (reverse_command == 1) && (left_motor_speed == 0) && (right_motor_speed == 0)){
 					Inverters_SetDirection(INVERTERS_DIRECTION_REVERSE);
-					currentState = INVERTERS_REVERSE;
+					directionState = INVERTERS_REVERSE;
 				}
 				break;
 		}
@@ -200,12 +200,12 @@ int main(void)
 			if(travel_percentage > acc_sensor_2_travel_percentage){
 				travel_percentage = acc_sensor_2_travel_percentage;
 			}
-			if(currentState == INVERTERS_REVERSE){
-				travel_percentage /= 5U;
+			if(directionState == INVERTERS_REVERSE){
+				travel_percentage /= 2U;
 			}
 		}
 
-		if((currentState == INVERTERS_FORWARD) || (currentState == INVERTERS_REVERSE)){
+		if((directionState == INVERTERS_FORWARD) || (directionState == INVERTERS_REVERSE)){
 			Inverters_SetThrottle(LEFT_INVERTER, travel_percentage);
 			Inverters_SetThrottle(RIGHT_INVERTER, travel_percentage);
 		}

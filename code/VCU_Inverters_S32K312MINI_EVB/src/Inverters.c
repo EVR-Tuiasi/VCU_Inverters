@@ -59,7 +59,7 @@ extern "C"{
 #define ADC_PRESSURE_2 AdcGroup_3
 #define ADC_ACCELERATION_LEFT AdcGroup_5
 #define ADC_ACCELERATION_RIGHT AdcGroup_4
-#define GPT_200MS_TIMER 6000000U
+#define GPT_200MS_TIMER 12000000U
 #define TRESHOLD_LOW_VOLTAGE 800U
 #define TRESHOLD_HIGH_VOLTAGE 900U
 #define GPT_INVERTER_STATE_TIMER_CHANNEL 0U
@@ -316,16 +316,16 @@ void Cooling_Test(void){
 		for(uint64_t i=0;i<=MAX_DUTY_CYCLE;i++){
 			Pwm_SetDutyCycle(FAN1_CHANNEL, i);
 			Pwm_SetDutyCycle(FAN2_CHANNEL, i);
-			Pwm_SetDutyCycle(PUMP1_CHANNEL, i);
-			Pwm_SetDutyCycle(PUMP2_CHANNEL, i);
+			//Pwm_SetDutyCycle(PUMP1_CHANNEL, i);
+			//Pwm_SetDutyCycle(PUMP2_CHANNEL, i);
 			delay=1000;
 			while(delay--);
 		}
 		for(uint64_t i=MAX_DUTY_CYCLE;i>0;i--){
 			Pwm_SetDutyCycle(FAN1_CHANNEL, i);
 			Pwm_SetDutyCycle(FAN2_CHANNEL, i);
-			Pwm_SetDutyCycle(PUMP1_CHANNEL, i);
-			Pwm_SetDutyCycle(PUMP2_CHANNEL, i);
+			//Pwm_SetDutyCycle(PUMP1_CHANNEL, i);
+			//Pwm_SetDutyCycle(PUMP2_CHANNEL, i);
 			delay=1000;
 			while(delay--);
 		}
