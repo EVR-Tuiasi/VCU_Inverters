@@ -34,9 +34,9 @@ extern "C" {
 #define BRAKE_PERCENTAGE_THRESHOLD 10U
 #define LOWEST_PUMP_PRESSURE_LIMIT 10000U
 #define HIGHEST_PUMP_PRESSURE_LIMIT 30000U
-#define COOLING_TEMP_START 40U
-#define MAX_TEMP 55U
-#define SHUTDOWN_TEMP 60U
+#define COOLING_TEMP_START 40
+#define MAX_TEMP 55
+#define SHUTDOWN_TEMP 60
 
 typedef enum{
 	INVERTERS_ERROR,
@@ -263,6 +263,9 @@ int main(void)
 			Inverters_SetThrottle(RIGHT_INVERTER, travel_percentage);
 		}
 
+		WriteCanDataAtAddress(((Inverters_GetState() == INVERTERS_OFF) | (directionState == INVERTERS_ERROR)), &MonitoredValues.InvertersMonitoredValues.InvertersError);
+		WriteCanDataAtAddress(((directionState == INVERTERS_FORWARD) | (directionState == INVERTERS_REVERSE)), &MonitoredValues.InvertersMonitoredValues.IsCarRunning);
+		WriteCanDataAtAddress((directionState == INVERTERS_REVERSE), &MonitoredValues.InvertersMonitoredValues.IsCarInReverse);
 		Inverters_Update();
 		CanMessaging_Update();
 	}

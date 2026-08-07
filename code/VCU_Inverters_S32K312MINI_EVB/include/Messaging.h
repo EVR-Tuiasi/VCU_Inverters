@@ -183,6 +183,7 @@ typedef struct{
     /* Status and errors */ 
 	BoolMonitoredValue_t IsCarInReverse;                                /* 1 bit, 0 means car is in FORWARD, 1 means car is in REVERSE */
 	BoolMonitoredValue_t IsCarRunning;                                  /* 1 bit, 0 means car is RUNNING (Responding to accelerator pedal), 1 means car is IDLE (NOT responding to accelerator pedal)*/
+	BoolMonitoredValue_t InvertersError;								/* 1 bit, 0 means SAFE, 1 means ERROR */
 }InvertersMonitoredValues_t;
 
 typedef struct{

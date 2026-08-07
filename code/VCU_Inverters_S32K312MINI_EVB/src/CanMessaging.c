@@ -291,6 +291,7 @@ static void CanMessaging_ResetInverters(void){
 	WriteCanDataAtAddress(0, &MonitoredValues.InvertersMonitoredValues.RightMotorSpeedKmh);
 	WriteCanDataAtAddress(0, &MonitoredValues.InvertersMonitoredValues.RightInverterThrottle);
 	WriteCanDataAtAddress(0, &MonitoredValues.InvertersMonitoredValues.RightInverterThrottleFeedback);
+	WriteCanDataAtAddress(1, &MonitoredValues.InvertersMonitoredValues.InvertersError);
 }
 static void CanMessaging_ResetPedals(void){
 	WriteCanDataAtAddress(0, &MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1Voltage);
@@ -384,6 +385,7 @@ static void CanMessaging_CreateBuffer(MessageId_t type, uint8_t *buffer){
 		case ID_UART_INVERTOARE:
 			ReadDataFromAddressAndWriteInRawBufferCan(buffer_merged, &MonitoredValues.InvertersMonitoredValues.IsCarRunning);
 			ReadDataFromAddressAndWriteInRawBufferCan(buffer_merged, &MonitoredValues.InvertersMonitoredValues.IsCarInReverse);
+			ReadDataFromAddressAndWriteInRawBufferCan(buffer_merged, &MonitoredValues.InvertersMonitoredValues.InvertersError);
 			ReadDataFromAddressAndWriteInRawBufferCan(buffer_merged, &MonitoredValues.InvertersMonitoredValues.LeftInverterCurrent);
 			ReadDataFromAddressAndWriteInRawBufferCan(buffer_merged, &MonitoredValues.InvertersMonitoredValues.RightInverterCurrent);
 			break;
@@ -513,6 +515,7 @@ void Can_Receive_Interrupt_INVERTOARE(PduIdType RxPduId, const PduInfoType * Pdu
 	data_merged = (((uint64_t)PduInfoPtr->SduDataPtr[0]) << 56) + (((uint64_t)PduInfoPtr->SduDataPtr[1]) << 48) + (((uint64_t)PduInfoPtr->SduDataPtr[2]) << 40) + (((uint64_t)PduInfoPtr->SduDataPtr[3]) << 32) + (((uint64_t)PduInfoPtr->SduDataPtr[4]) << 24) + (((uint64_t)PduInfoPtr->SduDataPtr[5]) << 16) + (((uint64_t)PduInfoPtr->SduDataPtr[6]) << 8) + (uint64_t)PduInfoPtr->SduDataPtr[7];
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.InvertersMonitoredValues.IsCarRunning);
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.InvertersMonitoredValues.IsCarInReverse);
+	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.InvertersMonitoredValues.InvertersError);
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.InvertersMonitoredValues.LeftInverterCurrent);
 	WriteCanDataFromRawBufferAtAddress(data_merged, &MonitoredValues.InvertersMonitoredValues.RightInverterCurrent);
 	(void)RxPduId;
@@ -1093,6 +1096,7 @@ void CanMessaging_Test(void){
 			WriteCanDataAtAddress(cnt%(MonitoredValues.InvertersMonitoredValues.RightInverterThrottleFeedback.maxValue+1), &MonitoredValues.InvertersMonitoredValues.RightInverterThrottleFeedback);
 			WriteCanDataAtAddress(cnt&1, &MonitoredValues.InvertersMonitoredValues.IsCarInReverse);
 			WriteCanDataAtAddress(cnt&1, &MonitoredValues.InvertersMonitoredValues.IsCarRunning);
+			WriteCanDataAtAddress(cnt&1, &MonitoredValues.InvertersMonitoredValues.InvertersError);
 
 			WriteCanDataAtAddress(cnt&1, &MonitoredValues.DashboardMonitoredValues.ActivationButtonPressed);
 			WriteCanDataAtAddress(cnt&1, &MonitoredValues.DashboardMonitoredValues.CarReverseCommandPressed);
@@ -1346,6 +1350,7 @@ void CanMessaging_AppTest(void){
 		WriteUartDataAtAddress(ReadCanDataFromAddress(&MonitoredValues.InvertersMonitoredValues.RightInverterThrottleFeedback), &MonitoredValues.InvertersMonitoredValues.RightInverterThrottleFeedback);
 		WriteUartDataAtAddress(ReadCanDataFromAddress(&MonitoredValues.InvertersMonitoredValues.IsCarInReverse), &MonitoredValues.InvertersMonitoredValues.IsCarInReverse);
 		WriteUartDataAtAddress(ReadCanDataFromAddress(&MonitoredValues.InvertersMonitoredValues.IsCarRunning), &MonitoredValues.InvertersMonitoredValues.IsCarRunning);
+		WriteUartDataAtAddress(ReadCanDataFromAddress(&MonitoredValues.InvertersMonitoredValues.InvertersError), &MonitoredValues.InvertersMonitoredValues.InvertersError);
 
 		WriteUartDataAtAddress(ReadCanDataFromAddress(&MonitoredValues.DashboardMonitoredValues.ActivationButtonPressed), &MonitoredValues.DashboardMonitoredValues.ActivationButtonPressed);
 		WriteUartDataAtAddress(ReadCanDataFromAddress(&MonitoredValues.DashboardMonitoredValues.CarReverseCommandPressed), &MonitoredValues.DashboardMonitoredValues.CarReverseCommandPressed);

@@ -483,6 +483,13 @@ MonitoredValues_t MonitoredValues ={
 						1U,	   /* nrOfBits */
 						63U,   /* shift */
 						1U     /* maxValue */
+				},
+				{/* InvertersError */
+						0,	   /* value */
+						0,	   /* value */
+						1U,	   /* nrOfBits */
+						61U,   /* shift */
+						1U     /* maxValue */
 				}
 		},/* END InvertersMonitoredValues */
 		{/* START DashboardMonitoredValues */
