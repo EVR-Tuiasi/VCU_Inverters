@@ -93,7 +93,7 @@ void Inverters_SetThrottle(Inverter_t inverter, uint8_t percentage);
 void Inverters_SetBrake(Inverter_t inverter, uint8_t percentage);
 void Inverters_SetPower(bool value);
 void Inverters_SetFunction(Function_t name, Inverter_t inverter, bool value);
-uint16_t Inverters_ReadAcceleration(Inverter_t inverter);
+uint8_t Inverters_ReadAcceleration(Inverter_t inverter);
 void Inverters_Timer_Timeout(void);
 void Inverters_Update(void);
 InvertersState_t Inverters_GetState(void);
@@ -108,8 +108,8 @@ void Cooling_Init(void);
 void Cooling_Test(void);
 void Cooling_SetFanSpeed(PartNum_t num, uint8_t percentage);
 void Cooling_SetPumpSpeed(PartNum_t num, uint8_t percentage);
-uint16_t Cooling_ReadTemp(PartNum_t num);
-uint16_t Cooling_ReadPressure(PartNum_t num);
+int8_t Cooling_ReadTemp(PartNum_t num);
+uint32_t Cooling_ReadPressure(PartNum_t num);
 
 void CanMessaging_Inverters_Timeout(void);
 

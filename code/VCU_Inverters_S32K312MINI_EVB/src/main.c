@@ -32,6 +32,11 @@ extern "C" {
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
 ==================================================================================================*/
 #define BRAKE_PERCENTAGE_THRESHOLD 10U
+#define LOWEST_PUMP_PRESSURE_LIMIT 10000U
+#define HIGHEST_PUMP_PRESSURE_LIMIT 30000U
+#define COOLING_TEMP_START 40U
+#define MAX_TEMP 55U
+#define SHUTDOWN_TEMP 60U
 
 typedef enum{
 	INVERTERS_ERROR,
@@ -111,14 +116,62 @@ int main(void)
 	bool activation_logic_pressed, reverse_command;
 
 	uint8_t left_motor_speed, right_motor_speed, acc_sensor_1_travel_percentage, acc_sensor_2_travel_percentage, brake_sensor_1_travel_percentage, brake_sensor_2_travel_percentage, travel_percentage;
-	volatile uint16_t tmp1, tmp2, pres1, pres2;
-
+	uint16_t pres1, pres2;
+	volatile uint8_t cooling_percentage;
+	volatile int8_t left_motor_temp, right_motor_temp, left_inverter_temp, right_inverter_temp, max_temp, tmp1, tmp2;
 	while(1){
 		tmp1 = Cooling_ReadTemp(ONE);
 		tmp2 = Cooling_ReadTemp(TWO);
 
+		if(tmp1 < 0){
+			tmp1 = 0;
+		}
+		if(tmp2 < 0){
+			tmp2 = 0;
+		}
+
 		pres1 = Cooling_ReadPressure(ONE);
 		pres2 = Cooling_ReadPressure(TWO);
+
+		left_motor_temp = MonitoredValues.InvertersMonitoredValues.LeftMotorTemperature.valueCan - 30;
+		right_motor_temp = MonitoredValues.InvertersMonitoredValues.RightMotorTemperature.valueCan - 30;
+		left_inverter_temp = MonitoredValues.InvertersMonitoredValues.LeftInverterTemperature.valueCan - 40;
+		right_inverter_temp = MonitoredValues.InvertersMonitoredValues.RightInverterTemperature.valueCan - 40;
+
+		max_temp = left_motor_temp;
+		if(max_temp < right_motor_temp){
+			max_temp = right_motor_temp;
+		}
+		if(max_temp < left_inverter_temp){
+			max_temp = left_inverter_temp;
+		}
+		if(max_temp < right_inverter_temp){
+			max_temp = right_inverter_temp;
+		}
+		if(max_temp < tmp1){
+			max_temp = tmp1;
+		}
+		if(max_temp < tmp2){
+			max_temp = tmp2;
+		}
+
+		if(max_temp > COOLING_TEMP_START){
+			cooling_percentage = ((max_temp - COOLING_TEMP_START) * 100U) / (MAX_TEMP - COOLING_TEMP_START);
+			if(pres1 < LOWEST_PUMP_PRESSURE_LIMIT || pres2 < LOWEST_PUMP_PRESSURE_LIMIT || pres1 > HIGHEST_PUMP_PRESSURE_LIMIT || pres2 > HIGHEST_PUMP_PRESSURE_LIMIT){
+				Cooling_SetPumpSpeed(ONE, 0);
+				Cooling_SetPumpSpeed(TWO, 0);
+			}
+			else{
+				//Cooling_SetPumpSpeed(ONE, cooling_percentage);
+				//Cooling_SetPumpSpeed(TWO, cooling_percentage);
+			}
+			Cooling_SetFanSpeed(ONE, cooling_percentage);
+			Cooling_SetFanSpeed(TWO, cooling_percentage);
+		}
+		else{
+			Cooling_SetFanSpeed(ONE, 0);
+			Cooling_SetFanSpeed(TWO, 0);
+		}
 
 		reverse_command = MonitoredValues.DashboardMonitoredValues.CarReverseCommandPressed.valueCan;
 
@@ -153,7 +206,7 @@ int main(void)
 		pedals_timeout = CanMessaging_GetPedalsReceiveTimeout();
 		dashboard_timeout = CanMessaging_GetDashboardReceiveTimeout();
 
-		errors = /*tsac_errors | tsac_timeout |*/ pedals_errors | pedals_timeout | dashboard_errors | dashboard_timeout;
+		errors = /*tsac_errors | tsac_timeout |*/ pedals_errors | pedals_timeout | dashboard_errors | dashboard_timeout | (max_temp >= SHUTDOWN_TEMP);
 
 		switch(directionState){
 			case INVERTERS_FORWARD:
@@ -182,8 +235,8 @@ int main(void)
 				break;
 		}
 
-		WriteCanDataAtAddress((uint8_t)((((uint32_t)Inverters_ReadAcceleration(LEFT_INVERTER)) * (uint32_t)250U) / (uint32_t)16383U), &MonitoredValues.InvertersMonitoredValues.LeftInverterThrottle);
-		WriteCanDataAtAddress((uint8_t)((((uint32_t)Inverters_ReadAcceleration(RIGHT_INVERTER)) * (uint32_t)250U) / (uint32_t)16383U), &MonitoredValues.InvertersMonitoredValues.RightInverterThrottle);
+		WriteCanDataAtAddress(Inverters_ReadAcceleration(LEFT_INVERTER), &MonitoredValues.InvertersMonitoredValues.LeftInverterThrottle);
+		WriteCanDataAtAddress(Inverters_ReadAcceleration(RIGHT_INVERTER), &MonitoredValues.InvertersMonitoredValues.RightInverterThrottle);
 
 		acc_sensor_1_travel_percentage = MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1TravelPercentage.valueCan;
 		acc_sensor_2_travel_percentage = MonitoredValues.PedalsMonitoredValues.AcceleratorSensor2TravelPercentage.valueCan;

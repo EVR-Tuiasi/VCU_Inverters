@@ -64,6 +64,7 @@ extern "C"{
 #define TRESHOLD_HIGH_VOLTAGE 900U
 #define GPT_INVERTER_STATE_TIMER_CHANNEL 0U
 #define GPT_INVERTER_CAN_TIMER_CHANNEL 1U
+#define MEASUREMENTS_POINTS_NUM 12U
 /*==================================================================================================
 *                                      LOCAL CONSTANTS
 ==================================================================================================*/
@@ -87,7 +88,8 @@ volatile bool init_flag = 1;
 /*==================================================================================================
 *                                      GLOBAL CONSTANTS
 ==================================================================================================*/
-
+int32_t adcValues[MEASUREMENTS_POINTS_NUM] = {8192, 7347, 6858, 6502, 6430, 6375, 6144, 5745, 5675, 5388, 4926, 4337};
+int32_t tempValues[MEASUREMENTS_POINTS_NUM] = {250, 308, 344, 364, 371, 376, 386, 415, 421, 444, 494, 560};
 
 /*==================================================================================================
 *                                      GLOBAL VARIABLES
@@ -268,47 +270,74 @@ void Cooling_Init(){
 	Pwm_SetDutyCycle(PUMP1_CHANNEL, 0U);
 	Pwm_SetDutyCycle(PUMP2_CHANNEL, 0U);
 }
-uint16_t Cooling_ReadTemp(PartNum_t num){
+
+static int8_t getTempFromAdc(uint32_t adc, int32_t adc_low, int32_t adc_high, int32_t temp_low, int32_t temp_high){
+	return ((((((int32_t)adc) - adc_low) * (temp_high - temp_low)) / (adc_high - adc_low)) + temp_low) / 10;
+}
+
+int8_t Cooling_ReadTemp(PartNum_t num){
+	uint32_t result;
 	if(num == ONE){
 		Adc_StartGroupConversion(ADC_TEMP_1);
 		while(Adc_GetGroupStatus(ADC_TEMP_1) == ADC_BUSY);
 		Adc_ReadGroup(ADC_TEMP_1, &temp1);
-		return temp1;
+		result =  temp1;
 	}
 	else{
 		Adc_StartGroupConversion(ADC_TEMP_2);
 		while(Adc_GetGroupStatus(ADC_TEMP_2) == ADC_BUSY);
 		Adc_ReadGroup(ADC_TEMP_2, &temp2);
-		return temp2;
+		result = temp2;
 	}
+	if(result > 11703U){
+		return 0U;
+	}
+	for(uint8_t i=1; i < MEASUREMENTS_POINTS_NUM; i++){
+		if(result > adcValues[i]){
+			return getTempFromAdc(result, adcValues[i-1], adcValues[i], tempValues[i-1], tempValues[i]);
+		}
+	}
+	return getTempFromAdc(result, adcValues[MEASUREMENTS_POINTS_NUM-2], adcValues[MEASUREMENTS_POINTS_NUM-1], tempValues[MEASUREMENTS_POINTS_NUM-2], tempValues[MEASUREMENTS_POINTS_NUM-1]);
 }
-uint16_t Cooling_ReadPressure(PartNum_t num){
+uint32_t Cooling_ReadPressure(PartNum_t num){
+	//0.5V => 0MPa; 4.5V => 1.2MPa
+	//functia returneaza in Pa
+	uint16_t result;
 	if(num == ONE){
 		Adc_StartGroupConversion(ADC_PRESSURE_1);
 		while(Adc_GetGroupStatus(ADC_PRESSURE_1) == ADC_BUSY);
 		Adc_ReadGroup(ADC_PRESSURE_1, &pres1);
-		return pres1;
+		result = pres1;
 	}
 	else{
 		Adc_StartGroupConversion(ADC_PRESSURE_2);
 		while(Adc_GetGroupStatus(ADC_PRESSURE_2) == ADC_BUSY);
 		Adc_ReadGroup(ADC_PRESSURE_2, &pres2);
-		return pres2;
+		result = pres2;
 	}
+	if(result < 1683){
+		result = 1638;
+	}
+	if(result > 14744){
+		result = 14744;
+	}
+	return (uint32_t)((((uint64_t)1200000U) * (((uint64_t)result) - ((uint64_t)1638U))) / ((uint64_t)13106U));
 }
-uint16_t Inverters_ReadAcceleration(Inverter_t inverter){
+uint8_t Inverters_ReadAcceleration(Inverter_t inverter){
+	uint16_t result;
 	if(inverter == LEFT_INVERTER){
 		Adc_StartGroupConversion(ADC_ACCELERATION_LEFT);
 		while(Adc_GetGroupStatus(ADC_ACCELERATION_LEFT) == ADC_BUSY);
 		Adc_ReadGroup(ADC_ACCELERATION_LEFT, &accLeft);
-		return accLeft;
+		result = accLeft;
 	}
 	else{
 		Adc_StartGroupConversion(ADC_ACCELERATION_RIGHT);
 		while(Adc_GetGroupStatus(ADC_ACCELERATION_RIGHT) == ADC_BUSY);
 		Adc_ReadGroup(ADC_ACCELERATION_RIGHT, &accRight);
-		return accRight;
+		result = accRight;
 	}
+	return (uint8_t)(((uint32_t)result) * ((uint32_t)250U)) / ((uint32_t)16383U);
 }
 void Cooling_Test(void){
 	while(1){
