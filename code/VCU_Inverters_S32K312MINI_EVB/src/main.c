@@ -37,6 +37,7 @@ extern "C" {
 #define COOLING_TEMP_START 40
 #define MAX_TEMP 55
 #define SHUTDOWN_TEMP 60
+#define PUMP_START_PERCENTAGE 50U
 
 typedef enum{
 	INVERTERS_ERROR,
@@ -157,16 +158,22 @@ int main(void)
 
 		if(max_temp > COOLING_TEMP_START){
 			cooling_percentage = ((max_temp - COOLING_TEMP_START) * 100U) / (MAX_TEMP - COOLING_TEMP_START);
+			Cooling_SetFanSpeed(ONE, cooling_percentage);
+			Cooling_SetFanSpeed(TWO, cooling_percentage);
 			if(pres1 < LOWEST_PUMP_PRESSURE_LIMIT || pres2 < LOWEST_PUMP_PRESSURE_LIMIT || pres1 > HIGHEST_PUMP_PRESSURE_LIMIT || pres2 > HIGHEST_PUMP_PRESSURE_LIMIT){
 				Cooling_SetPumpSpeed(ONE, 0);
 				Cooling_SetPumpSpeed(TWO, 0);
 			}
 			else{
-				//Cooling_SetPumpSpeed(ONE, cooling_percentage);
-				//Cooling_SetPumpSpeed(TWO, cooling_percentage);
+				if(cooling_percentage <= PUMP_START_PERCENTAGE){
+					Cooling_SetPumpSpeed(ONE, PUMP_START_PERCENTAGE);
+					Cooling_SetPumpSpeed(TWO, PUMP_START_PERCENTAGE);
+				}
+				else{
+					Cooling_SetPumpSpeed(ONE, cooling_percentage);
+					Cooling_SetPumpSpeed(TWO, cooling_percentage);
+				}
 			}
-			Cooling_SetFanSpeed(ONE, cooling_percentage);
-			Cooling_SetFanSpeed(TWO, cooling_percentage);
 		}
 		else{
 			Cooling_SetFanSpeed(ONE, 0);
@@ -206,7 +213,7 @@ int main(void)
 		pedals_timeout = CanMessaging_GetPedalsReceiveTimeout();
 		dashboard_timeout = CanMessaging_GetDashboardReceiveTimeout();
 
-		errors = /*tsac_errors | tsac_timeout |*/ pedals_errors | pedals_timeout | dashboard_errors | dashboard_timeout | (max_temp >= SHUTDOWN_TEMP);
+		errors = tsac_errors | tsac_timeout | pedals_errors | pedals_timeout | dashboard_errors | dashboard_timeout | (max_temp >= SHUTDOWN_TEMP);
 
 		switch(directionState){
 			case INVERTERS_FORWARD:

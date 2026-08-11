@@ -293,7 +293,7 @@ int8_t Cooling_ReadTemp(PartNum_t num){
 		return 0U;
 	}
 	for(uint8_t i=1; i < MEASUREMENTS_POINTS_NUM; i++){
-		if(result > adcValues[i]){
+		if(((int32_t)result) > adcValues[i]){
 			return getTempFromAdc(result, adcValues[i-1], adcValues[i], tempValues[i-1], tempValues[i]);
 		}
 	}
@@ -340,22 +340,22 @@ uint8_t Inverters_ReadAcceleration(Inverter_t inverter){
 	return (uint8_t)(((uint32_t)result) * ((uint32_t)250U)) / ((uint32_t)16383U);
 }
 void Cooling_Test(void){
+	volatile uint64_t delay;
 	while(1){
-		volatile uint64_t delay;
-		for(uint64_t i=0;i<=MAX_DUTY_CYCLE;i++){
-			Pwm_SetDutyCycle(FAN1_CHANNEL, i);
-			Pwm_SetDutyCycle(FAN2_CHANNEL, i);
-			//Pwm_SetDutyCycle(PUMP1_CHANNEL, i);
-			//Pwm_SetDutyCycle(PUMP2_CHANNEL, i);
-			delay=1000;
+		for(uint64_t i=0;i<=100/2;i++){
+			Cooling_SetFanSpeed(ONE, i);
+			Cooling_SetFanSpeed(TWO, i);
+			Cooling_SetPumpSpeed(ONE, i);
+			Cooling_SetPumpSpeed(TWO, i);
+			delay=1000000;
 			while(delay--);
 		}
-		for(uint64_t i=MAX_DUTY_CYCLE;i>0;i--){
-			Pwm_SetDutyCycle(FAN1_CHANNEL, i);
-			Pwm_SetDutyCycle(FAN2_CHANNEL, i);
-			//Pwm_SetDutyCycle(PUMP1_CHANNEL, i);
-			//Pwm_SetDutyCycle(PUMP2_CHANNEL, i);
-			delay=1000;
+		for(uint64_t i=100/2;i>0;i--){
+			Cooling_SetFanSpeed(ONE, i);
+			Cooling_SetFanSpeed(TWO, i);
+			Cooling_SetPumpSpeed(ONE, i);
+			Cooling_SetPumpSpeed(TWO, i);
+			delay=1000000;
 			while(delay--);
 		}
 	}
