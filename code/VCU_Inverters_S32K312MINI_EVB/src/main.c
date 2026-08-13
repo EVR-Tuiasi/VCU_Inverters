@@ -198,13 +198,13 @@ int main(void)
 				MonitoredValues.PedalsMonitoredValues.Accel_Sensor2_OutOfRangeOutput.valueCan |
 				MonitoredValues.PedalsMonitoredValues.Accel_Sensor2_ShortToGnd.valueCan |
 				MonitoredValues.PedalsMonitoredValues.Accel_Sensor2_ShortToVcc.valueCan |
-				MonitoredValues.PedalsMonitoredValues.Brake_Implausibility.valueCan |
+				//MonitoredValues.PedalsMonitoredValues.Brake_Implausibility.valueCan |
 				MonitoredValues.PedalsMonitoredValues.Brake_Sensor1_OutOfRangeOutput.valueCan |
 				MonitoredValues.PedalsMonitoredValues.Brake_Sensor1_ShortToGnd.valueCan |
-				MonitoredValues.PedalsMonitoredValues.Brake_Sensor1_ShortToVcc.valueCan |
+				MonitoredValues.PedalsMonitoredValues.Brake_Sensor1_ShortToVcc.valueCan /*|
 				MonitoredValues.PedalsMonitoredValues.Brake_Sensor2_OutOfRangeOutput.valueCan |
 				MonitoredValues.PedalsMonitoredValues.Brake_Sensor2_ShortToGnd.valueCan |
-				MonitoredValues.PedalsMonitoredValues.Brake_Sensor2_ShortToVcc.valueCan;
+				MonitoredValues.PedalsMonitoredValues.Brake_Sensor2_ShortToVcc.valueCan*/;
 
 		activation_logic_pressed = MonitoredValues.DashboardMonitoredValues.ActivationButtonPressed.valueCan;
 		dashboard_errors = !activation_logic_pressed;
@@ -248,9 +248,9 @@ int main(void)
 		acc_sensor_1_travel_percentage = MonitoredValues.PedalsMonitoredValues.AcceleratorSensor1TravelPercentage.valueCan;
 		acc_sensor_2_travel_percentage = MonitoredValues.PedalsMonitoredValues.AcceleratorSensor2TravelPercentage.valueCan;
 		brake_sensor_1_travel_percentage = MonitoredValues.PedalsMonitoredValues.BrakeSensor1TravelPercentage.valueCan;
-		brake_sensor_2_travel_percentage = MonitoredValues.PedalsMonitoredValues.BrakeSensor1TravelPercentage.valueCan;
+		//brake_sensor_2_travel_percentage = MonitoredValues.PedalsMonitoredValues.BrakeSensor1TravelPercentage.valueCan;
 
-		if((brake_sensor_1_travel_percentage >= BRAKE_PERCENTAGE_THRESHOLD) || (brake_sensor_2_travel_percentage >= BRAKE_PERCENTAGE_THRESHOLD)){
+		if((brake_sensor_1_travel_percentage >= BRAKE_PERCENTAGE_THRESHOLD)/* || (brake_sensor_2_travel_percentage >= BRAKE_PERCENTAGE_THRESHOLD)*/){
 			travel_percentage = 0U;
 			BrakeLight_SetState(STD_ON);
 		}
