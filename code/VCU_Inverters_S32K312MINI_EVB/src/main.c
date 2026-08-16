@@ -31,13 +31,15 @@ extern "C" {
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
 ==================================================================================================*/
-#define BRAKE_PERCENTAGE_THRESHOLD 10U
+#define BRAKE_PERCENTAGE_THRESHOLD 20U
 #define LOWEST_PUMP_PRESSURE_LIMIT 10000U
 #define HIGHEST_PUMP_PRESSURE_LIMIT 30000U
-#define COOLING_TEMP_START 40
+#define COOLING_TEMP_START 35
+#define PUMP_FULL_PERCENTAGE_TEMP_START 40
 #define MAX_TEMP 55
 #define SHUTDOWN_TEMP 60
-#define PUMP_START_PERCENTAGE 50U
+#define PUMP_START_PERCENTAGE 60U
+#define COOLING_IDLE_SPEED 30U
 
 typedef enum{
 	INVERTERS_ERROR,
@@ -156,8 +158,33 @@ int main(void)
 			max_temp = tmp2;
 		}
 
-		if(max_temp > COOLING_TEMP_START){
-			cooling_percentage = ((max_temp - COOLING_TEMP_START) * 100U) / (MAX_TEMP - COOLING_TEMP_START);
+		if(max_temp < 35){
+			Cooling_SetFanSpeed(ONE, 0);
+			Cooling_SetFanSpeed(TWO, 0);
+			Cooling_SetPumpSpeed(ONE, 0);
+			Cooling_SetPumpSpeed(TWO, 0);
+		}
+		else if(max_temp >= 35 && max_temp < 40){
+			Cooling_SetFanSpeed(ONE, 50);
+			Cooling_SetFanSpeed(TWO, 50);
+			Cooling_SetPumpSpeed(ONE, 50);
+			Cooling_SetPumpSpeed(TWO, 50);
+		}
+		else{
+			Cooling_SetFanSpeed(ONE, 100U);
+			Cooling_SetFanSpeed(TWO, 100U);
+			Cooling_SetPumpSpeed(ONE, 100U);
+			Cooling_SetPumpSpeed(TWO, 100U);
+		}
+
+		//Cooling logic ce are nevoie de o revizuire masiva
+		/*if(max_temp > COOLING_TEMP_START){
+			if(max_temp > MAX_TEMP){
+				cooling_percentage = 100U;
+			}
+			else{
+				cooling_percentage = ((max_temp - COOLING_TEMP_START) * 100U) / (MAX_TEMP - COOLING_TEMP_START);
+			}
 			Cooling_SetFanSpeed(ONE, cooling_percentage);
 			Cooling_SetFanSpeed(TWO, cooling_percentage);
 			if(pres1 < LOWEST_PUMP_PRESSURE_LIMIT || pres2 < LOWEST_PUMP_PRESSURE_LIMIT || pres1 > HIGHEST_PUMP_PRESSURE_LIMIT || pres2 > HIGHEST_PUMP_PRESSURE_LIMIT){
@@ -165,20 +192,28 @@ int main(void)
 				Cooling_SetPumpSpeed(TWO, 0);
 			}
 			else{
-				if(cooling_percentage <= PUMP_START_PERCENTAGE){
-					Cooling_SetPumpSpeed(ONE, PUMP_START_PERCENTAGE);
-					Cooling_SetPumpSpeed(TWO, PUMP_START_PERCENTAGE);
+				if(max_temp > PUMP_FULL_PERCENTAGE_TEMP_START){
+					Cooling_SetPumpSpeed(ONE, 100U);
+					Cooling_SetPumpSpeed(TWO, 100U);
 				}
 				else{
-					Cooling_SetPumpSpeed(ONE, cooling_percentage);
-					Cooling_SetPumpSpeed(TWO, cooling_percentage);
+					if(cooling_percentage <= PUMP_START_PERCENTAGE){
+						Cooling_SetPumpSpeed(ONE, PUMP_START_PERCENTAGE);
+						Cooling_SetPumpSpeed(TWO, PUMP_START_PERCENTAGE);
+					}
+					else{
+						Cooling_SetPumpSpeed(ONE, cooling_percentage);
+						Cooling_SetPumpSpeed(TWO, cooling_percentage);
+					}
 				}
 			}
 		}
 		else{
-			Cooling_SetFanSpeed(ONE, 0);
-			Cooling_SetFanSpeed(TWO, 0);
-		}
+			Cooling_SetFanSpeed(ONE, COOLING_IDLE_SPEED);
+			Cooling_SetFanSpeed(TWO, COOLING_IDLE_SPEED);
+			Cooling_SetPumpSpeed(ONE, COOLING_IDLE_SPEED);
+			Cooling_SetPumpSpeed(TWO, COOLING_IDLE_SPEED);
+		}*/
 
 		reverse_command = MonitoredValues.DashboardMonitoredValues.CarReverseCommandPressed.valueCan;
 
@@ -251,18 +286,25 @@ int main(void)
 		//brake_sensor_2_travel_percentage = MonitoredValues.PedalsMonitoredValues.BrakeSensor1TravelPercentage.valueCan;
 
 		if((brake_sensor_1_travel_percentage >= BRAKE_PERCENTAGE_THRESHOLD)/* || (brake_sensor_2_travel_percentage >= BRAKE_PERCENTAGE_THRESHOLD)*/){
-			travel_percentage = 0U;
+			//travel_percentage = 0U;
 			BrakeLight_SetState(STD_ON);
 		}
 		else{
 			BrakeLight_SetState(STD_OFF);
-			travel_percentage = acc_sensor_1_travel_percentage;
+			/*travel_percentage = acc_sensor_1_travel_percentage;
 			if(travel_percentage > acc_sensor_2_travel_percentage){
 				travel_percentage = acc_sensor_2_travel_percentage;
 			}
 			if(directionState == INVERTERS_REVERSE){
 				travel_percentage /= 2U;
-			}
+			}*/
+		}
+		travel_percentage = acc_sensor_1_travel_percentage;
+		if(travel_percentage < acc_sensor_2_travel_percentage){
+			travel_percentage = acc_sensor_2_travel_percentage;
+		}
+		if(directionState == INVERTERS_REVERSE){
+			travel_percentage /= 2U;
 		}
 
 		if((directionState == INVERTERS_FORWARD) || (directionState == INVERTERS_REVERSE)){
